@@ -1,5 +1,5 @@
 services:
-    devcontainer:
+    fin556:
         container_name: fin556
         image: roylai/suss-fin556:latest
         volumes:

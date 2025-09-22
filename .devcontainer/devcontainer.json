@@ -3,7 +3,7 @@
     "dockerComposeFile": [
         "docker-compose.yml"
     ],
-    "service": "devcontainer",
+    "service": "fin556",
     "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
