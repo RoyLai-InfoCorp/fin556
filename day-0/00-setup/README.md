@@ -1,4 +1,4 @@
-# Setup
+# Setup Guide (15 minutes to complete)
 
 ## Overview
 
@@ -261,13 +261,30 @@ DevContainers allow you to develop inside a Docker container with all necessary 
 
 ---
 
-## Step 7. Send Confirmation Email
+## Step 7. Find your Student Group in Canvas
+
+1. Login to Canvas
+
+2. Go to your Course site (e.g., FIN556_JUL25_L01)
+
+3. Click on "People" in the left-hand menu
+
+4. Click on "Groups" tab
+
+    ![canvas_groups](./img/canvas_groups.png)
+
+5. Identify your assigned group (there can be no more than 5 members in a group).
+
+---
+
+## Step 8. Send Confirmation Email
 
 Upon successful completion of all setup steps, please send a confirmation email to the course instructor indicating that your development environment is ready for class. Please include:
 
 -   your full name
 -   student identification number
 -   Windows or macOS or others.
+-   Your assigned student group (from Step 7)
 
 ---
 
