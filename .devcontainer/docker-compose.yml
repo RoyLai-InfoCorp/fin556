@@ -1,0 +1,12 @@
+services:
+    devcontainer:
+        container_name: fin556
+        image: roylai/suss-fin556:latest
+        volumes:
+            # Use anonymous volume for virtual environment
+            - /workspace/.venv
+            - ..:/workspace:cached
+            - $HOME:/home/vscode:cached
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: sleep infinity
+        network_mode: host
