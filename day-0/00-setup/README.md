@@ -237,24 +237,33 @@ DevContainers allow you to develop inside a Docker container with all necessary 
 
 ### c) Verify DevContainer Environment
 
-1. Open the integrated terminal in VS Code (** Ctrl + ` **)
+1. Open the integrated terminal in VS Code (**Ctrl + `**)
 
 2. Verify the development tools are installed:
 
     ```bash
     node --version
-    # Should show v18.x or higher
+
+     # v22.15.0
+
     npm --version
-    # Should show v9.x or higher
+
+     # 10.9.2
+
     git --version
-    # git version 2.34.1
+
+     # git version 2.34.1
     ```
 
 3. Test that hardhat-shorthand is available (this will be used in day-1 lessons):
 
     ```bash
-    hh --version
-    # Should show Hardhat version
+    npm ls -g
+
+     #/usr/local/share/nvm/versions/node/v22.15.0/lib
+     #├── corepack@0.32.0
+     #├── hardhat-shorthand@1.1.0
+     #└── npm@10.9.2
     ```
 
 4. Task completed ✅.
