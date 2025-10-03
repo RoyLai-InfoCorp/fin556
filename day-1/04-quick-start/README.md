@@ -267,7 +267,7 @@ The ABI enables external programs to interact with your contract. Without it, ap
     Open `hardhat.config.js` and ensure it specifies the same version as your contract pragma: 0.8.20.
 
     ```js
-    require("@nomicfoundation/hardhat-toolbox");
+    require("@nomicfoundation/hardhat-require");
 
     module.exports = {
         solidity: {

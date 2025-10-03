@@ -1,0 +1,24 @@
+{
+    "name": "erc20-advanced",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "clean": "rm -rf artifacts cache node_modules"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "@nomicfoundation/hardhat-chai-matchers": "^2.1.0",
+        "@nomicfoundation/hardhat-ethers": "3.0.8",
+        "chai": "^6.0.1",
+        "ethers": "6.13.2",
+        "hardhat": "2.22.15",
+        "prettier": "^3.6.2",
+        "prettier-plugin-solidity": "^2.1.0"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^5.4.0"
+    }
+}
