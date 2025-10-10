@@ -134,7 +134,7 @@ Understanding derivation paths is crucial when:
     In the Hardhat console, run the following commands line by line after the `>` prompt to generate a new mnemonic phrase:
 
     ```js
-    > const { ethers } = require("ethers");
+    > const { ethers } = require("hardhat");
     > mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
 
     // Sample Output:

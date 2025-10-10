@@ -572,7 +572,7 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
     ```solidity
     function buyTokens() public payable {
-        uint256 amount = msg.value * rate; // rate is number of tokens per ETH
+        uint256 amount = msg.value * rate; // rate is number of tokens per wei
         _mint(msg.sender, amount);
     }
     ```
@@ -622,13 +622,12 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
     contract Crowdsale {
         OwnableMintableDemoToken public token;
-        uint256 public rate; // number of tokens per ETH
+        uint256 public rate; // number of tokens per wei
         event TokensPurchased(address buyer, uint256 amount);
 
         constructor(OwnableMintableDemoToken tokenAddress, uint256 rate_) {
             rate = rate_;
             token = tokenAddress;
-            token.transferOwnership(address(this)); // transfer ownership to crowdsale contract
         }
 
         function buyTokens() public payable {
@@ -637,15 +636,14 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
             token.mint(msg.sender, amount);
             emit TokensPurchased(msg.sender, amount);
         }
-
     }
     ```
 
 2. **Create test for Crowdsale**
 
-    Create a new file `test/crowdsale.js`.
+    Create a new file `test/testCrowdsale.js`.
 
-    **test/crowdsale.js**
+    **test/testCrowdsale.js**
 
     ```js
     const { expect } = require("chai");
@@ -659,27 +657,42 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
         beforeEach(async function () {
             [owner, addr1] = await ethers.getSigners();
-            const Token = await ethers.getContractFactory("OwnableMintableDemoToken");
-            token = await Token.deploy(1000, owner.address);
-            await token.deployed();
 
+            // Deploy Token contract
+            const Token = await ethers.getContractFactory(
+                "OwnableMintableDemoToken"
+            );
+            token = await Token.deploy(1000, owner.address);
+            await token.waitForDeployment();
+
+            // Deploy Crowdsale contract
             const Crowdsale = await ethers.getContractFactory("Crowdsale");
-            crowdsale = await Crowdsale.deploy(token.address, 100); // 100 tokens per ETH
-            await crowdsale.deployed();
+            crowdsale = await Crowdsale.deploy(await token.getAddress(), 1000); // 1000 tokens per wei
+            await crowdsale.waitForDeployment();
+
+            // Transfer token ownership to crowdsale contract
+            await token.transferOwnership(await crowdsale.getAddress());
         });
 
         it("Should allow users to buy tokens", async function () {
-            await crowdsale.connect(addr1).buyTokens({ value: ethers.utils.parseEther("1.0") });
+            await crowdsale
+                .connect(addr1)
+                .buyTokens({ value: ethers.parseEther("1.0") });
             const addr1Balance = await token.balanceOf(addr1.address);
-            expect(addr1Balance).to.equal(100);
+            expect(addr1Balance).to.equal(ethers.parseEther("1.0") * 1000n);
         });
 
         it("Should emit TokensPurchased event", async function () {
             await expect(
-                crowdsale.connect(addr1).buyTokens({ value: ethers.utils.parseEther("1.0") })
-            ).to.emit(crowdsale, "TokensPurchased").withArgs(addr1.address, 100);
+                crowdsale
+                    .connect(addr1)
+                    .buyTokens({ value: ethers.parseEther("1.0") })
+            )
+                .to.emit(crowdsale, "TokensPurchased")
+                .withArgs(addr1.address, ethers.parseEther("1.0") * 1000n);
         });
     });
+
     ```
 
 3. **Run the test**
