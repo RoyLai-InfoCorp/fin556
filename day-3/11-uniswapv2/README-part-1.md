@@ -246,13 +246,17 @@ In the subsequent steps below, make sure to place the code inside this test case
         <!-- prettier-ignore -->
         ```js
             // Method 3 - Off-Chain: Get the pair address using CREATE2 calculation (preferred)
-
+            address0 = (await token0.getAddress()).toLowerCase();
+            address1 = (await token1.getAddress()).toLowerCase();
+            if (address0 > address1) {
+                [address0, address1] = [address1, address0];
+            }
             const pairAddress2 = ethers.getCreate2Address(
                 factory.target,
                 ethers.keccak256(
                     ethers.solidityPacked(
                         ["address", "address"],
-                        [await token0.getAddress(), await token1.getAddress()]
+                        [address0, address1]
                     )
                 ),
                 "0x215a032792ab9f4a5eb14f1f4c1daed5017b1eee4de72ddb42e06c967b16c5d4" // init code hash

@@ -272,7 +272,7 @@ In the subsequent steps below, make sure to place the code inside this test case
         // -----------------------------------------------------------------
         const reserves = await pair.getReserves();
         const [reserve0, reserve1] =
-            (await token0.getAddress()) < (await token1.getAddress())
+            (await token0.getAddress()).toLowerCase() < (await token1.getAddress()).toLowerCase()
                 ? [reserves._reserve0, reserves._reserve1]
                 : [reserves._reserve1, reserves._reserve0];
     ```
