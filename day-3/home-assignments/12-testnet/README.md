@@ -7,7 +7,7 @@ There are 2 parts to this lab:
 1. Sending Transaction on Public Testnet
 2. Deploying ERC20 tokens on Public Testnet
 
-## 1. Sending Transaction on Public Testnet
+## 🛠️ Lab Practise: Sending Transaction on Public Testnet
 
 💀⚠️ **IMPORTANT: NEVER USE YOUR REAL PRODUCTION WALLET KEY FOR LAB**
 
@@ -174,7 +174,7 @@ a) Go to this repository https://github.com/pk910/PoWFaucet and refer to the lin
 
 ---
 
-## 2. Deploying ERC20 and Crowdsale token on Public Testnet
+## 🛠️ Lab Practise: Deploying ERC20 and Crowdsale token on Public Testnet
 
 In this section, you will learn how to deploy ERC20 token contract which you have learned in **Lesson 8 (ERC20 Token Standard Advanced)** to the Hoodi testnet.
 

@@ -125,7 +125,49 @@ Reference types store the location of data and can be stored in memory, storage,
 
 ---
 
-## 2. Contract Inheritance
+## 2. Data Location
+
+https://docs.soliditylang.org/en/v0.8.8/types.html?highlight=data%20location#data-location
+
+When working with reference types like strings, arrays, and structs, Solidity requires you to explicitly declare the **data location**.
+
+```solidity
+function getName() public view returns (string memory)
+function getDescription() public view returns (string memory)
+```
+
+If you omit the data location, compilation will fail with an error like:
+
+```bash
+TypeError: Data location must be "memory" or "calldata" for return parameter in function, but none was given.
+```
+
+### What is Data Location?
+
+**Reference types** in Solidity can live in one of three locations. Each has distinct cost, lifetime, and performance characteristics:
+
+-   storage
+
+    -   Most expensive option.
+    -   Default for state variables.
+    -   Data is permanently written to the blockchain.
+    -   Certain types (e.g., mappings) must always use storage.
+
+-   memory
+
+    -   Temporary and non-persistent.
+    -   Typically used for local variables within functions.
+    -   Freed once the function execution ends.
+
+-   calldata
+    -   Cheapest option.
+    -   Read-only and non-modifiable.
+    -   Used mainly for function parameters in external calls.
+    -   Cost is comparable to memory (Gmemory = 3).
+
+---
+
+## 3. Contract Inheritance
 
 Contract inheritance allows one contract to use functions and state variables from another contract. It's like extending a class in other programming languages - the child contract inherits all public and internal functions from the parent.
 
@@ -273,7 +315,7 @@ contract Dog is Animal {
 
 ---
 
-## 3. Visibility
+## 4. Visibility
 
 ### Function Visibility
 
@@ -342,7 +384,7 @@ contract StateVariableVisibility {
 
 ---
 
-## 4. Built-in Modifiers
+## 5. Built-in Modifiers
 
 Built-in modifiers control how functions interact with the contract's state and Ether. The modifier comes after visibility in the function declaration:
 
@@ -389,7 +431,7 @@ contract FunctionModifiers {
 
 ---
 
-## 5. Mappings
+## 6. Mappings
 
 Mappings are key-value stores, similar to hash tables or dictionaries in other programming languages. They provide an efficient way to store and retrieve data using unique keys.
 
