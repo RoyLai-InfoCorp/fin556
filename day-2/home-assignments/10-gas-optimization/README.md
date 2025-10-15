@@ -165,80 +165,7 @@ hh test test/functionCallTest.js
 
 ---
 
-## 3. EVM Word Size and Its Impact on Gas
-
-The EVM uses a word size of **32 bytes** (256 bits). This means the cost of storing and processing data is based on chunks of 32 bytes.
-
-In Solidity, using a smaller type can be more expensive if its size is not in multiples of 32 bytes. This is because the EVM has to run extra operations to transform a 1-byte type (uint8) into a 32-byte type (uint256) before it can perform operations.
-
----
-
-## 🛠️ Lab: EVM Word Size and Its Impact on Gas
-
--   **Create `contracts/WordSizeExample.sol`:**
-
-    ```solidity
-    // SPDX-License-Identifier: MIT
-    pragma solidity ^0.8.20;
-
-    contract WordSizeExample {
-        uint8 public small;    // 1 byte
-        uint256 public large;  // 32 bytes
-
-        function setSmall(uint8 _val) public {
-            small = _val;
-        }
-
-        function setLarge(uint256 _val) public {
-            large = _val;
-        }
-    }
-    ```
-
--   **Create `test/wordSizeTest.js`:**
-
-    ```js
-    const { expect } = require("chai");
-    const { ethers } = require("hardhat");
-
-    describe("WordSizeExample", function () {
-        let contract;
-
-        beforeEach(async function () {
-            const Example = await ethers.getContractFactory("WordSizeExample");
-            contract = await Example.deploy();
-            await contract.deployed();
-        });
-
-        it("Gas comparison: setSmall vs setLarge", async function () {
-            const txSmall = await contract.setSmall(5);
-            const rcSmall = await txSmall.wait();
-            console.log("Gas used for setSmall:", rcSmall.gasUsed.toString());
-
-            const txLarge = await contract.setLarge(5);
-            const rcLarge = await txLarge.wait();
-            console.log("Gas used for setLarge:", rcLarge.gasUsed.toString());
-
-            expect(rcSmall.gasUsed).to.be.gt(rcLarge.gasUsed);
-        });
-    });
-    ```
-
--   **Run the test:**
-
-    Even though `uint8` is smaller, it costs more gas due to EVM word size alignment.
-
-    ```bash
-    hh test test/wordSizeTest.js
-
-    # Expected results:
-    # Gas used for setSmall: 21446
-    # Gas used for setLarge: 21314
-    ```
-
----
-
-## 4. Storage Slot Packing and State Variable Ordering
+## 3. Storage Slot Packing and State Variable Ordering
 
 Storage operations are the most expensive part of smart contract execution. Reordering variables and using smaller types can significantly reduce gas costs.
 
@@ -343,7 +270,7 @@ contract Efficient {
 
 ---
 
-## 5. Gas Costs of Function Visibility (public vs external)
+## 4. Gas Costs of Function Visibility (public vs external)
 
 Function visibility affects both deployment costs and execution gas. Choosing the right visibility can reduce contract size and gas consumption.
 
