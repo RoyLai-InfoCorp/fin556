@@ -63,7 +63,7 @@ We will prove that this is indeed the default mnemonic by comparing the addresse
 
     ```javascript
     module.exports = {
-        solidity: "0.8.18",
+        solidity: "0.8.20",
         networks: {
             localhost: {
                 url: "http://localhost:8545",
@@ -196,7 +196,7 @@ Understanding derivation paths is crucial when:
 
     ```javascript
     module.exports = {
-        solidity: "0.8.18",
+        solidity: "0.8.20",
         networks: {
             localhost: {
                 url: "http://localhost:8545",
@@ -274,7 +274,7 @@ In the next lab, we will learn how to use the `dotenv` package to securely manag
     require("dotenv").config();
 
     module.exports = {
-        solidity: "0.8.18",
+        solidity: "0.8.20",
         networks: {
             localhost: {
                 url: "http://localhost:8545",

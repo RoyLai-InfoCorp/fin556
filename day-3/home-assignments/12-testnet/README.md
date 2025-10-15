@@ -1,4 +1,10 @@
-# Testnet
+# Deploying ERC20 Tokens on Testnet
+
+⚠️ You must have completed the previous lesson on HD Wallets before you can continue with this lesson. Otherwise, please refer to:
+
+-   [Hierarchical Deterministic Wallets](../../day-1/home-assignments/06-hd-wallet/README.md)
+    -   You need to understand how .env file works and because you will need to configure the network settings for testnet.
+    -   The account created using the mnemonic will be used to receive test ETH and deploy the smart contracts.
 
 By now you should be familiar with writing and deploying smart contracts on a local Hardhat Network. In this lab, you will apply what you have learnt onto a public testnet called **Hoodi**. Hoodi is a fork of the Ethereum mainnet and is used for testing purposes. More information about Hoodi can be found here: https://github.com/eth-clients/hoodi
 
@@ -15,47 +21,26 @@ There are 2 parts to this lab:
 
 Since we are no longer using the default Hardhat Network for this lab, we will need to create our own test wallet account using a mnemonic phrase.
 
-If you already have the mnemonic phrase from completing Day 1 Home Assignment (Hierarchical Deterministic (HD) Wallets), you can reuse the same mnemonic phrase here.
+-   Copy the **.env** file created from the previous lesson [Hierarchical Deterministic Wallets](../../day-1/home-assignments/06-hd-wallet/README.md) to this directory.
 
-Otherwise, you can generate the mnemonic phrase from Hardhat console below:
+    Your `.env` file should look similar to this:
 
--   Start Hardhat console
-
-    ```bash
-    hh console
+    ```.env
+    FIN556_MNEMONIC=replace this with your passphrase
     ```
 
--   Generate a new mnemonic phrase
+-   Take note of the account address as you will be needing it to collect test ETH later.
 
-    **NOTE:** You need to note down the mnemonic phrase generated as you will need it later.
+    If you have "lost" your address, you can get it from hardhat console:
 
-    ```javascript
-    > const { ethers } = require("hardhat");
-    > mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
+    ```js
+    > accounts = await ethers.getSigners();
+    > accounts[0].address
     // Sample Output:
-    // 'hill drive sure whip bargain horn raven sunny claw example merit income'
+    // '0x6976827c1fC851546a202a5159a48Cac2b0649FF'
     ```
 
-### Step 2: Obtain your Test Wallet address
-
--   Get the wallet address for the first account
-
-    **NOTE:** You need to note down the wallet address below as you will need it later.
-
-    ```javascript
-    > wallet0 = ethers.HDNodeWallet.fromPhrase(
-        mnemonic,
-        null,
-        "m/44'/60'/0'/0/0"
-    );
-    > wallet0.address
-
-    // Sample Output:
-    // '0x18b2Ba693Fc01A6e7e6031e5a31936AC8ED8Aef5'
-
-    ```
-
-### Step 3: Signup for an account with Alchemy
+### Step 2: Signup for an account with Alchemy
 
 Alchemy is a web3 gateway provider. They do not own the testnet, they simply provide access to nodes that are connected to the testnet.
 To use their API, you will need to create an account with Alchemy and obtain an API key.
@@ -73,7 +58,7 @@ c) Note down the **Network URL** provided.
 
 ![Alchemy App](./img/testnet.png)
 
-### Step 4: Configure Hardhat for Hoodi
+### Step 3: Configure Hardhat for Hoodi
 
 a) Create a `.env` file with the mnemonic and Alchemy URL and API Key.
 

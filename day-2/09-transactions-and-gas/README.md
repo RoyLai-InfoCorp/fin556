@@ -389,20 +389,15 @@ describe("Contract Deployment Cost Comparison", () => {
         console.log(`Counter deployment gas: ${receipt.gasUsed}`);
     });
 
-    it("Deploy ERC20 Contract", async () => {
+    it("Deploy DemoToken Contract", async () => {
         const [owner] = await ethers.getSigners();
-        const erc20Factory = await ethers.getContractFactory("ERC20");
+        const erc20Factory = await ethers.getContractFactory("DemoToken");
         const totalSupply = ethers.parseUnits("1000", 18);
 
-        const erc20 = await erc20Factory.deploy(
-            "TestToken",
-            "TUT",
-            totalSupply,
-            owner.address
-        );
+        const erc20 = await erc20Factory.deploy(totalSupply, owner.address);
         const receipt = await erc20.deploymentTransaction().wait();
 
-        console.log(`ERC20 deployment gas: ${receipt.gasUsed}`);
+        console.log(`DemoToken deployment gas: ${receipt.gasUsed}`);
     });
 });
 ```
