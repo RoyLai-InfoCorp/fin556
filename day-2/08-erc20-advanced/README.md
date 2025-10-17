@@ -113,11 +113,11 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
 
     **contracts/MintableDemoToken.sol**
 
+    <!--ignore-prettier-->
     ```solidity
         function mint(address to, uint256 amount) virtual public {
             _mint(to, amount);
         }
-    }
     ```
 
     This `mint()` function is declared as `virtual` so that it can be overridden in derived contracts.
@@ -444,22 +444,12 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
 2. **Update hardhat.config.js**
 
-    Update `hardhat.config.js` to include the Hardhat Chai Matchers plugin.
+    Update `hardhat.config.js` to insert Hardhat Chai Matchers plugin at the top.
 
     **hardhat.config.js**
 
     ```js
-    require("@nomicfoundation/hardhat-ethers");
     require("@nomicfoundation/hardhat-chai-matchers");
-
-    module.exports = {
-        solidity: "0.8.20",
-        networks: {
-            localhost: {
-                url: "http://127.0.0.1:8545",
-            },
-        },
-    };
     ```
 
 3.  **Create OwnableMintableDemoToken.sol**
@@ -484,6 +474,8 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
         }
     }
     ```
+
+    Notice that we are inheriting from both `MintableDemoToken` and OpenZeppelin's `Ownable` contract so we need to call both constructors. Remember that the order of constructor calls follows the order in which the base contracts are defined, ie. left to right.
 
     ```solidity
 
@@ -531,7 +523,6 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
             [owner, addr1, addr2] = await ethers.getSigners();
             const Token = await ethers.getContractFactory("OwnableMintableDemoToken");
             token = await Token.deploy(1000, owner.address);
-            await token.deployed();
         });
 
         it("Owner should mint new tokens", async function () {

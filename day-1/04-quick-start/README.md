@@ -464,6 +464,7 @@ We will now interact with the `Counter` contract that was deployed in the previo
     Replace the address below with the actual address printed during deployment:
 
     ```javascript
+    > const { ethers } = require("hardhat");
     > const Counter = await ethers.getContractFactory("Counter");
     > const counter = await Counter.attach(
         "replace-with-your-deployed-contract-address"
