@@ -163,8 +163,7 @@ const { ethers } = require("hardhat");
 describe("Test Swap Tokens", function () {
     let signer;
     let factory, router, token0, token1;
-
-}
+});
 ```
 
 For the subsequent stages involving the beforeEach setup and test cases, ensure to place the code inside the describe block.
@@ -209,8 +208,8 @@ The beforeEach function will setup up the testing environment before each test:
         );
 
         // Approve tokens to router
-        const amount0 = ethers.parseEther("2");
-        const amount1 = ethers.parseEther("3");
+        const amount0 = ethers.parseEther("1000");
+        const amount1 = ethers.parseEther("5000");
         await token0.approve(await router.getAddress(), amount0);
         await token1.approve(await router.getAddress(), amount1);
 

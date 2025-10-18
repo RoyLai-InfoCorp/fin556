@@ -116,8 +116,7 @@ const { ethers } = require("hardhat");
 describe("Test Create Pool", function () {
     let signer;
     let factory, router, token0, token1;
-
-}
+});
 ```
 
 For the subsequent stages involving the beforeEach setup and test cases, ensure to place the code inside the describe block.
@@ -213,14 +212,14 @@ In the subsequent steps below, make sure to place the code inside this test case
 
         <!-- prettier-ignore -->
         ```js
-            expect(pairAddress1).to.not.equal(ethers.ZeroAddress);
+            expect(pairAddress).to.not.equal(ethers.ZeroAddress);
         ```
 
         And is a valid address.
 
         <!-- prettier-ignore -->
         ```js
-            expect(pairAddress1).to.be.properAddress;
+            expect(pairAddress).to.be.properAddress;
         ```
 
     -   **method 2:** Using the `getPair()` function from the factory contract. Use this method when you want to find an existing pair from the reserve token addresses.

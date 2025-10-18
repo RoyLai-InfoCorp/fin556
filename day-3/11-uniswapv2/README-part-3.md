@@ -85,8 +85,7 @@ const { ethers } = require("hardhat");
 describe("Test Exit Position", function () {
     let signer;
     let factory, router, token0, token1;
-
-}
+});
 ```
 
 For the subsequent stages involving the beforeEach setup and test cases, ensure to place the code inside the describe block.
