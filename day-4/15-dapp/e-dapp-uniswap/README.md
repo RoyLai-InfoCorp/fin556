@@ -32,64 +32,63 @@ e) Complete the DApp to allow token swaps - this part ✅
     npm i
     ```
 
-### 1. Update script library
+### 1. Update React hook script library
 
--   **Open the fin556-dapp/src/dapp.js**
+-   **Open the fin556-dapp/src/useDapp.js**
 
-    Add the following code:
+    Open the file **useDapp.js** in the **fin556-dapp/src** directory and make the following changes.
 
-    -   **Add constants for contract addresses**
+-   **Update useDapp parameters**
 
-        Refer to the addresses obtained from **scripts/addresses.json** in the [previous step](#1-deploy-uniswap-and-erc20-contracts-on-local-node) and insert them as constants in the code after the import statements.
+    Replace the following line.
 
-        ```js
-        // Update these constants with actual addresses.
-        const UNISWAP_ROUTER_ADDRESS = "...";
-        const UNISWAP_FACTORY_ADDRESS = "...";
-        const DEMO_TOKEN_A = "...";
-        const DEMO_TOKEN_B = "...";
-        ```
+    ```js
+    const useDapp = ({ setSigner }) => {
+    ```
 
-        Update the above constants with the actual addresses.
-        You can get the addresses from **scripts/addresses.json** generated from the previous step.
+    with this
 
-        **NOTE:** If you are connecting to a public testnet instead of localhost, you will need to update the token addresses accordingly. You can use any ERC-20 tokens on the testnet.
+    ```js
+    const useDapp = ({
+        setSigner,
+        uniswapRouterAddress,
+        uniswapFactoryAddress,
+        tokenAddrA,
+        tokenAddrB,
+    }) => {
+    ```
 
-    -   **Add getAddressA() and getAddressB() functions**
+    This is to expand the list of arguments that can be passed into the useDapp hook to include other state variables such as the Uniswap router and factory addresses, and the token addresses.
 
-        Add the function to return DemoTokenA and DemoTokenB addresses so that it can be used to initialize the text boxes.
+-   **Insert the following code inside useDapp()**
 
-        ```js
-        const getAddressA = () => DEMO_TOKEN_A;
-
-        const getAddressB = () => DEMO_TOKEN_B;
-        ```
+    Insert the following code inside the `useDapp` function to implement the required functionalities.
 
     -   **Add getBalance() function**
 
         Add the following code to get the token balances of the user and reserve balances in the liquidity pool.
 
         ```js
-        const getBalance = async (tokenAddrA, tokenAddrB, account) => {
-            const address = await account.getAddress();
+        const getBalance = async (signer) => {
+            const address = signer.address;
 
             const tokenA = new ethers.Contract(
                 tokenAddrA,
                 ["function balanceOf(address) view returns(uint)"],
-                account
+                signer
             );
 
             const tokenB = new ethers.Contract(
                 tokenAddrB,
                 ["function balanceOf(address) view returns(uint)"],
-                account
+                signer
             );
 
             // Pool
             const factory = new ethers.Contract(
-                UNISWAP_FACTORY_ADDRESS,
+                uniswapFactoryAddress,
                 ["function getPair(address,address) view returns(address)"],
-                account
+                signer
             );
             console.log(
                 `Getting poolAddress for addressA(${tokenAddrA}) and addressB(${tokenAddrB})`
@@ -104,7 +103,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                     "function getReserves() view returns(uint112 reserve0,uint112 reserve1,uint32)",
                     "function balanceOf(address) view returns(uint)",
                 ],
-                account
+                signer
             );
 
             // Get Reserves
@@ -122,12 +121,14 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-    -   **Add getAmountOut() function**
+    -   **Add a private \_getAmountOut() function**
 
         Add the following code to swap tokens in the liquidity pool.
 
+        NOTE: This function is only used internally by sellTokens and buyTokens functions that is why it is prefixed with an underscore(\_) as a convention to indicate that it is private.
+
         ```js
-        function getAmountOut(amountIn, reserveIn, reserveOut) {
+        function _getAmountOut(amountIn, reserveIn, reserveOut) {
             if (!amountIn || !reserveIn || !reserveOut) {
                 throw new Error(
                     "Invalid input: amountIn, reserveIn, and reserveOut must be provided"
@@ -143,12 +144,14 @@ e) Complete the DApp to allow token swaps - this part ✅
         }
         ```
 
-    -   **Add getReserves() function**
+    -   **Add \_getReserves() function**
 
         Add the following code to get the reserves of the liquidity pool.
 
+        NOTE: This function is only used internally by sellTokens and buyTokens functions that is why it is prefixed with an underscore(\_) as a convention to indicate that it is private.
+
         ```js
-        const getReserves = async (factory, { TOKEN_0, TOKEN_1 }, account) => {
+        const _getReserves = async (factory, { TOKEN_0, TOKEN_1 }, account) => {
             const poolAddress = await factory.getPair(TOKEN_0, TOKEN_1);
             if (poolAddress === ethers.ZeroAddress) {
                 throw new Error("No pool found for the given token pair");
@@ -176,12 +179,12 @@ e) Complete the DApp to allow token swaps - this part ✅
         const sellTokens = async (inputAmt, inputAddr, outputAddr, account) => {
             // Get Reserves
             const factory = new ethers.Contract(
-                UNISWAP_FACTORY_ADDRESS,
+                uniswapFactoryAddress,
                 ["function getPair(address,address) view returns(address)"],
                 account
             );
 
-            const reserves = await getReserves(
+            const reserves = await _getReserves(
                 factory,
                 {
                     TOKEN_0: inputAddr,
@@ -197,7 +200,7 @@ e) Complete the DApp to allow token swaps - this part ✅
             }
 
             // Get OutputAmt
-            const outputAmt = getAmountOut(
+            const outputAmt = _getAmountOut(
                 inputAmt,
                 reserves.reserveA,
                 reserves.reserveB
@@ -205,7 +208,7 @@ e) Complete the DApp to allow token swaps - this part ✅
 
             // Load contract A and contract B
             const uniswap = new ethers.Contract(
-                UNISWAP_ROUTER_ADDRESS,
+                uniswapRouterAddress,
                 [
                     `function swapExactTokensForTokens(uint,uint,address[],address,uint)`,
                 ],
@@ -219,7 +222,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                 account
             );
             const response = await inputToken.approve(
-                UNISWAP_ROUTER_ADDRESS,
+                uniswapRouterAddress,
                 inputAmt
             );
             await response.wait();
@@ -249,15 +252,19 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-    -   **Export the functions**
+    -   **Return the new functions from useDapp**
 
-        Export these 6 functions so that they can be imported into **App.jsx**.
+        Replace the following return statement.
 
         ```js
-        export {
-            getAccount,
-            getAddressA,
-            getAddressB,
+        return { connect };
+        ```
+
+        with this
+
+        ```js
+        return {
+            connect,
             getBalance,
             sellTokens,
             buyTokens,
@@ -270,20 +277,6 @@ e) Complete the DApp to allow token swaps - this part ✅
 
     Open the file **App.jsx** in the **fin556-dapp/src** directory.
 
--   **Import the functions**
-
-    Import the functions created in **dapp.js**.
-
-    ```js
-    import {
-        getAccount,
-        getAddressA,
-        getAddressB,
-        getBalance,
-        sellTokens,
-    } from "./dapp";
-    ```
-
 -   **Update the App component**
 
     Insert the following code inside the `App` component.
@@ -293,45 +286,46 @@ e) Complete the DApp to allow token swaps - this part ✅
         Replace the following lines.
 
         ```js
-        const tokenAddrA = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"; // tokenA
-        const tokenAddrB = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"; // tokenB
-        ```
-
-        with
-
-        ```js
-        const [tokenAddrA, setTokenAddrA] = useState(getAddressA());
-        const [tokenAddrB, setTokenAddrB] = useState(getAddressB());
-        ```
-
-        -   Replace the hardcoded tokenAddrA and tokenAddrB with state variables.
-        -   Initialize the state variable using getAddressA() and getAddressB() functions from **dapp.js**.
-        -   Add the setTokenAddrA() and setTokenAddrB() functions so that if the user changes the value in the text box, the state variable will be updated.
-
-    -   **Replace the balance state variable**
-
-        Replace the following lines.
-
-        ```js
-        const balance = {
+        const [tokenAddrA, setTokenAddrA] = useState(
+            "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+        const [tokenAddrB, setTokenAddrB] = useState(
+            "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        );
+        const [uniswapRouterAddress, setUniswapRouterAddress] = useState(
+            "0xcccccccccccccccccccccccccccccccccccccccc"
+        );
+        const [uniswapFactoryAddress, setUniswapFactoryAddress] = useState(
+            "0xdddddddddddddddddddddddddddddddddddddddd"
+        );
+        const [balance, setBalance] = useState({
             balanceA: 100,
             balanceB: 200,
             liquidity: 50,
             reservesA: 500,
             reservesB: 1000,
-        };
+        });
         ```
 
         with
 
         ```js
+        const [tokenAddrA, setTokenAddrA] = useState("");
+        const [tokenAddrB, setTokenAddrB] = useState("");
+        const [uniswapRouterAddress, setUniswapRouterAddress] = useState("");
+        const [uniswapFactoryAddress, setUniswapFactoryAddress] = useState("");
         const [balance, setBalance] = useState(null);
-        const [isLoading, setIsLoading] = useState(false);
         ```
 
-        -   Replace the hardcoded balance object with a state variable.
-        -   Add the setBalance() function so that when we get the actual balances from the blockchain, we can update the state variable.
-        -   Add a isLoading state variable to show a loading spinner when we are fetching data from the blockchain. This is useful to know that the DApp is working and not frozen.
+        -   Replace all hardcoded initial values with empty string or null to indicate that they are not set yet.
+
+    -   **Add isLoading state variable to display a spinner while loading data**
+
+        Add the following state variable to control the visual effect when loading data from the blockchain. This is useful to know that the DApp is working and not frozen.
+
+        ```js
+        const [isLoading, setIsLoading] = useState(false);
+        ```
 
     -   **Add amtA and amtB state variables**
         Add the following state variables to store the amount of TokenA and TokenB to be swapped.
@@ -339,6 +333,26 @@ e) Complete the DApp to allow token swaps - this part ✅
         ```js
         const [amtA, setAmtA] = useState(0);
         const [amtB, setAmtB] = useState(0);
+        ```
+
+    -   **Load the useDapp() hook**
+
+        Replace the following line.
+
+        ```js
+        const { connect } = useDapp({ setSigner });
+        ```
+
+        with this
+
+        ```js
+        const { connect, getBalance, sellTokens } = useDapp({
+            setSigner,
+            uniswapRouterAddress,
+            uniswapFactoryAddress,
+            tokenAddrA,
+            tokenAddrB,
+        });
         ```
 
     -   **Create handleCheckBalance() function**
@@ -349,24 +363,15 @@ e) Complete the DApp to allow token swaps - this part ✅
         const handleCheckBalance = async () => {
             setIsLoading(true);
             try {
-                const account = await getAccount();
-                if (!account) {
-                    alert("Metamask not detected");
-                    setIsLoading(false);
-                    return;
-                }
-                const balance = await getBalance(
-                    tokenAddrA,
-                    tokenAddrB,
-                    account
-                );
+                const balance = await getBalance(signer);
                 console.log(balance);
                 setBalance(balance);
             } catch (error) {
                 console.error("Error fetching balances:", error);
                 alert("Failed to fetch balances. Please try again.");
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         };
         ```
 
@@ -381,116 +386,50 @@ e) Complete the DApp to allow token swaps - this part ✅
         Add the following functions to handle the "Sell" button click events.
 
         ```js
-        const handleSellA = async () => {
-            const account = await getAccount();
-            if (!account) {
-                alert("Invalid account");
-                return;
-            }
-            if (!amtA) {
+        const handleSell = async (aOrB) => {
+            if (!amtA && !amtB) {
                 alert("Invalid amount");
                 return;
             }
             setIsLoading(true);
-            const amtB = await sellTokens(
-                amtA,
-                tokenAddrA,
-                tokenAddrB,
-                account
-            );
-            console.log(`Sold ${amtA} of A for ${amtB} of B`);
-            setIsLoading(false);
-        };
-
-        const handleSellB = async () => {
-            const account = await getAccount();
-            if (!account) {
-                alert("Invalid account");
-                return;
+            try {
+                if (aOrB === "A") {
+                    const amtB = await sellTokens(
+                        amtA,
+                        tokenAddrA,
+                        tokenAddrB,
+                        signer
+                    );
+                    console.log(`Sold ${amtA} of A for ${amtB} of B`);
+                    return;
+                } else if (aOrB === "B") {
+                    const amtA = await sellTokens(
+                        amtB,
+                        tokenAddrB,
+                        tokenAddrA,
+                        signer
+                    );
+                    console.log(`Sold ${amtB} of B for ${amtA} of A`);
+                    return;
+                } else {
+                    throw new Error("Invalid token type. Must be 'A' or 'B'");
+                }
+            } catch (error) {
+                console.error("Error selling tokens:", error);
+                alert("Failed to sell tokens. Please try again.");
+            } finally {
+                setIsLoading(false);
             }
-            if (!amtB) {
-                alert("Invalid amount");
-                return;
-            }
-            setIsLoading(true);
-            const amtA = await sellTokens(
-                amtB,
-                tokenAddrB,
-                tokenAddrA,
-                account
-            );
-            console.log(`Sold ${amtB} of B for ${amtA} of A`);
-            setIsLoading(false);
         };
         ```
 
-        -   These functions are called when the "Sell" buttons are clicked.
+        -   The function expects a parameter `aOrB` to be either "A" or "B" to indicate which token to sell.
         -   They check if the amount entered is valid (greater than 0).
         -   They set the loading state variable to true to show the loading spinner.
-        -   They call the `getAccount()` function to get the signer from Metamask.
-        -   If no account is found, it will show an alert message and return.
-        -   If an account is found, it will call the `sellTokens()` function to swap the tokens in the liquidity pool.
-        -   After the swap is done, it will log the result and set the loading state variable to false.
+        -   It will call the `sellTokens()` function to swap the tokens in the liquidity pool.
+        -   After the swap is done, it will log the result and set the loading state variable to false to hide the loading spinner.
 
     -   Update the **return** statement to replace the hardcoded values with the state variables and add the loading spinner.
-
-        -   **Update the text boxes to use state variables**
-
-            Update the following lines in the text boxes.
-
-            **NOTE:** You should be able to find them in the return() section of the code.
-
-            <!-- prettier-ignore -->
-            ```js
-                <TextField
-                    id='tokenAddrA'
-                    label='TokenA Address'
-                    value={tokenAddrA}
-                    sx={{ flex: 1 }}
-                ></TextField>
-            ```
-
-            and
-
-            <!-- prettier-ignore -->
-            ```js
-                <TextField
-                    id='tokenAddrB'
-                    label='TokenB Address'
-                    value={tokenAddrB}
-                    sx={{ flex: 1 }}
-                ></TextField>
-            ```
-
-            to
-
-            <!-- prettier-ignore -->
-            ```js
-                <TextField
-                    id='tokenAddrA'
-                    label='TokenA Address'
-                    value={tokenAddrA}
-                    sx={{ flex: 1 }}
-                    onChange={(e) => {
-                        setTokenAddrA(e.target.value);
-                    }}
-                ></TextField>
-            ```
-
-            and
-
-            <!-- prettier-ignore -->
-            ```js
-                <TextField
-                    id='tokenAddrB'
-                    label='TokenB Address'
-                    value={tokenAddrB}
-                    sx={{ flex: 1 }}
-                    onChange={(e) => {
-                        setTokenAddrB(e.target.value);
-                    }}
-                ></TextField>
-            ```
 
         -   **Update the "Check" button to invoke handleCheckBalance()**
 
@@ -546,7 +485,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                     ></TextField>
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <Button variant='contained'>Buy</Button>
-                        <Button variant='outlined' onClick={handleSellA}>Sell</Button>
+                        <Button variant='outlined' onClick={() => handleSell("A")}>Sell</Button>
                     </Box>
             ```
 
@@ -575,7 +514,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                     ></TextField>
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <Button variant='contained'>Buy</Button>
-                        <Button variant='outlined' onClick={handleSellB}>Sell</Button>
+                        <Button variant='outlined' onClick={() => handleSell("B")}>Sell</Button>
                     </Box>
 
             ```
@@ -596,7 +535,30 @@ e) Complete the DApp to allow token swaps - this part ✅
 
 -   **Open browser at http://localhost:5173**
 
-    a) Refresh the balances by clicking the "Check" button.
+-   **Enter the contract addresses**
+
+    Enter the contract addresses using the **addresses.json** file from the scripts directory in the lab **d-dapp-network** (../../d-dapp-network/scripts/addresses.json).
+
+    Refresh the balances by clicking the "Check" button.
+
+    ![swap-0](./img/swap-0.png)
+
+-   **Check the token Balance for TokenA and TokenB**
+
+    If you have provided the correct wallet address and token address, the token balance should be greater than 0.
+
+    If the token balances are displayed as 0, check the following:
+
+    -   Compare the wallet address in Metamask with the accounts[0] address in the hardhat node terminal. If they are different, that means the .env file contains a different mnemonic than the one used to create your Metamask wallet.
+
+    -   Compare the token contract addresses with the ones in the **addresses.json** file from the scripts directory in the lab **d-dapp-network** (../../d-dapp-network/scripts/addresses.json). If they are different, update the contract addresses in the DApp accordingly.
+
+-   **Swap pool reserves**
+
+    If pool reserves are not displayed, check the router and factory contract addresses.
+
+-   **Perform a token swap**
+
     b) Enter an amount in the "TokenA Amount" text box
     c) Click the "Sell" button next to it to swap TokenA for TokenB.
 

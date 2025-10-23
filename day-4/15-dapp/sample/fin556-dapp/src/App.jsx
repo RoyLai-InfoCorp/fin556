@@ -1,106 +1,123 @@
 import React, { useState, useEffect } from "react";
-
 import {
     CssBaseline,
     Container,
     Card,
-    Grid,
     Button,
     TextField,
     Box,
     Divider,
     CircularProgress,
 } from "@mui/material";
-import {
-    getAccount,
-    getAddressA,
-    getAddressB,
-    getBalance,
-    sellTokens,
-} from "./dapp";
-
+import useDapp from "./useDapp";
 const App = () => {
-    const [address, setAddress] = useState(null);
-    const [tokenAddrA, setTokenAddrA] = useState(getAddressA());
-    const [tokenAddrB, setTokenAddrB] = useState(getAddressB());
+    // Insert the subsequent code here
+    const [signer, setSigner] = useState(null);
+    const [tokenAddrA, setTokenAddrA] = useState("");
+    const [tokenAddrB, setTokenAddrB] = useState("");
+    const [uniswapRouterAddress, setUniswapRouterAddress] = useState("");
+    const [uniswapFactoryAddress, setUniswapFactoryAddress] = useState("");
     const [balance, setBalance] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [amtA, setAmtA] = useState(0);
     const [amtB, setAmtB] = useState(0);
 
+    const { connect, getBalance, sellTokens } = useDapp({
+        setSigner,
+        uniswapRouterAddress,
+        uniswapFactoryAddress,
+        tokenAddrA,
+        tokenAddrB,
+    });
+
     useEffect(() => {
-        const connectMetamask = async () => {
-            // Get account from Metamask
-            const account = await getAccount();
-            if (!account) {
-                // If no account found, show alert
-                alert("Metamask not detected");
-                return;
+        const start = async () => {
+            const result = await connect();
+            if (result?.error) {
+                alert(
+                    "MetaMask is not installed. Please install MetaMask to use this DApp."
+                );
             }
-            // If account found, assign the address to state variable
-            const address = await account.getAddress();
-            console.log(`Connected to Metamask with address ${address}`);
-            setAddress(address);
         };
-        connectMetamask();
+        start();
     }, []);
 
     const handleCheckBalance = async () => {
         setIsLoading(true);
         try {
-            const account = await getAccount();
-            if (!account) {
-                alert("Metamask not detected");
-                setIsLoading(false);
-                return;
-            }
-            const balance = await getBalance(tokenAddrA, tokenAddrB, account);
+            const balance = await getBalance(signer);
             console.log(balance);
             setBalance(balance);
         } catch (error) {
             console.error("Error fetching balances:", error);
             alert("Failed to fetch balances. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
-    const handleSellA = async () => {
-        const account = await getAccount();
-        if (!account) {
-            alert("Invalid account");
-            return;
-        }
-        if (!amtA) {
+    const handleSell = async (aOrB) => {
+        if (!amtA && !amtB) {
             alert("Invalid amount");
             return;
         }
         setIsLoading(true);
-        const amtB = await sellTokens(amtA, tokenAddrA, tokenAddrB, account);
-        console.log(`Sold ${amtA} of A for ${amtB} of B`);
-        setIsLoading(false);
+        try {
+            if (aOrB === "A") {
+                const amtB = await sellTokens(
+                    amtA,
+                    tokenAddrA,
+                    tokenAddrB,
+                    signer
+                );
+                console.log(`Sold ${amtA} of A for ${amtB} of B`);
+                return;
+            } else if (aOrB === "B") {
+                const amtA = await sellTokens(
+                    amtB,
+                    tokenAddrB,
+                    tokenAddrA,
+                    signer
+                );
+                console.log(`Sold ${amtB} of B for ${amtA} of A`);
+                return;
+            } else {
+                throw new Error("Invalid token type. Must be 'A' or 'B'");
+            }
+        } catch (error) {
+            console.error("Error selling tokens:", error);
+            alert("Failed to sell tokens. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleSellB = async () => {
-        const account = await getAccount();
-        if (!account) {
-            alert("Invalid account");
-            return;
-        }
-        if (!amtB) {
-            alert("Invalid amount");
-            return;
-        }
-        setIsLoading(true);
-        const amtA = await sellTokens(amtB, tokenAddrB, tokenAddrA, account);
-        console.log(`Sold ${amtB} of B for ${amtA} of A`);
-        setIsLoading(false);
-    };
     return (
         <>
             <CssBaseline />
             <Container>
                 <h1>DEX DAPP</h1>
-                <p>Connected to Metamask with address: {address}</p>
+                <p>Connected to Metamask with address: {signer?.address}</p>
+                <h2 style={{ marginBottom: "16px" }}>Contract Configuration</h2>
+                <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <TextField
+                        label='Uniswap Router Address'
+                        sx={{ flex: 1 }}
+                        value={uniswapRouterAddress}
+                        onChange={(e) => {
+                            setUniswapRouterAddress(e.target.value);
+                        }}
+                    />
+                    <TextField
+                        label='Uniswap Factory Address'
+                        sx={{ flex: 1 }}
+                        value={uniswapFactoryAddress}
+                        onChange={(e) => {
+                            setUniswapFactoryAddress(e.target.value);
+                        }}
+                    />
+                </Box>
+                <Divider sx={{ my: 3 }} />
                 <h2 style={{ marginBottom: "16px" }}>Liquidity Pool</h2>
                 <Box
                     sx={{
@@ -190,7 +207,10 @@ const App = () => {
                     ></TextField>
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <Button variant='contained'>Buy</Button>
-                        <Button variant='outlined' onClick={handleSellA}>
+                        <Button
+                            variant='outlined'
+                            onClick={() => handleSell("A")}
+                        >
                             Sell
                         </Button>
                     </Box>
@@ -206,7 +226,10 @@ const App = () => {
                     ></TextField>
                     <Box sx={{ display: "flex", gap: 1 }}>
                         <Button variant='contained'>Buy</Button>
-                        <Button variant='outlined' onClick={handleSellB}>
+                        <Button
+                            variant='outlined'
+                            onClick={() => handleSell("B")}
+                        >
                             Sell
                         </Button>
                     </Box>

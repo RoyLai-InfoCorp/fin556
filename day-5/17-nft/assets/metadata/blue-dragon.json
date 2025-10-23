@@ -1,0 +1,10 @@
+{
+    "name": "Blue Dragon",
+    "description": "Blue Dragon - A legendary creature of water",
+    "image": "ipfs://QmcYcWq82KHsaZK3Ze15s4kt95zkZyj8smTcm6mQfoPMD8",
+    "attributes": [
+        { "trait_type": "Element", "value": "Water" },
+        { "trait_type": "Color", "value": "Blue" },
+        { "trait_type": "Rarity", "value": "Legendary" }
+    ]
+}

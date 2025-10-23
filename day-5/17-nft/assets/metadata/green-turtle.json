@@ -1,0 +1,10 @@
+{
+    "name": "Green Turtle",
+    "description": "Green Turtle - A legendary creature of earth",
+    "image": "ipfs://QmWdktpwmLZfxvXTo45zNnu4UyiBTRUcNAJpAMfF9wDVFp",
+    "attributes": [
+        { "trait_type": "Element", "value": "Earth" },
+        { "trait_type": "Color", "value": "Green" },
+        { "trait_type": "Rarity", "value": "Legendary" }
+    ]
+}

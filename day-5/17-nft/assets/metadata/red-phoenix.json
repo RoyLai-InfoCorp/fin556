@@ -1,0 +1,10 @@
+{
+    "name": "Red Phoenix",
+    "description": "Red Phoenix - A legendary creature of fire",
+    "image": "ipfs://QmdsnZMfRiCpKrCBToNwMzxMe6xKFucWLF2uatYWPwrAbi",
+    "attributes": [
+        { "trait_type": "Element", "value": "Fire" },
+        { "trait_type": "Color", "value": "Red" },
+        { "trait_type": "Rarity", "value": "Legendary" }
+    ]
+}

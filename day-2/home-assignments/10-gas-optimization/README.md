@@ -106,6 +106,13 @@ Different function types and patterns can have dramatically different gas costs 
 
 **Understanding Contract Interaction Costs**: External calls to view/pure functions are free, but contract-to-contract calls cost gas. The Counter contract includes all function types: pure, view, and state-changing.
 
+### Install project dependencies
+
+    ```bash
+    cd /workspace/day-2/home-assignments/10-gas-optimization
+    npm i
+    ```
+
 ### Create `test/functionCallTest.js`
 
 ```js

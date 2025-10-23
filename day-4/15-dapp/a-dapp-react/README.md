@@ -34,7 +34,7 @@ We will start by setting up an empty React (web framework) project and strip it 
 
 ### Step 2: Create React Project
 
-1. **Create project directory fin556-dapp**
+1.  **Create project directory fin556-dapp**
 
     Create a new React project using Vite.
 
@@ -56,13 +56,13 @@ We will start by setting up an empty React (web framework) project and strip it 
     cd fin556-dapp
     ```
 
-2. **Install React dependencies**
+2.  **Install React dependencies**
 
     ```bash
     npm i
     ```
 
-3. **Start React server**
+3.  **Start React server**
 
     ```bash
     npm run dev
@@ -76,27 +76,43 @@ We will start by setting up an empty React (web framework) project and strip it 
 
     ```
 
-4. **Open browser at http://localhost:5173**
+4.  **Open browser at http://localhost:5173**
 
     If you can see the following page, that means your React server is running correctly and you are able to connect to it from your browser.
 
     ![empty-react-page](./img/empty-react-page.png)
 
-    - **Troubleshooting**
+    -   **Troubleshooting**
 
         If you see an error page, it could be due to one of the following reasons:
 
-        - **Conflicting port** That means you have another server running on the same port. You can stop the other server if you know which one it is. Or you can change the port of the React server by editing the **package.json** file and adding the following line in the "scripts" section.
+        -   **Conflicting port** That means you have another server running on the same port. You can change the port of the React server to avoid the conflict by updating the vite.config.js file.
 
-            ```json
-            "dev": "vite --port 5174",
-            ```
+            -   Open **vite.config.js** file in the **fin556-dapp** directory.
+            -   Replace
 
-            Then stop the React server by pressing `Ctrl + C` in the terminal and restart it using `npm run dev`.
+                ```js
+                export default defineConfig({
+                    plugins: [react()],
+                });
+                ```
 
-        - **Firewall blocking the port** Your local firewall could be blocking the port. On Windows, you can stop the firewall temporarily to test if that is the issue. On macOS, you can go to System Preferences > Security & Privacy > Firewall and turn off the firewall temporarily to test if that is the issue. If it is, then you can add an exception in the firewall settings to allow traffic on that port.
+                with a new port number, for example 5174
 
-5. **Stop React server**
+                ```js
+                export default defineConfig({
+                    plugins: [react()],
+                    server: {
+                        port: 5174, // Change to a different port number
+                    },
+                });
+                ```
+
+        -   **Firewall blocking the port** Your local firewall could be blocking the port. You can try disabling the firewall temporarily to test if that is the issue. If it is, then you can follow the above steps to change the port or add an exception in the firewall settings to allow traffic on that port. The exact steps to disable firewall depends on your operating system and if there are any third-party firewall applications installed which is beyond the scope of this lab. Please search online for instructions specific to your operating system and firewall application.
+
+            **Warning:** Remember to turn the firewall back on after testing.
+
+5.  **Stop React server**
 
     Go back to terminal and press `Ctrl + C` to stop the server.
 
@@ -137,7 +153,9 @@ We will start by setting up an empty React (web framework) project and strip it 
 
 3. **Create fin556-dapp/src/main.jsx**
 
-    In **fin556-dapp/src** directory, create a new file **main.jsx** and add the following code.
+    Create **main.jsx** file in **fin556-dapp/src** directory.
+
+    Add the following code.
 
     ```jsx
     import { createRoot } from "react-dom/client";
@@ -148,7 +166,9 @@ We will start by setting up an empty React (web framework) project and strip it 
 
 4. **Create fin556-dapp/src/App.jsx**
 
-    In **fin556-dapp/src** directory, create a new file **App.jsx** and add the following code.
+    Create **App.jsx** file in **fin556-dapp/src** directory.
+
+    Add the following code.
 
     ```jsx
     import React from "react";
@@ -159,7 +179,10 @@ We will start by setting up an empty React (web framework) project and strip it 
     ```
 
 5. **Create fin556-dapp/index.html**
-   In **fin556-dapp** directory, create a new file **index.html** and add the following code.
+
+    Create **index.html** file in **fin556-dapp** directory.
+
+    Add the following code.
 
     ```html
     <!DOCTYPE html>

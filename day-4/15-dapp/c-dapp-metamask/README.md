@@ -42,14 +42,14 @@ e) Complete the DApp to allow token swaps
     npm i ethers
     ```
 
-### Step 2: Create a script library
+### Step 2: Create a React hook script library for blockchain interaction
 
 We want to separate the code for blockchain interaction from the code for web interaction. This will make the code cleaner and easier to maintain.  
-Therefore, we will create a separate script library file called **dapp.js** for the blockchain interaction code in the React project.
+Therefore, we will create a separate script library file called **useDapp.js** for the blockchain interaction code in the React project. This library is known as a "React Hook" because it uses React's hook system to manage state and side effects.
 
-1.  **Create a fin556-dapp/src/dapp.js**
+1.  **Create a fin556-dapp/src/useDapp.js**
 
-    Create a new file called **dapp.js** in the **fin556-dapp/src** directory of the React project.
+    Create a new file called **useDapp.js** in the **fin556-dapp/src** directory of the React project.
 
     > ⚠️ Becareful here:
     >
@@ -57,7 +57,7 @@ Therefore, we will create a separate script library file called **dapp.js** for 
     > -   Make sure you are creating it in the **fin556-dapp/src** directory where you created the React project previously.
     > -   Do not create it the wrong directory.
 
-2.  **Add the following code to the dapp.js**
+2.  **Add the following code to the useDapp.js**
 
     -   **Import ethers**
 
@@ -67,51 +67,81 @@ Therefore, we will create a separate script library file called **dapp.js** for 
         import { ethers } from "ethers";
         ```
 
-    -   **Add provider**
+    -   **Create an empty useDapp() function**
 
-        We want to get the Metamask provider (`window.ethereum`) so that we can interact with the Metamask wallet extension in the browser. And through Metamask, let us send commands to the blockchain. If Metamask is not installed, `window.ethereum` will be null and the function will return null so that the DApp can display an error message to the user.
+        Create an empty function called `useDapp()`.
 
-        **NOTE:** In Hardhat, we configure the provider using **hardhat.config.js** file but since we are not using Hardhat here, we need to get the provider from Metamask.
-
-        ```js
-        const provider = window.ethereum
-            ? new ethers.BrowserProvider(window.ethereum)
-            : null;
-        ```
-
-    -   **Add getAccount() function**
-
-        This function will be used by the DApp to get the signer from Metamask. In Hardhat, we were able to use `ethers.getSigners()` to get a list of accounts because we delegated the key management to Hardhat. In Metamask, you need to first connect to it using your password to unlock the wallet. That is what the `eth_requestAccounts` command in the code below does.
+        `useDapp()` will take in a function called `setSigner()` as parameter. When the DApp connects to Metamask and gets the connected signer, it will call this function to update the signer in the DApp UI.
 
         ```js
-        const getAccount = async () => {
-            if (!provider) return null;
-            await provider.send("eth_requestAccounts", []); // Login to metamask
-            const account = provider.getSigner();
-
-            const { chainId } = await provider.getNetwork();
-            console.log("Connected to chainId:", chainId);
-
-            // const DESIRED_CHAIN_ID = 31337; // This is the default chain ID for hardhat localhost network
-            // if (chainId !== DESIRED_CHAIN_ID) {
-            //     await provider.send("wallet_switchEthereumChain", [
-            //         { chainId: `0x${DESIRED_CHAIN_ID.toString(16)}` }, // Must be in hex format
-            //     ]);
-            // }
-
-            return account;
+        const useDapp = ({ setSigner }) => {
+            // Blockchain interaction code will go here
         };
+
+        export default useDapp;
         ```
 
-        **Optional:** We can also control which network the user should connect to by uncommenting the code after `const account = provider.getSigner();` line. This is useful if you want to ensure the user is connected to localhost instead of anywhere else.
+    -   **Insert the following code inside useDapp() function**
 
-    -   **Export the functions**
+        We will add the code to connect to Metamask and get the connected account.
 
-        Export the functions so that they can be imported into **App.jsx**.
+        -   **Add provider**
 
-        ```js
-        export { getAccount };
-        ```
+            We want to get the Metamask provider (`window.ethereum`) so that we can interact with the Metamask wallet extension in the browser. And through Metamask, let us send commands to the blockchain. If Metamask is not installed, `window.ethereum` will be null and the function will return null so that the DApp can display an error message to the user.
+
+            **NOTE:** In Hardhat, we configure the provider using **hardhat.config.js** file but since we are not using Hardhat here, we need to get the provider from Metamask.
+
+            Insert the following code inside the `useDapp()` function.
+
+            ```js
+            const provider = window.ethereum
+                ? new ethers.BrowserProvider(window.ethereum)
+                : null;
+            ```
+
+        -   **Add connect() function**
+
+            This function will be used by the DApp to get the signer from Metamask. In Hardhat, we were able to use `ethers.getSigners()` to get a list of accounts because we delegated the key management to Hardhat. In Metamask, you need to first connect to it using your password to unlock the wallet. That is what the `eth_requestAccounts` command in the code below does.
+
+            Insert the following code inside the `useDapp()` function.
+
+            ```js
+            const connect = async () => {
+                if (!provider) return null;
+
+                await provider.send("eth_requestAccounts", []); // Login to metamask
+                const signer = await provider.getSigner();
+
+                const { chainId } = await provider.getNetwork();
+                console.log("Connected to chainId:", chainId);
+
+                // const DESIRED_CHAIN_ID = 31337; // This is the default chain ID for hardhat localhost network
+                // if (chainId !== DESIRED_CHAIN_ID) {
+                //     await provider.send("wallet_switchEthereumChain", [
+                //         { chainId: `0x${DESIRED_CHAIN_ID.toString(16)}` }, // Must be in hex format
+                //     ]);
+                // }
+
+                // Get and set the address
+                setSigner(signer);
+
+                return signer;
+            };
+            ```
+
+            **Optional:** We can also control which network the user should connect to by uncommenting the code after `const signer = provider.getSigner();` line. This is useful if you want to ensure the user is connected to localhost instead of anywhere else.
+
+        -   **Return the functions from useDapp()**
+
+            Finally, we need to return the `connect()` so that it can be used by the DApp.
+
+            Insert the following code inside the `useDapp()` function.
+
+            ```js
+            return {
+                connect,
+            };
+            ```
 
 ### Step 3: Update the UI to show Metamask connected address
 
@@ -123,65 +153,67 @@ Therefore, we will create a separate script library file called **dapp.js** for 
 
 2.  **Add the following code to App.jsx**
 
-    -   **Import functions from dapp.js**
+    -   **Import useDapp**
 
-        Import the `getAccount()` function from **dapp.js** at the top of the file.
+        Import the `useDapp` function from **useDapp.js** at the top of the file.
 
         ```js
-        import { getAccount } from "./dapp";
+        import useDapp from "./useDapp";
         ```
 
     -   **Update the App() component**
 
         Insert the following code inside the `App()` component to connect to Metamask and get the connected address.
 
-        -   **Add connected address state variable**
+        -   **Initialize signer state variable**
 
             Replace the following line.
 
             ```js
-            const address = "0x1234567890abcdef1234567890abcdef12345678"; // connected address
+            const [signer, setSigner] = useState({
+                address: "0x1234567890123456789012345678901234567890",
+            });
             ```
 
             with
 
             ```js
-            const [address, setAddress] = useState(null);
+            const [signer, setSigner] = useState(null);
             ```
 
-            -   Replace the hardcoded address with a state variable.
-            -   Initialize the state variable to null.
-            -   Add the setAddress() function so that when we get the connected address from Metamask, we can update the state variable.
+            -   Initialize the state variable to null instead of a hardcoded address so that we can detect if the user is connected or not.
 
-        -   **Use useEffect() to connect to Metamask**
+        -   **Load the useDapp() hook**
 
-            Insert the following code before the `return()` section. Use `useEffect()` to run the code to connect to Metamask when the component is loaded.
+            Insert the following code after the state variable declarations.
+
+            ```js
+            const { connect } = useDapp({ setSigner });
+            ```
+
+            -   This will load the `useDapp()` hook and get the `connect()` function that we defined earlier.
+
+        -   **Load address from Metamask**
+
+            Insert the following code before the `return()` section.
 
             <!-- prettier-ignore -->
             ```js
             useEffect(() => {
-                const connectMetamask = async () => {
-
-                    // Get account from Metamask
-                    const account = await getAccount();
-                    if (!account) {
-                        // If no account found, show alert
-                        alert("Metamask not detected");
-                        return;
+                const start = async () => {
+                    const result = await connect();
+                    if (result?.error) {
+                        alert(
+                            "MetaMask is not installed. Please install MetaMask to use this DApp."
+                        );
                     }
-                    // If account found, assign the address to state variable
-                    const address = await account.getAddress();
-                    console.log(`Connected to Metamask with address ${address}`);
-                    setAddress(address);
                 };
-                connectMetamask();
+                start();
             }, []);
-
             ```
 
-            -   The code will call the `getAccount()` function to get the currently selected account in Metamask.
-            -   If no account is found, it will show an alert message.
-            -   If an account is found, it assigns the address to the state variable `address` using the `setAddress()` function.
+            -   The code will call the `connect()` function to connect to Metamask and update the signer state variable.
+            -   If Metamask is not installed, it will show an alert message.
 
 ### Step 4: Run the DApp
 
