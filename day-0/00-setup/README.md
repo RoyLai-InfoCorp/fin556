@@ -15,227 +15,341 @@ Please follow the steps below to set up your development environment for the cou
 
 ## Step 1. Setup Terminal
 
+📌 **NOTE: Moving forward, whenever the guide refers to **"Terminal"**, it is referring either to the Windows Terminal for Windows/WSL2 users, or the native Terminal application for macOS users.**
+
 The purpose of this step is to standardize the terminal environment for all students in the class to use Linux-based commands. This is important because most blockchain development tools are designed to work in a Unix-like environment.
 
-### a) For Windows Users
+-   **🪟 Windows Users**
 
-1. Install WSL2 (Windows Subsystem for Linux). Follow the official Microsoft guide **[here](https://learn.microsoft.com/en-us/windows/wsl/install)**.
+    1. Install WSL2 (Windows Subsystem for Linux). Follow the official Microsoft guide **[here](https://learn.microsoft.com/en-us/windows/wsl/install)**.
 
-    - During installation, choose Ubuntu **24.04 LTS**.
-    - You will be prompted to create a username and password for your Linux environment. ⚠️ Remember these credentials as you'll need them later.
+        - During installation, choose Ubuntu **24.04 LTS**.
+        - You will be prompted to create a username and password for your Linux environment. ⚠️ Remember these credentials as you'll need them later.
 
-📌 NOTE: If you failed to install using the link above, try using the manual approach instead **[here](https://learn.microsoft.com/en-us/windows/wsl/install-manual)**
+    📌 NOTE: If you failed to install using the link above, try using the manual approach instead **[here](https://learn.microsoft.com/en-us/windows/wsl/install-manual)**
 
-2. Install **[Windows Terminal](https://aka.ms/terminal)** from the Microsoft Store.
+    2. Install **[Windows Terminal](https://aka.ms/terminal)** from the Microsoft Store.
 
-3. Open Windows Terminal, select Ubuntu from the dropdown, and confirm you can see a terminal prompt.
+    3. Open Windows Terminal, select **Ubuntu** from the dropdown, and confirm you can see a terminal prompt.
 
-4. Task completed ✅.
+    4. Task completed ✅.
 
-### b) For macOS Users
+-   **🍎 macOS Users**
 
-1. Use the built-in "Terminal" application in macOS (no additional installation needed).
+    1. There is no need to install anything extra, as macOS comes with a built-in terminal application.
 
-2. Find Terminal using one of these methods:
+    2. Find Terminal using one of these methods:
 
-    - Press **Cmd + Space** and type **Terminal**
-    - Go to Applications > Utilities > Terminal
-    - Use Launchpad and search for **Terminal**
+        - Press **Cmd + Space** and type **Terminal**
+        - Go to Applications > Utilities > Terminal
+        - Use Launchpad and search for **Terminal**
 
-3. Open Terminal and confirm you see a command prompt with your username.
+    3. Open Terminal and confirm you see a command prompt with your username.
 
-4. Task completed ✅.
-
-**Note for Apple Silicon Macs (M1, M2, M3, M4)**: Ensure Docker Desktop and VS Code downloads are for Apple Silicon (ARM64) architecture.
+    4. Task completed ✅.
 
 ---
 
-## Step 2. Install Git
+## Step 2. Check Your Architecture
 
-Git is a version control system that allows you to track changes in your code and collaborate with others. It's essential for downloading course materials and managing your project files.
+The subsequent steps may require you to know your computer's CPU architecture (e.g., x86_64 or ARM64). This is important for downloading the correct versions of software.
 
-### a) For Windows Users
+-   **🪟 Windows Users**
 
-1. Download Git for Windows from **[this link](https://git-scm.com/download/win)**.
+    1. Open **Windows Terminal** (with WSL2 enabled).
+    2. Run the following command:
 
-2. Run the installer and follow the installation wizard with default settings.
-
-3. Git for Windows includes Git for WSL2 integration.
-
-4. Open Windows Terminal with WSL2 and verify installation:
-
-    ```bash
-    git --version
-    ```
-
-5. Task completed ✅.
-
-### b) For macOS Users
-
-1. Git is often pre-installed on macOS. Check if it's already installed:
-
-    ```bash
-    git --version
-    ```
-
-2. If not installed, you can install it via:
-
-    - **Option 1**: Download from **[this link](https://git-scm.com/download/mac)**
-    - **Option 2**: Install Xcode Command Line Tools:
         ```bash
-        xcode-select --install
+        uname -m
         ```
 
-3. Verify installation:
+    3. Note down the output:
 
-    ```bash
-    git --version
-    ```
+        - If it shows `x86_64`, your architecture is x86_64.
+        - If it shows `aarch64`, your architecture is ARM64.
 
-4. Task completed ✅.
+    4. Task completed ✅.
+
+-   **🍎 macOS Users**
+
+    1. Open **Terminal**.
+    2. Run the following command:
+
+        ```bash
+        uname -m
+        ```
+
+    3. Note down the output:
+
+        - If it shows `x86_64`, your architecture is x86_64 (Intel).
+        - If it shows `arm64`, your architecture is ARM64 (Apple Silicon).
+
+    4. Task completed ✅.
 
 ---
 
-## Step 3. Clone FIN556 Repository
+## Step 3. Install Git
 
-Now that Git is installed, you need to clone the course repository which contains all the lab materials and project structure.
+Git is a version control system that allows you to track changes in your code and collaborate with others. It is required for downloading course materials and managing your project files.
 
-1. Open your terminal (Windows Terminal with WSL2 or macOS Terminal).
+-   **🪟 Windows Users**
 
-2. Navigate to a directory where you want to store the course materials:
+    1. Download Git for Windows from **[this link](https://git-scm.com/download/win)**.
 
-    ```bash
-    cd ~
-    mkdir courses
-    cd courses
-    ```
+    2. Run the installer and follow the installation wizard with default settings.
 
-3. Clone the FIN556 repository:
+    3. Git for Windows includes Git for WSL2 integration.
 
-    ```bash
-    git clone https://github.com/RoyLai-InfoCorp/FIN556.git
-    ```
+    4. Open Windows Terminal with WSL2 and verify installation:
 
-4. Navigate into the cloned repository:
+        ```bash
+        git --version
+        ```
 
-    ```bash
-    cd FIN556
-    ```
+    5. Task completed ✅.
 
-5. Verify the repository contents:
+-   **🍎 macOS Users**
 
-    ```bash
-    ls -la
-    ```
+    1. Git is often pre-installed on macOS. Check if it's already installed:
 
-    You should see the directory `day-0`.
+        ```bash
+        git --version
+        ```
 
-6. Task completed ✅.
+    2. **Only if not installed**, you can install it via:
+
+        - **Option 1**: Download from **[this link](https://git-scm.com/download/mac)**
+        - **Option 2**: Install Xcode Command Line Tools:
+            ```bash
+            xcode-select --install
+            ```
+
+    3. Verify installation:
+
+        ```bash
+        git --version
+        ```
+
+    4. Task completed ✅.
 
 ---
 
 ## Step 4. Install Docker Desktop
 
 Docker Desktop is required for DevContainer functionality used in this course.
+For non-technical users, Docker allows you to run applications in isolated environments called containers. This is essential for ensuring that all students have the same development environment regardless of their host operating system.
 
-### For All Platforms
+### a) Download Docker Desktop
 
-1. Download Docker Desktop from **[docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)**:
+-   Download Docker Desktop from the official download page:
 
-    - **Windows**: Choose the appropriate version (x86_64 or ARM64)
-    - **macOS**: Choose Intel or Apple Silicon based on your Mac
-    - **Linux**: Download the native Linux version
+    **👉 [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)**
 
-2. Follow the installation instructions for your operating system.
+### b) Installation by Operating System
 
-3. **Important for macOS users**: After installation, you may need to grant Docker Desktop permissions in System Preferences > Security & Privacy.
+-   **🪟 Windows Users**
 
-4. **For Windows users**: Ensure WSL2 integration is enabled in Docker Desktop settings.
+    1. Download the correct version for your system, based on your architecture identified in [Step 2](#step-2-check-your-architecture):
+        - For **x86_64**, download the x86_64 version.
+        - For **aarch64**, download the ARM64 version.
+    2. Run the installer and follow the prompts.
+    3. After installation, open **Docker Desktop → Settings → Resources → WSL Integration**, and **enable integration for your WSL2 distribution**.
 
-5. Open Docker Desktop and ensure the whale icon shows "Docker Desktop is running" status.
+-   **🍎 macOS Users**
 
-6. Verify installation by opening terminal and running:
+    1. Download the correct version for your system, based on your architecture identified in [Step 2](#step-2-check-your-architecture):
+        - Intel Macs (**x86_64**) → download the Intel build.
+        - Apple Silicon Macs (**ARM64**) → download the Apple Silicon build.
+    2. Run the installer and follow the on-screen instructions.
+    3. If prompted, allow permissions under:  
+       **System Settings ▸ Privacy & Security ▸ Allow Docker Desktop.**
+
+### c) Verify Docker Desktop Installation
+
+1. Launch **Docker Desktop**.
+
+    - Make sure the whale 🐳 icon in the menu bar shows “Docker Desktop is running.”
+
+2. Open **Terminal** and run:
 
     ```bash
     docker --version
     ```
 
-7. Task completed ✅.
+    You should see a version number, e.g., `Docker version 24.0.5, build 0a4c701`.
+
+3. Task completed ✅.
 
 ---
 
-## Step 5. Install Visual Studio Code
+## Step 4. Install Visual Studio Code
 
-Visual Studio Code is a powerful code editor that provides excellent support for blockchain development and smart contract programming.
+Visual Studio Code is the code editor that we will use for development in this course.
 
-### a) Installation
+### a) Download Visual Studio Code
 
 1. Download Visual Studio Code from **[this link](https://code.visualstudio.com/)**.
 
-2. Follow the installation instructions for your operating system.
+### b) Installation by Operating System
 
-3. Once installed, open Visual Studio Code.
+-   **🪟 Windows Users**
 
-### b) Install Dev Containers Extension
+    Proceed with the default installation options.
 
-You only need to install the Dev Containers extension. All other blockchain development extensions will be automatically installed by the DevContainer when you open the course projects.
+-   **🍎 macOS Users**
 
-1. **Dev Containers** - Required for DevContainer setup
+    Follow these steps to enable the `code` command in your terminal:
 
-To install the extension:
+    1. Install **Visual Studio Code.app** in your **Applications** folder.
+    2. Open the Terminal app.
+    3. Run this command.
 
--   Open VS Code
--   Click on the Extensions icon in the sidebar (or press **Ctrl + Shift + X**)
--   Search for "Dev Containers" and click "Install"
-
-2. Task completed ✅.
-
----
-
-## Step 6. Verify DevContainer Setup
-
-DevContainers allow you to develop inside a Docker container with all necessary dependencies pre-installed. This ensures a consistent development environment across different machines.
-
-### a) Prerequisites Check
-
-1. Ensure Docker Desktop is running
-2. Ensure Visual Studio Code is installed with Dev Containers extension
-3. Ensure you have successfully cloned the FIN556 repository
-
-### b) Open Course Repository in DevContainer
-
-1. Open Visual Studio Code
-
-2. Open the cloned FIN556 repository:
-
-    - **Option 1**: Use File menu: **File > Open Folder** and navigate to your **~/courses/FIN556** directory
-    - **Option 2**: From terminal in the FIN556 directory:
         ```bash
-        cd ~/courses/FIN556
+        sudo ln -s "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" /usr/local/bin/code
+        ```
+
+    4. Close and reopen Terminal, then test with:
+
+        ```bash
         code .
         ```
 
-3. VS Code should detect the DevContainer configuration and show a popup asking "Reopen in Container"
+---
 
-4. Click "Reopen in Container" (or press **Ctrl + Shift + P** and type **Dev Containers: Reopen in Container**)
+## Step 5. Clone FIN556 Repository
+
+**Cloning** the repository means downloading a copy of the course materials from GitHub to your local machine. These files are necessary for all your lab exercises and assignments and will be updated throughout the course on a weekly basis.
+
+1. Open your **Terminal** (Windows Terminal with WSL2 or macOS Terminal).
+
+2. Go to your home directory.
+
+    ```bash
+    cd ~
+    ```
+
+3. Create a courses directory (if not already created):
+
+    NOTE: If the `courses` directory already exists, you can skip this step. Otherwise, it will raise an error.
+
+    ```bash
+    mkdir courses
+    ```
+
+4. Change into the `courses` directory:
+
+    ```bash
+    cd courses
+    ```
+
+5. Clone the FIN556 repository from GitHub:
+
+    NOTE: Make sure FIN556 is capitalized as shown below.
+
+    ```bash
+    git clone https://github.com/RoyLai-InfoCorp/FIN556.git
+    ```
+
+6. Verify the courses directory contains the `FIN556` folder:
+
+    ```bash
+    ls -la
+    ```
+
+7. Change into the FIN556 directory:
+
+    ```bash
+    cd FIN556
+    ```
+
+8. Verify the FIN556 directory contains the `day-0` folder:
+
+    ```bash
+    ls -la
+    ```
+
+9. Task completed ✅.
+
+## Step 6. Update FIN556 Repository
+
+In subsequent weeks, you can go to your `FIN556` directory directly by running:
+
+```bash
+cd ~/courses/FIN556
+```
+
+Then, to update your local repository with the latest course materials, run:
+
+```bash
+git pull
+```
+
+## Step 5. Open Repository in Visual Studio Code
+
+Continuing from the previous step, enter the following commands in your terminal:
+
+```bash
+code .
+```
+
+This will open the FIN556 repository in Visual Studio Code containing all your lab exercises and assignments.
+
+---
+
+## Step 6. Open Repository in DevContainer
+
+### a) Install Dev Containers Extension
+
+-   Click on the Extensions icon in the sidebar (or press **Ctrl + Shift + X**)
+-   Search for "Dev Containers" and click "Install"
+-   Task completed ✅.
+
+### b) Configure Platform for DevContainer (macOS or ARM64 users only)
+
+**NOTE:** Refer to earlier [step 2](#step-2-check-your-architecture) to identify your architecture.
+
+The following instructions are only necessary if your computer architecture is **aarch64** (Apple Silicon Macs or ARM64 Windows PCs). If your architecture is **x86_64**, you can skip this section.
+
+-   Create a file named **docker-compose.override.yml** in the **.devcontainer** directory.
+-   Add the following content to the file:
+
+    ```yaml
+    services:
+        devcontainer:
+        platform: linux/arm64
+    ```
+
+### c) Open Course Repository in DevContainer
+
+-   **Prerequisites Check**
+
+    -   Ensure Docker Desktop is running
+    -   Ensure Visual Studio Code is installed with Dev Containers extension
+    -   Ensure you have successfully cloned the FIN556 repository
+
+1. Click "Reopen in Container" (or press **Ctrl + Shift + P** and type **Dev Containers: Reopen in Container**)
 
     ![open in container](./img/dev-container.png)
 
-5. VS Code will automatically:
+2. VS Code will automatically:
 
     - Build the development container
     - Install all required blockchain development tools
     - Install extensions (Solidity, Hardhat, etc.)
     - Set up the complete development environment
 
-6. Wait for the container to build (this may take a few minutes on first run)
+3. Wait for the container to build (this may take a few minutes on first run)
 
-7. Once complete, you should see:
+4. Once complete, you should see:
     - The FIN556 project files in the explorer
     - A terminal with the development environment ready
     - Extensions automatically installed and active
 
-### c) Verify DevContainer Environment
+---
+
+## Step 7. Verify DevContainer Setup
+
+DevContainers allow you to develop inside a Docker container with all necessary dependencies pre-installed. This ensures a consistent development environment across different machines.
 
 1. Open the integrated terminal in VS Code (**Ctrl + `**)
 
@@ -270,7 +384,7 @@ DevContainers allow you to develop inside a Docker container with all necessary 
 
 ---
 
-## Step 7. Find your Student Group in Canvas
+## Step 8. Find your Student Group in Canvas
 
 1. Login to Canvas
 
@@ -286,7 +400,7 @@ DevContainers allow you to develop inside a Docker container with all necessary 
 
 ---
 
-## Step 8. Send Confirmation Email
+## Step 9. Send Confirmation Email
 
 Upon successful completion of all setup steps, please send a confirmation email to the course instructor indicating that your development environment is ready for class. Please include:
 

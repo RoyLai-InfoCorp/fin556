@@ -1,0 +1,1 @@
+docker exec -it mc1 bash

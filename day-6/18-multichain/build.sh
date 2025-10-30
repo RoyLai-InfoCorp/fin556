@@ -1,0 +1,1 @@
+docker-compose --profile build build mc_image

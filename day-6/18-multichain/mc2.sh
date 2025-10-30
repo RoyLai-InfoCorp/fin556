@@ -1,0 +1,1 @@
+docker exec -it mc2 bash

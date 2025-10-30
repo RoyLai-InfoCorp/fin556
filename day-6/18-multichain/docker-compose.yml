@@ -1,0 +1,20 @@
+services:
+    mc_image:
+        image: multichain:2.3.3
+        build: { context: ., dockerfile: Dockerfile.multichain }
+        profiles: ["build"] # won't start unless profile is enabled
+
+    mc1:
+        image: multichain:2.3.3
+        container_name: mc1
+        #command: ["tail", "-f", "/dev/null"]
+
+    mc2:
+        image: multichain:2.3.3
+        container_name: mc2
+        #command: ["tail", "-f", "/dev/null"]
+
+    mc3:
+        image: multichain:2.3.3
+        container_name: mc3
+        #command: ["tail", "-f", "/dev/null"]
