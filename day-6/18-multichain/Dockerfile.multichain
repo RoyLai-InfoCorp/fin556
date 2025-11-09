@@ -1,18 +1,31 @@
-FROM python:3.10-slim AS base
+FROM ubuntu:22.04 AS base
 SHELL ["/bin/bash","-c"]
 
-RUN apt-get update \
- && apt-get install -y --no-install-recommends wget curl git ca-certificates iputils-ping nano procps\
- && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential autoconf libtool pkg-config \
+    libssl-dev libboost-all-dev \
+    wget curl git ca-certificates \
+    bsdmainutils \
+    && rm -rf /var/lib/apt/lists/*
 
 FROM base AS build
 SHELL ["/bin/bash","-c"]
-RUN wget -q -O - https://www.multichain.com/download/multichain-2.3.3.tar.gz | tar -xzf - -C /tmp
+
+WORKDIR /tmp
+RUN git clone https://github.com/MultiChain/multichain.git
+RUN cd multichain \
+    && git checkout 2.3.x-release \
+    && mkdir v8build
+RUN wget -q -O - https://github.com/MultiChain/multichain-binaries/raw/master/linux-v8.tar.gz | tar -xzf - -C /tmp/multichain/v8build
+RUN cd multichain && ./autogen.sh && ./configure
+RUN cd multichain && make
 RUN git clone https://github.com/MultiChain/multichain-explorer-2
 
 FROM base AS app
-COPY --from=build /tmp/multichain-2.3.3 /usr/local/bin
-COPY --from=build /multichain-explorer-2 /root/multichain-explorer-2
+COPY --from=build /tmp/multichain/src/multichaind /usr/local/bin/multichaind
+COPY --from=build /tmp/multichain/src/multichain-cli /usr/local/bin/multichain-cli
+COPY --from=build /tmp/multichain/src/multichain-util /usr/local/bin/multichain-util
+COPY --from=build /tmp/multichain-explorer-2 /root/multichain-explorer-2
 
 WORKDIR /root
 CMD ["sleep", "infinity"]
