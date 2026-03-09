@@ -1,31 +1,31 @@
 # Ethers
 
-## 1. Ether (ETH)
+## 1. 以太 (ETH)
 
--   **Ether (ETH)** is the native cryptocurrency of Ethereum. While Bitcoin's (the cryptocurrency) primary purpose is for value transfer or peer-to-peer electronic cash on the Bitcoin network, Ether's main utility is for running computations on the Ethereum blockchain.
+-   **以太 (ETH)** 是以太坊的原生加密货币。虽然比特币（这种加密货币）的主要目的是在比特币网络上进行价值转移或点对点电子现金，但以太的主要用途是在以太坊区块链上运行计算。
 
--   When a block is mined, miners receive a **mining reward** in Ether (ETH). This is how ETH is minted and added to circulation.
+-   当一个区块被挖出时，矿工获得以太（ETH）作为**挖矿奖励**。这是 ETH 被铸造并进入流通的方式。
 
--   Besides the mining rewards, ETH is also used by transaction senders to compensate miners for the computational resources consumed to run their transactions.
+-   除了挖矿奖励外，ETH 还被交易发送者用于补偿运行其交易所消耗的计算资源。
 
-## 2. Ether Denominations
+## 2. 以太单位
 
--   The standard unit used in Ethereum is wei.
--   ETH prices are quoted for Ether = 10^18 wei (18 decimals).
--   Gas prices are quoted in Gwei = 10^9 wei (9 decimals).
--   ERC20 units (token amount) are generally quoted in wei = 1 wei.
+-   以太坊使用的标准单位是 wei。
+-   ETH 价格以 Ether = 10^18 wei（18 位小数）报价。
+-   Gas 价格以 Gwei = 10^9 wei（9 位小数）报价。
+-   ERC20 代币单位通常以 wei = 1 wei 报价。
 
     ![Ether Units](./img/eth-denominations.png)
 
-The following section list some commonly used ethers.js functions to convert between different ether denominations and to send ETH transactions.
+以下部分列出了一些常用的 ethers.js 函数，用于在不同以太单位之间转换以及发送 ETH 交易。
 
 ---
 
-### Convert a string to wei - ethers.parseUnits() function
+### 将字符串转换为 wei - ethers.parseUnits() 函数
 
-You can use ethers.js to convert any ether denominations to wei. This is commonly used to convert human input based on `ether` to contract input based on `wei`.
+您可以使用 ethers.js 将任何以太单位转换为 wei。这常用于将基于 `ether` 的人类输入转换为基于 `wei` 的合约输入。
 
--   **Syntax:**
+-   **语法：**
 
     ```js
 
@@ -33,7 +33,7 @@ You can use ethers.js to convert any ether denominations to wei. This is commonl
 
     ```
 
--   **Example:**
+-   **示例：**
 
     ```js
 
@@ -44,37 +44,37 @@ You can use ethers.js to convert any ether denominations to wei. This is commonl
 
 ---
 
-### Convert from wei to string - ethers.formatUnits() function
+### 从 wei 转换为字符串 - ethers.formatUnits() 函数
 
-You can use ethers.js to convert from wei to any ether denominations. This is commonly used to convert contract output based on `wei` to human output based on `ether`.
+您可以使用 ethers.js 将 wei 转换为任何以太单位。这常用于将基于 `wei` 的合约输出转换为基于 `ether` 的人类输出。
 
--   **Syntax:**
+-   **语法：**
 
     ```js
     utils.formatUnits(wei , decimalsOrUnitName) => string
     ```
 
--   **Example:**
+-   **示例：**
 
     ```js
     > ethers.formatUnits(1000000000000000000n, "ether");
     // '1.0'
     ```
 
-## 3. ETH Transactions
+## 3. ETH 交易
 
-The following are the main steps to send ETH from one account to another using ethers.js:
+使用 ethers.js 将 ETH 从一个账户发送到另一个账户的主要步骤如下：
 
-1. Obtain a **signer** to connect with Ethereum account
-2. Check ETH balance with **getBalance()** to ensure sufficient funds
-3. Execute **sendTransaction()** to send ETH from one account to another
-4. Wait for transaction to be mined with **wait()** to get the transaction receipt
+1. 获取一个**签名者**以连接以太坊账户
+2. 使用 **getBalance()** 检查 ETH 余额以确保有足够的资金
+3. 执行 **sendTransaction()** 将 ETH 从一个账户发送到另一个账户
+4. 使用 **wait()** 等待交易被挖掘以获取交易收据
 
-### a) Get Signer - ethers.getSigners() function
+### a) 获取签名者 - ethers.getSigners() 函数
 
-To send ETH, you need to get the account (signer) containing the private key and the ETH balance. A signer is basically an account that can sign transactions (refer to lesson on **Accounts and Addresses** for more details).
+要发送 ETH，您需要获取包含私钥和 ETH 余额的账户（签名者）。签名者基本上是一个可以签署交易的账户（有关更多详细信息，请参阅**账户和地址**课程）。
 
--   **Syntax:**
+-   **语法：**
 
     ```js
 
@@ -82,8 +82,8 @@ To send ETH, you need to get the account (signer) containing the private key and
 
     ```
 
--   **Example:**
-    The following example is used to get all accounts in the network wallet.
+-   **示例：**
+    以下示例用于获取网络钱包中的所有账户。
 
     ```js
 
@@ -97,11 +97,11 @@ To send ETH, you need to get the account (signer) containing the private key and
 
     ```
 
-### b) Check ETH balance - provider.getBalance() function
+### b) 检查 ETH 余额 - provider.getBalance() 函数
 
-You can use ethers.js to check an address' ETH balance.
+您可以使用 ethers.js 检查地址的 ETH 余额。
 
--   **Syntax:**
+-   **语法：**
 
     ```js
 
@@ -109,24 +109,24 @@ You can use ethers.js to check an address' ETH balance.
 
     ```
 
--   **Example:**
+-   **示例：**
 
-    The following example is used to check the balance of accounts[0] in the network wallet.
+    以下示例用于检查网络钱包中 accounts[0] 的余额。
 
     ```js
 
     > await ethers.provider.getBalance(accounts[0].address);
-    // output: 10000000000000000000000n
+    // 输出: 10000000000000000000000n
 
     ```
 
 ---
 
-### c) Send ETH - account.sendTransaction() function
+### c) 发送 ETH - account.sendTransaction() 函数
 
-You can use ethers.js to transfer ETH from a given account.
+您可以使用 ethers.js 从给定账户转移 ETH。
 
--   **Syntax:**
+-   **语法：**
 
     ```js
 
@@ -134,22 +134,22 @@ You can use ethers.js to transfer ETH from a given account.
 
     ```
 
--   **What is a transactionRequest?**
+-   **什么是 transactionRequest？**
 
-    A transactionRequest is a JavaScript object with the following fields:
+    transactionRequest 是一个具有以下字段的 JavaScript 对象：
 
-    -   **to**: The recipient address (string)
-    -   **value**: The amount of ETH to send (BigInt)
-    -   **gasLimit**: (Optional) The maximum amount of gas units that can be consumed by the transaction (BigInt)
-    -   **gasPrice**: (Optional) The price (in wei) per unit of gas (BigInt)
-    -   **data**: (Optional) The data payload for the transaction (string)
-    -   **nonce**: (Optional) The transaction count for the sender's address (number)
+    -   **to**：接收者地址（字符串）
+    -   **value**：要发送的 ETH 数量（BigInt）
+    -   **gasLimit**：（可选）交易可以消耗的最大 Gas 单位数量（BigInt）
+    -   **gasPrice**：（可选）每单位 Gas 的价格（以 wei 为单位）（BigInt）
+    -   **data**：（可选）交易的数据负载（字符串）
+    -   **nonce**：（可选）发送者地址的交易计数（数字）
 
-    For sending ETH, you only need to specify the `to` and `value` fields. The other fields will be automatically populated by ethers.js if not provided.
+    对于发送 ETH，您只需指定 `to` 和 `value` 字段。如果未提供，其他字段将由 ethers.js 自动填充。
 
--   **Example:**
+-   **示例：**
 
-    -   The example below sends 1 wei from accounts[0] to accounts[1] of the network wallet.
+    -   以下示例从网络钱包的 accounts[0] 向 accounts[1] 发送 1 wei。
 
         ```js
 
@@ -159,7 +159,7 @@ You can use ethers.js to transfer ETH from a given account.
                 value:1
             }
         )
-        // output:
+        // 输出：
         // TransactionResponse {
         //     hash: '0x...',
         //     nonce: 0,
@@ -174,14 +174,14 @@ You can use ethers.js to transfer ETH from a given account.
 
         ```
 
-    -   After calling sendTransaction() and receiving a TransactionResponse object, it means your transaction is not rejected by the provider but this doesn't mean the transaction has been mined yet. You can still find useful information from the TransactionResponse object such as the transaction hash, gas limit, gas price, etc.
+    -   调用 sendTransaction() 并收到 TransactionResponse 对象后，意味着您的交易没有被提供商拒绝，但这并不意味着交易已经被挖掘。您仍然可以从 TransactionResponse 对象中找到有用的信息，如交易哈希、Gas 限制、Gas 价格等。
 
-### d) Confirm Transaction - transactionResponse.wait() function
+### d) 确认交易 - transactionResponse.wait() 函数
 
-To wait for the transaction to be mined, you can call the wait() function on the TransactionResponse object. This returns a TransactionReceipt object.
-One important field in the TransactionReceipt object is gasUsed which tells you how much gas was actually used to mine the transaction.
+要等待交易被挖掘，您可以调用 TransactionResponse 对象上的 wait() 函数。这返回一个 TransactionReceipt 对象。
+TransactionReceipt 对象中的一个重要字段是 gasUsed，它告诉您实际挖掘交易使用了多少 Gas。
 
--   **Syntax:**
+-   **语法：**
 
     ```js
 
@@ -189,13 +189,13 @@ One important field in the TransactionReceipt object is gasUsed which tells you 
 
     ```
 
--   **Example:**
+-   **示例：**
 
     ```js
 
     > receipt = await tx.wait();
 
-    // output:
+    // 输出：
     //TransactionReceipt {
     //    ...
     //    gasUsed: 21000n,
@@ -204,74 +204,74 @@ One important field in the TransactionReceipt object is gasUsed which tells you 
 
     ```
 
-    The TransactionReceipt object contains useful information about the mined transaction such as the actual gas used.
+    TransactionReceipt 对象包含有关已挖掘交易的有用信息，如实际使用的 Gas。
 
-**NOTE:** When you send ETH, you pay two costs:
+**注意：** 当您发送 ETH 时，您需要支付两笔费用：
 
--   **Transfer Amount**: The actual ETH you're sending to the recipient
--   **Gas Fee**: The cost to execute the transaction on the Ethereum network
+-   **转账金额**：您实际发送给接收者的 ETH
+-   **Gas 费**：在以太坊网络上执行交易的成本
 
-We will cover gas fees in more details in lesson on **Transactions and Gas**.
+我们将在**交易和 Gas**课程中更详细地介绍 Gas 费。
 
 ---
 
-## 🛠️ Lab: Send ETH
+## 🛠️ 实验：发送 ETH
 
--   **Install project dependencies**
+-   **安装项目依赖**
 
     ```bash
     cd /workspace/day-1/03-ethers
     npm i
     ```
 
--   **Start Local Network**
+-   **启动本地网络**
 
     ```bash
     hh node
     ```
 
--   **Connect Hardhat Console to Local Network (New Terminal)**
+-   **将 Hardhat Console 连接到本地网络（新终端）**
 
-    You need to open a new terminal window while keeping the previous terminal running the network. In the new terminal, enter the following command:
+    您需要在保持前一个终端运行网络的同时打开一个新的终端窗口。在新终端中输入以下命令：
 
     ```bash
     hh console --network localhost
     ```
 
--   **Import Ethers plugin**
+-   **导入 Ethers 插件**
 
-    Enter the following command in the console after the `>` prompt:
+    在控制台中 `>` 提示符后输入以下命令：
 
     ```javascript
     > const { ethers } = require("hardhat");
     ```
 
--   **Load the accounts.**
+-   **加载账户。**
 
     ```js
     > accounts = await ethers.getSigners();
     ```
 
--   **Get ETH balance of accounts[0]**
+-   **获取 accounts[0] 的 ETH 余额**
 
     ```js
     > before = await ethers.provider.getBalance(accounts[0].address);
-    // output:
+    // 输出:
     //10000000000000000000000n
     ```
 
--   **Convert from ether to wei**
+-   **从 ether 转换为 wei**
 
-    In lesson 1, we sent 1 ETH using the notation `10n**18n`. The proper way is to use the ethers.js function `parseUnits()` to convert 0.1 ETH to wei.
+    在第一课中，我们使用符号 `10n**18n` 发送了 1 ETH。正确的方法是使用 ethers.js 函数 `parseUnits()` 将 0.1 ETH 转换为 wei。
 
     ```js
     > amt = ethers.parseUnits('0.1','ether')
     100000000000000000n
     ```
 
--   **Send 0.1 ETH to accounts[1]**
+-   **向 accounts[1] 发送 0.1 ETH**
 
-    Note that TransactionResponse is returned immediately after calling sendTransaction(). In reality, the transaction is still pending and has not been validated yet.
+    请注意，调用 sendTransaction() 后会立即返回 TransactionResponse。实际上，交易仍然待处理，尚未验证。
 
     ```js
     > tx = await accounts[0].sendTransaction({
@@ -279,7 +279,7 @@ We will cover gas fees in more details in lesson on **Transactions and Gas**.
         value:amt
     });
 
-    // output:
+    // 输出：
     // TransactionResponse {
     //  ...
     //  hash: '0x...',
@@ -294,26 +294,26 @@ We will cover gas fees in more details in lesson on **Transactions and Gas**.
     //  data: '0x',
     ```
 
-    Results that are important to note:
+    需要注意的结果：
 
-    -   **hash**: This is the unique identifier for the transaction. Use this to check transaction status on Etherscan.
-    -   **to**: The recipient address you are sending ETH to.
-    -   **value**: The amount of ETH (in wei) you are sending to the recipient.
+    -   **hash**：这是交易的唯一标识符。使用它可以在 Etherscan 上检查交易状态。
+    -   **to**：您发送 ETH 的接收者地址。
+    -   **value**：您发送给接收者的 ETH 数量（以 wei 为单位）。
 
-    Results that are useful to note:
+    有用的结果：
 
-    -   **nonce**: This is an incremental counter tied to your account. We will show how to use this to fix forever pending transactions later.
-    -   **gasLimit**: A value you set to prevent your transaction from using too much gas. We will cover this in contract deployment later.
-    -   **gasPrice**: The price (in wei) you are willing to pay for each unit of gas. We will cover this in the lesson on Transactions and Gas along with **maxPriorityFeePerGas** and **maxFeePerGas**.
+    -   **nonce**：这是一个与您的账户绑定的增量计数器。稍后我们将展示如何使用它来修复永远待处理的交易。
+    -   **gasLimit**：您设置的一个值，用于防止您的交易使用过多 Gas。我们将在合约部署中介绍这一点。
+    -   **gasPrice**：您愿意为每单位 Gas 支付的价格（以 wei 为单位）。我们将在交易和 Gas 课程中与 **maxPriorityFeePerGas** 和 **maxFeePerGas** 一起介绍这一点。
 
--   **Wait for transaction to be mined and get the receipt**
+-   **等待交易被挖掘并获取收据**
 
-    Run the following command to wait for the transaction to be validated. This returns a TransactionReceipt object.
+    运行以下命令等待交易被验证。这返回一个 TransactionReceipt 对象。
 
     ```js
     > receipt = await tx.wait();
 
-    // output:
+    // 输出：
     // TransactionReceipt {
     //    ...
     //    to: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
@@ -327,30 +327,30 @@ We will cover gas fees in more details in lesson on **Transactions and Gas**.
     //    }
     ```
 
-    Once the transaction is validated, we are able to see the actual gas used to validate the transaction in the `gasUsed` field.
+    一旦交易被验证，我们就能够在 `gasUsed` 字段中看到验证交易实际使用的 Gas。
 
--   **Get ETH balance of accounts[0] again**
+-   **再次获取 accounts[0] 的 ETH 余额**
 
     ```js
     > after = await ethers.provider.getBalance(accounts[0].address);
-    // output:
+    // 输出：
     // 9999899976744140625000n
     ```
 
--   **Compare balance before and after**
+-   **比较前后的余额**
 
     ```js
     > deduction = before - after
     100023255859375000n
     ```
 
--   **Convert from wei to ether**
+-   **从 wei 转换为 ether**
 
     ```js
     > ethers.formatUnits(deduction,"ether")
     '0.100023255859375'
     ```
 
--   **Quiz**
+-   **测验**
 
-    Why is the amount deducted more than 0.1 ETH?
+    为什么扣除的金额超过 0.1 ETH？

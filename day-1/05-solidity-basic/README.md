@@ -1,63 +1,63 @@
-# Solidity Basics
+# Solidity 基础
 
-This lesson covers the basic syntax and structure of Solidity smart contracts.
+本课程介绍 Solidity 智能合约的基本语法和结构。
 
-## 1. Data Types
+## 1. 数据类型
 
-Solidity has two main categories of data types:
+Solidity 有两大类数据类型：
 
-### Value Types
+### 值类型
 
-Value types are stored directly and passed by value when assigned or passed as function parameters:
+值类型直接存储并在赋值或作为函数参数传递时按值复制：
 
--   **Integers**: `uint256`, `uint8`, `int256` - whole numbers
--   **Boolean**: `bool` - true or false values
--   **Address**: `address` - Ethereum account addresses (20 bytes)
--   **Fixed bytes**: `bytes32`, `bytes1` - fixed-length byte arrays
+-   **整数**：`uint256`、`uint8`、`int256` - 整数
+-   **布尔**：`bool` - true 或 false 值
+-   **地址**：`address` - 以太坊账户地址（20 字节）
+-   **固定字节**：`bytes32`、`bytes1` - 固定长度字节数组
 
-### Reference Types
+### 引用类型
 
-Reference types store the location of data and can be stored in memory, storage, or calldata:
+引用类型存储数据的位置，可以存储在 memory、storage 或 calldata 中：
 
--   **String**: `string` - text data (UTF-8 encoded)
--   **Dynamic arrays**: `uint256[]` - resizable arrays
--   **Fixed arrays**: `uint256[5]` - fixed-size arrays
--   **Mappings**: `mapping(address => uint256)` - key-value stores
+-   **字符串**：`string` - 文本数据（UTF-8 编码）
+-   **动态数组**：`uint256[]` - 可调整大小的数组
+-   **固定数组**：`uint256[5]` - 固定大小的数组
+-   **映射**：`mapping(address => uint256)` - 键值存储
 
 ---
 
-## 🛠️ Lab Practice: Data Type
+## 🛠️ 实验实践：数据类型
 
-**Understanding Solidity data types**: Create a contract that demonstrates basic data type storage and retrieval.
+**理解 Solidity 数据类型**：创建一个展示基本数据类型存储和检索的合约。
 
--   **Install project dependencies**
+-   **安装项目依赖**
 
     ```bash
     cd /workspace/day-1/05-solidity-basic
     npm i
     ```
 
--   **Create the contract**
+-   **创建合约**
 
-    Create contracts/DataTypesDemo.sol.
+    创建 contracts/DataTypesDemo.sol。
 
     ```solidity
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.20;
 
     contract DataTypesDemo {
-        // Value types
+        // 值类型
         uint256 public myUint = 123;
         bool public myBool = true;
         address public myAddress = 0x000000000000000000000000000000000000dEaD;
         bytes32 public myBytes = "Hi";
 
-        // Reference types
+        // 引用类型
         string public myString = "Hello Solidity";
         uint256[] public myArray;
         mapping(address => uint256) public balances;
 
-        // Functions to modify state
+        // 修改状态的函数
         function addToArray(uint256 x) public {
             myArray.push(x);
         }
@@ -68,15 +68,15 @@ Reference types store the location of data and can be stored in memory, storage,
     }
     ```
 
--   **Start Hardhat console**
+-   **启动 Hardhat 控制台**
 
     ```bash
     hh console
     ```
 
--   **Deploy in Hardhat console**
+-   **在 Hardhat 控制台中部署**
 
-    Enter the following commands line by line after the `>` prompt:
+    在 `>` 提示符后逐行输入以下命令：
 
     ```javascript
     > const { ethers } = require("hardhat");
@@ -86,7 +86,7 @@ Reference types store the location of data and can be stored in memory, storage,
     > await demo.waitForDeployment();
     ```
 
--   **Interact with value types**
+-   **与值类型交互**
 
     ```js
     > await demo.myUint();
@@ -99,17 +99,17 @@ Reference types store the location of data and can be stored in memory, storage,
     // '0x000000000000000000000000000000000000dEaD'
 
     > await demo.myBytes();
-    // '0x4869000000000000000000000000000000000000000000000000000000000000' // Hex for "Hi"
+    // '0x4869000000000000000000000000000000000000000000000000000000000000' // "Hi" 的十六进制
     ```
 
--   **Interact with reference types**
+-   **与引用类型交互**
 
     ```js
-    // String
+    // 字符串
     > await demo.myString();
     // 'Hello Solidity'
 
-    // Dynamic array: push values, then read
+    // 动态数组：先推送值，然后读取
     > await demo.addToArray(42);
     > await demo.addToArray(100);
     > await demo.myArray(0);
@@ -117,7 +117,7 @@ Reference types store the location of data and can be stored in memory, storage,
     > await demo.myArray(1);
     // 100n
 
-    // Mapping: set and read
+    // 映射：设置和读取
     > await demo.setBalance(500);
     > await demo.balances(accounts[0].address);
     // 500n
@@ -125,74 +125,74 @@ Reference types store the location of data and can be stored in memory, storage,
 
 ---
 
-## 2. Data Location
+## 2. 数据位置
 
 https://docs.soliditylang.org/en/v0.8.8/types.html?highlight=data%20location#data-location
 
-When working with reference types like strings, arrays, and structs, Solidity requires you to explicitly declare the **data location**.
+在处理字符串、数组和结构体等引用类型时，Solidity 要求您显式声明**数据位置**。
 
 ```solidity
 function getName() public view returns (string memory)
 function getDescription() public view returns (string memory)
 ```
 
-If you omit the data location, compilation will fail with an error like:
+如果您省略数据位置，编译将失败并显示如下错误：
 
 ```bash
 TypeError: Data location must be "memory" or "calldata" for return parameter in function, but none was given.
 ```
 
-### What is Data Location?
+### 什么是数据位置？
 
-**Reference types** in Solidity can live in one of three locations. Each has distinct cost, lifetime, and performance characteristics:
+Solidity 中的**引用类型**可以存在于三个位置之一。每个都有不同的成本、生命周期和性能特征：
 
 -   storage
 
-    -   Most expensive option.
-    -   Default for state variables.
-    -   Data is permanently written to the blockchain.
-    -   Certain types (e.g., mappings) must always use storage.
+    -   最昂贵的选项。
+    -   状态变量的默认值。
+    -   数据永久写入区块链。
+    -   某些类型（例如映射）必须始终使用 storage。
 
 -   memory
 
-    -   Temporary and non-persistent.
-    -   Typically used for local variables within functions.
-    -   Freed once the function execution ends.
+    -   临时的且非持久的。
+    -   通常用于函数内的局部变量。
+    -   函数执行结束后释放。
 
 -   calldata
-    -   Cheapest option.
-    -   Read-only and non-modifiable.
-    -   Used mainly for function parameters in external calls.
-    -   Cost is comparable to memory (Gmemory = 3).
+    -   最便宜的选项。
+    -   只读的且不可修改的。
+    -   主要用于外部调用的函数参数。
+    -   成本与 memory 可比（Gmemory = 3）。
 
 ---
 
-## 3. Contract Inheritance
+## 3. 合约继承
 
-Contract inheritance allows one contract to use functions and state variables from another contract. It's like extending a class in other programming languages - the child contract inherits all public and internal functions from the parent.
+合约继承允许一个合约使用另一个合约的函数和状态变量。这类似于在其他编程语言中扩展类——子合约继承父合约的所有公共和内部函数。
 
-**Inheritance syntax:**
+**继承语法：**
 
 ```solidity
 contract Parent {
-    // Parent contract code
+    // 父合约代码
 }
 
 contract Child is Parent {
-    // Child contract inherits from Parent
-    // Can access Parent's public and internal functions
+    // 子合约从 Parent 继承
+    // 可以访问 Parent 的公共和内部函数
 }
 ```
 
-**Key concepts:**
+**关键概念：**
 
--   **Parent contract** - The contract being inherited from (also called base contract)
--   **Child contract** - The contract that inherits (also called derived contract)
--   **Access to parent functions** - Child can call parent's public and internal functions
--   **Code reuse** - Avoid duplicating code by inheriting common functionality
--   **Function overriding** - Child can replace parent functions with new implementations
+-   **父合约** - 被继承的合约（也称为基合约）
+-   **子合约** - 继承的合约（也称为派生合约）
+-   **访问父函数** - 子合约可以调用父合约的公共和内部函数
+-   **代码重用** - 通过继承通用功能避免代码重复
+-   **函数覆盖** - 子合约可以用新实现替换父合约函数
 
-**Example showing inheritance:**
+**展示继承的示例：**
 
 ```solidity
 contract Animal {
@@ -213,15 +213,15 @@ contract Animal {
 
 contract Dog is Animal {
     constructor() Animal("Canine") {
-        // Call parent constructor with "Canine"
+        // 使用 "Canine" 调用父构造函数
     }
 
-    // Override parent function
+    // 覆盖父函数
     function makeSound() public pure override returns (string memory) {
         return "Woof!";
     }
 
-    // New function specific to Dog
+    // Dog 特有的新函数
     function wagTail() public pure returns (string memory) {
         return "Tail wagging!";
     }
@@ -230,11 +230,11 @@ contract Dog is Animal {
 
 ---
 
-## 🛠️ Lab Practice: Contract Inheritance
+## 🛠️ 实验实践：合约继承
 
--   **Create the contracts**
+-   **创建合约**
 
-    Create contracts/InheritanceDemo.sol:
+    创建 contracts/InheritanceDemo.sol：
 
     ```solidity
     // SPDX-License-Identifier: MIT
@@ -271,15 +271,15 @@ contract Dog is Animal {
     }
     ```
 
--   **Start Hardhat console**
+-   **启动 Hardhat 控制台**
 
-    Quit and restart the Hardhat console to pick up the new contract:
+    退出并重新启动 Hardhat 控制台以获取新合约：
 
     ```bash
     hh console
     ```
 
--   **Deploy Contracts**
+-   **部署合约**
 
     ```javascript
     > const Animal = await ethers.getContractFactory("Animal");
@@ -291,10 +291,10 @@ contract Dog is Animal {
     > await dog.waitForDeployment();
     ```
 
--   **Interact with contracts**
+-   **与合约交互**
 
     ```javascript
-    // From parent
+    // 来自父合约
 
     > await animal.makeSound();
     // 'Some generic animal sound'
@@ -302,7 +302,7 @@ contract Dog is Animal {
     await animal.getSpecies();
     // 'Generic'
 
-    // From child (inherited + overridden)
+    // 来自子合约（继承 + 覆盖）
     await dog.makeSound();
     // 'Woof!'
 
@@ -315,11 +315,11 @@ contract Dog is Animal {
 
 ---
 
-## 4. Visibility
+## 4. 可见性
 
-### Function Visibility
+### 函数可见性
 
-Visibility determines who can call a function. The visibility keyword comes after the function name in the function declaration:
+可见性决定谁可以调用函数。可见性关键字位于函数声明中函数名之后：
 
 ```solidity
 function functionName() [visibility] returns (returnType) {
@@ -327,66 +327,66 @@ function functionName() [visibility] returns (returnType) {
 }
 ```
 
-**Available visibility types:**
+**可用的可见性类型：**
 
--   **public** - Can be called by anyone (inside or outside the contract)
--   **private** - Can only be called from within the same contract
--   **internal** - Can be called from within the same contract or contracts that inherit from it
--   **external** - Can only be called from outside the contract (not internally)
+-   **public** - 任何人都可以调用（合约内部或外部）
+-   **private** - 只能从同一合约内部调用
+-   **internal** - 可以从同一合约或从继承的合约调用
+-   **external** - 只能从合约外部调用（不能在内部调用）
 
-**Example contract showing all visibility types:**
+**展示所有可见性类型的示例合约：**
 
 ```solidity
 contract Visibility {
     uint256 private secretNumber = 42;
 
-    // Public: callable by anyone
+    // Public: 任何人都可以调用
     function publicFunction() public pure returns (string memory) {
         return "Anyone can call this";
     }
 
-    // Private: only this contract
+    // Private: 只有此合约
     function privateFunction() private pure returns (uint256) {
         return secretNumber;
     }
 
-    // Internal: this contract + derived contracts
+    // Internal: 此合约 + 派生合约
     function internalFunction() internal pure returns (string memory) {
         return "Internal use";
     }
 
-    // External: only from outside the contract
+    // External: 只能从合约外部调用
     function externalFunction() external pure returns (string memory) {
         return "Called from outside";
     }
 }
 ```
 
-### State Variable Visibility
+### 状态变量可见性
 
-State variables also have visibility keywords that control who can read them:
+状态变量也有控制谁可以读取它们的可见性关键字：
 
--   **public** - Anyone can read the variable (a getter function is auto-generated)
--   **private** - Only the contract itself can read the variable
--   **internal** - The contract and derived contracts can read the variable
--   **default (no keyword)** - Same as internal
--   **Note**: There is no `external` visibility for state variables
-    **Example contract showing state variable visibility:**
+-   **public** - 任何人都可以读取变量（会自动生成 getter 函数）
+-   **private** - 只有合约本身可以读取变量
+-   **internal** - 合约和派生合约可以读取变量
+-   **default（无关键字）** - 与 internal 相同
+-   **注意**：状态变量没有 `external` 可见性
+    **展示状态变量可见性的示例合约：**
 
 ```solidity
 contract StateVariableVisibility {
-    uint256 public publicVar = 1;      // Anyone can read
-    uint256 private privateVar = 2;    // Only this contract
-    uint256 internal internalVar = 3;  // This contract + derived contracts
-    uint256 defaultVar = 4;            // Same as internal
+    uint256 public publicVar = 1;      // 任何人都可以读取
+    uint256 private privateVar = 2;    // 只有此合约
+    uint256 internal internalVar = 3;  // 此合约 + 派生合约
+    uint256 defaultVar = 4;            // 与 internal 相同
 }
 ```
 
 ---
 
-## 5. Built-in Modifiers
+## 5. 内置修饰符
 
-Built-in modifiers control how functions interact with the contract's state and Ether. The modifier comes after visibility in the function declaration:
+内置修饰符控制函数如何与合约的状态和以太交互。修饰符位于函数声明中可见性之后：
 
 ```solidity
 function functionName() [visibility] [modifier] returns (returnType) {
@@ -394,35 +394,35 @@ function functionName() [visibility] [modifier] returns (returnType) {
 }
 ```
 
-**Available built-in modifiers:**
+**可用的内置修饰符：**
 
--   **view** - Function reads contract state but doesn't modify it
--   **pure** - Function doesn't read or modify contract state (only uses parameters)
--   **payable** - Function can receive Ether when called
--   **no modifier** - Function can read and modify contract state (default behavior)
+-   **view** - 函数读取合约状态但不修改它
+-   **pure** - 函数不读取也不修改合约状态（只使用参数）
+-   **payable** - 函数可以被调用时接收以太
+-   **无修饰符** - 函数可以读取和修改合约状态（默认行为）
 
-**Example contract showing all modifier types:**
+**展示所有修饰符类型的示例合约：**
 
 ```solidity
 contract FunctionModifiers {
     uint256 public value = 100;
 
-    // Pure: doesn't read or modify state
+    // Pure: 不读取也不修改状态
     function add(uint256 a, uint256 b) public pure returns (uint256) {
         return a + b;
     }
 
-    // View: reads state but doesn't modify it
+    // View: 读取状态但不修改它
     function getValue() public view returns (uint256) {
         return value;
     }
 
-    // Payable: can receive Ether
+    // Payable: 可以接收以太
     function deposit() public payable {
-        // Function can receive Ether
+        // 函数可以接收以太
     }
 
-    // Default: can modify state
+    // Default: 可以修改状态
     function setValue(uint256 newValue) public {
         value = newValue;
     }
@@ -431,44 +431,44 @@ contract FunctionModifiers {
 
 ---
 
-## 6. Mappings
+## 6. 映射
 
-Mappings are key-value stores, similar to hash tables or dictionaries in other programming languages. They provide an efficient way to store and retrieve data using unique keys.
+映射是键值存储，类似于其他编程语言中的哈希表或字典。它们提供了一种使用唯一键高效存储和检索数据的方式。
 
-**Syntax:**
+**语法：**
 
 ```solidity
 mapping(KeyType => ValueType) public mappingName;
 ```
 
-**Key Characteristics:**
+**关键特征：**
 
--   **Storage only**: Mappings can only exist in storage (state variables)
--   **Default values**: All possible keys map to the default value initially (0, false, "", etc.)
--   **Efficient lookup**: Gas-efficient for direct key access
--   **Virtual size**: Every possible key exists conceptually with default values
+-   **仅存储**：映射只能存在于 storage（状态变量）中
+-   **默认值**：所有可能的键最初都映射到默认值（0、false、"" 等）
+-   **高效查找**：直接键访问 Gas 效率高
+-   **虚拟大小**：每个可能的键在概念上都存在，默认值
 
-**Critical Limitations:**
+**关键限制：**
 
--   **No length property**: `mapping.length` does not exist
--   **No iteration**: You cannot loop through mappings directly
--   **No key enumeration**: Cannot get a list of all keys that have been set
--   **Cannot delete**: You can only reset values to default, not truly delete keys
--   **Cannot check existence**: No way to tell if a key was explicitly set or just has default value
+-   **没有 length 属性**：`mapping.length` 不存在
+-   **没有迭代**：您不能直接遍历映射
+-   **没有键枚举**：无法获取已设置的所有键的列表
+-   **无法删除**：您只能将值重置为默认值，无法真正删除键
+-   **无法检查存在性**：无法判断键是被显式设置还是只有默认值
 
-**Working with mapping limitations:**
+**处理映射限制：**
 
 ```solidity
 contract MappingLimitations {
     mapping(address => uint256) public balances;
-    mapping(address => bool) public hasAccount;  // Track existence separately
+    mapping(address => bool) public hasAccount;  // 单独跟踪存在性
 
-    // Must manually track count - mappings have no length!
+    // 必须手动跟踪计数 - 映射没有长度！
     uint256 public userCount;
-    address[] public userList;  // Track keys separately for iteration
+    address[] public userList;  // 单独跟踪键以便迭代
 
     function addUser(uint256 amount) public {
-        if (!hasAccount[msg.sender]) {  // Check existence flag
+        if (!hasAccount[msg.sender]) {  // 检查存在性标志
             hasAccount[msg.sender] = true;
             userCount++;
             userList.push(msg.sender);
@@ -479,105 +479,103 @@ contract MappingLimitations {
     function removeUser() public {
         if (hasAccount[msg.sender]) {
             hasAccount[msg.sender] = false;
-            balances[msg.sender] = 0;  // Reset to default
+            balances[msg.sender] = 0;  // 重置为默认值
             userCount--;
-            // Note: userList still contains the address (cleanup needed)
+            // 注意：userList 仍然包含地址（需要清理）
         }
     }
 }
 ```
 
-**Common Use Cases:**
+**常见用例：**
 
--   Storing balances: `mapping(address => uint256) balances`
--   Access control: `mapping(address => bool) authorized`
--   Data relationships: `mapping(uint256 => string) names`
+-   存储余额：`mapping(address => uint256) balances`
+-   访问控制：`mapping(address => bool) authorized`
+-   数据关系：`mapping(uint256 => string) names`
 
 ---
 
-## 🛠️ Lab Practice: Putting It All Together
+## 🛠️ 实验实践：综合实践
 
-Read and try to solve the problem on your own without looking at the solution first. Compare your solution with the provided one afterwards.
+请先自己阅读并尝试解决问题，然后再查看解决方案。之后将您的解决方案与提供的进行比较。
 
-### Problem
+### 问题
 
-**Context**
+**背景**
 
-You are given a base contract Counter (from the Quick Start lesson) with:
+您有一个来自快速入门课程的基础合约 Counter，具有：
 
 -   uint256 public count;
 -   constructor(uint256 initial)
 -   function increment() public
 
-**Task**
+**任务**
 
-1.  Build a new contract **DepositCounter** in contracts/DepositCounter.sol that:
+1.  在 contracts/DepositCounter.sol 中构建一个新合约 **DepositCounter**，该合约：
+    -   继承自 Counter
+    -   接受 ETH 存款
+    -   跟踪每个发送者的累计存款
+    -   标记一个地址是否曾经存款
+    -   跟踪唯一存款人的总数
 
-    -   Inherits from Counter
-    -   Accepts ETH deposits
-    -   Tracks each sender’s cumulative deposit
-    -   Marks whether an address has ever deposited
-    -   Track the total number of unique depositors
-
-2.  Create a test script in test/depositCounterTest.js that:
-
-    -   Should test the number of unique depositors via count()
-        -   count() should start at 0.
-        -   After the first deposit from addr1, count() should be 1.
-        -   A second deposit from the same address should not increase count().
-        -   A deposit from a different address (addr2) should increase count() to 2.
-    -   Should test the deposit balance per address via deposits(addr)
-        -   deposits(addr1) should start at 0.
-        -   After depositing 1 ether, deposits(addr1) should be 1 ether.
-        -   A second deposit of 0.5 ether should increase deposits(addr1) to 1.5 ether.
+2.  在 test/depositCounterTest.js 中创建一个测试脚本，该脚本：
+    -   应该通过 count() 测试唯一存款人的数量
+        -   count() 应该从 0 开始。
+        -   来自 addr1 的第一次存款后，count() 应该是 1。
+        -   来自同一地址的第二次存款不应增加 count()。
+        -   来自不同地址（addr2）的存款应该将 count() 增加到 2。
+    -   应该通过 deposits(addr) 测试每个地址的存款余额
+        -   deposits(addr1) 应该从 0 开始。
+        -   存款 1 ether 后，deposits(addr1) 应该是 1 ether。
+        -   第二次存款 0.5 ether 应该将 deposits(addr1) 增加到 1.5 ether。
 
 ---
 
-### Solution
+### 解决方案
 
-This lab is an extension of the "Quick Start with Solidity" lesson. You will create a deposit counter contract that receives ETH deposits and tracks each sender's deposit balance by combining all the concepts learned so far.
+此实验是"快速入门 Solidity"课程的扩展。您将创建一个接收 ETH 存款并跟踪每个发送者存款余额的存款计数器合约，结合到目前为止学到的所有概念。
 
--   **Create the contract**
+-   **创建合约**
 
-    Create contracts/DepositCounter.sol:
+    创建 contracts/DepositCounter.sol：
 
     ```solidity
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.20;
     import "./Counter.sol";
     contract DepositCounter is Counter {
-        // Track deposits by address
+        // 按地址跟踪存款
         mapping(address => uint256) public deposits;
-        // Track if address has ever deposited
+        // 跟踪地址是否曾经存款
         mapping(address => bool) public hasAccount;
-        // Constructor calls parent constructor
+        // 构造函数调用父构造函数
         constructor() Counter(0) {}
-        // Deposit ETH and increment counter
+        // 存款 ETH 并增加计数器
         function deposit() public payable {
             require(msg.value > 0, "Must send ETH");
 
-            // Increment the counter for unique depositors
+            // 为唯一存款人增加计数器
             if (hasAccount[msg.sender] == false) {
                 increment();
                 hasAccount[msg.sender] = true;
             }
-            // Record who sent how much
+            // 记录谁发送了多少
             deposits[msg.sender] += msg.value;
 
         }
-        // Check if address has ever deposited
+        // 检查地址是否曾经存款
         function isDepositor(address addr) public view returns (bool) {
             return hasAccount[addr];
         }
-        // Check contract's ETH balance
+        // 检查合约的 ETH 余额
         function getBalance() public view returns (uint256) {
             return address(this).balance;
         }
     }
     ```
 
--   **Create the test script**
-    Create test/depositCounterTest.js:
+-   **创建测试脚本**
+    创建 test/depositCounterTest.js：
 
     ```javascript
     const { expect } = require("chai");
@@ -596,22 +594,22 @@ This lab is an extension of the "Quick Start with Solidity" lesson. You will cre
         });
 
         it("Should count depositor correctly", async function () {
-            // Initially, addr1 has no account
+            // 最初，addr1 没有账户
             expect(await depositCounter.count()).to.equal(0n);
 
-            // After deposit, addr1 has an account
+            // 存款后，addr1 有一个账户
             await depositCounter.connect(addr1).deposit({
                 value: ethers.parseEther("1.0"),
             });
             expect(await depositCounter.count()).to.equal(1n);
 
-            // Deposit again, should still be 1 unique depositor
+            // 再次存款，仍然是 1 个唯一存款人
             await depositCounter.connect(addr1).deposit({
                 value: ethers.parseEther("0.5"),
             });
             expect(await depositCounter.count()).to.equal(1n);
 
-            // After addr2 deposits, count should be 2
+            // addr2 存款后，计数应该是 2
             await depositCounter.connect(addr2).deposit({
                 value: ethers.parseEther("0.5"),
             });
@@ -619,10 +617,10 @@ This lab is an extension of the "Quick Start with Solidity" lesson. You will cre
         });
 
         it("Should track balance correctly", async function () {
-            // Initially, addr1 has no balance
+            // 最初，addr1 没有余额
             expect(await depositCounter.deposits(addr1.address)).to.equal(0n);
 
-            // After deposit, addr1 has balance
+            // 存款后，addr1 有余额
             await depositCounter.connect(addr1).deposit({
                 value: ethers.parseEther("1.0"),
             });
@@ -630,7 +628,7 @@ This lab is an extension of the "Quick Start with Solidity" lesson. You will cre
                 ethers.parseEther("1.0")
             );
 
-            // Deposit again, should accumulate
+            // 再次存款，应该累积
             await depositCounter.connect(addr1).deposit({
                 value: ethers.parseEther("0.5"),
             });
@@ -641,15 +639,15 @@ This lab is an extension of the "Quick Start with Solidity" lesson. You will cre
     });
     ```
 
--   **Run the test**
+-   **运行测试**
 
     ```bash
     hh test
     ```
 
--   **Expected output**
+-   **预期输出**
 
-    You should see all tests pass:
+    您应该看到所有测试通过：
 
     ```bash
     DepositCounter

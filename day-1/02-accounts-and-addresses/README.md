@@ -1,121 +1,121 @@
-# Accounts and Addresses
+# 账户和地址
 
-## 1. Ethereum Addresses
+## 1. 以太坊地址
 
-Ethereum addresses are made up of 20 bytes and are represented as hexadecimal strings, e.g., 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266.
+以太坊地址由 20 个字节组成，表示为十六进制字符串，例如 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266。
 
--   The prefix `0x` denotes a hexadecimal string,
--   Every two characters represent one byte (total 42 characters long).
+-   前缀 `0x` 表示十六进制字符串，
+-   每两个字符代表一个字节（总共 42 个字符）。
 
-Ethereum uses addresses in two ways:
+以太坊地址有两种用途：
 
--   **Externally Owned Accounts (EOAs)**: Addresses used for human wallets that are controlled by private keys
--   **Contract Accounts**: Addresses used for smart contracts that are controlled by code
+-   **外部拥有账户（EOAs）**：用于由私钥控制的个人钱包的地址
+-   **合约账户**：用于由代码控制的智能合约的地址
 
-The main difference is that EOAs require private keys that must be known and kept safe by the wallet user, while contract accounts are controlled by their code logic.
+主要区别在于，EOA 需要钱包妥善保管的私用户必须知道并钥，而合约账户由其代码逻辑控制。
 
 ---
 
-## 🛠️ Lab Practice: Generating a new Ethereum Account
+## 🛠️ 实验实践：生成新的以太坊账户
 
--   **Install packages**
+-   **安装软件包**
 
     ```bash
     /workspace/day-1/02-accounts-and-addresses
     npm i
     ```
 
--   **run Hardhat Console**
+-   **运行 Hardhat Console**
 
     ```bash
     hh console
     ```
 
--   **Generate a new wallet**
+-   **生成新钱包**
 
-    Enter the following commands line by line after the `>` prompt:
+    在 `>` 提示符后逐行输入以下命令：
 
     ```javascript
     > const { ethers } = require("hardhat");
     > const wallet = ethers.Wallet.createRandom();
     ```
 
--   **Get the wallet address**
+-   **获取钱包地址**
 
     ```javascript
     > wallet.address
-    // output
+    // 输出
     // '0x815dA86F4B01e53292541592E82f1FDdDB37038A'
     ```
 
--   **Get the private key**
+-   **获取私钥**
 
     ```javascript
     > wallet.privateKey
-    // output
+    // 输出
     // 0x8132dae6f139bc7d1a6308843d9df9062f49943aeb2dc600eadd9485ef872d1f
     ```
 
 ---
 
-## 2. Addresses and Private Keys
+## 2. 地址和私钥
 
-Ethereum addresses are derived from the public key, which in turn is derived from a private key which is a 32-byte (2^256) random number.
+以太自公钥，而坊地址派生公钥又派生自私钥，私钥是一个 32 字节（2^256）的随机数。
 
-The process involves:
+过程包括：
 
-1. Generating a random private key (32 bytes) - k
+1. 生成随机私钥（32 字节）- k
 
-2. Deriving the public key using the Elliptic Curve Digital Signature Algorithm (ECDSA) and secp256k1 curve.
+2. 使用椭圆曲线数字签名算法（ECDSA）和 secp256k1 曲线派生公钥。
 
     ![Image: Elliptic Curve secp256k1](img/secp256k1-curve.png)
 
-    The secp256k1 curve is defined by the equation:
+    secp256k1 曲线由以下方程定义：
 
     ```
     y^2 = x^3 + 7 (mod p)
     ```
 
-    where the constant p is a 256-bit prime number that fixes the allowable range of x and y coordinates.
+    其中常数 p 是一个 256 位素数，限定了 x 和 y 坐标的允许范围。
 
-    The secp256k1 standard also defines a base point G on the curve. The process of deriving the public key can be visualized geometrically as the process of "walking" along the elliptic curve in a specific way starting from G. The resulting point on the curve after k (private key) steps is the public key. This allows for very efficient computation of the public key from the private key, while making it computationally infeasible to reverse the process (i.e., derive the private key from the public key).
+    secp256k1 标准还定义了曲线上的一个基点 G。派生公钥的过程可以从几何上理解为从 G 开始沿椭圆曲线"走"特定方式的过程。走 k 步（私钥）后曲线上的结果点就是公钥。这允许非常高效地从私钥计算公钥，同时使反向推导过程（即从公钥派生私钥）在计算上不可行。
 
-3. Hashing the public key using the Keccak-256 hashing algorithm
-4. Taking the last 20 bytes of the hash to form the address
+3. 使用 Keccak-256 哈希算法对公钥进行哈希
+4. 取哈希的最后 20 个字节形成地址
 
 ---
 
-## 🛠️ Lab Practice: Derive Address from Private Key [Optional]
+## 🛠️ 实验实践：从私钥派生地址 [可选]
 
-This lab is optional and for those who want to dive deeper into the cryptographic details.
+此实验是可选的，供想深入了解密码学细节的人使用。
 
--   **Derive public key from private key**
+-   **从私钥派生公钥**
 
     ```javascript
     > const pubKey = ethers.SigningKey.computePublicKey(wallet.privateKey, false);
     ```
 
--   **Drop the version byte**
+-   **删除版本字节**
 
     ```javascript
     > const pubKeyNoPrefix = "0x" + pubKey.slice(4);
     ```
 
--   **Hash the public key using Keccak-256**
+-   **使用 Keccak-256 对公钥进行哈希**
 
     ```javascript
     > const hash = ethers.keccak256(pubKeyNoPrefix);
     ```
 
--   **Take the last 20 bytes (40 hexadecimal characters) to get the address**
+-   **取最后 20 个字节（40 个十六进制字符）获取地址**
 
     ```javascript
     > const derivedAddress = "0x" + hash.slice(-40)
-    // sample output
+    // 示例输出
     // 0x815da86f4b01e53292541592e82f1fdddb37038a
     ```
 
-    This is the exact same address as the one generated in previous lab.
+    这与上一个实验中生成的地址完全相同。
 
     ```javascript
     > wallet.address
@@ -124,56 +124,56 @@ This lab is optional and for those who want to dive deeper into the cryptographi
 
 ---
 
-## 3. Address Uniqueness and Collisions
+## 3. 地址唯一性和碰撞
 
-The probability of two different private keys generating the same address is astronomically low due to the vast keyspace (2^256 possible private keys). This makes address collisions practically impossible in real-world scenarios.
+由于密钥空间巨大（2^256 个可能的私钥），两个不同私钥生成相同地址的概率极低。这使得地址碰撞在现实世界中实际上不可能发生。
 
-**Quiz: How many atoms are there in our Sun?**
+**测验：太阳中有多少个原子？**
 
-**Answer: Roughly 10^57 atoms.**
+**答案：大约 10^57 个原子。**
 
-Now, if we frame private key collision probability using the birthday problem analogy:
+现在，如果我们用生日问题类比来分析私钥碰撞概率：
 
--   The total possible private keys (2^256) are equivalent to the combined atoms of about 120 quintillion Suns (1.2 x 10^20 Suns).
--   A collision would be about as likely as randomly picking two identical atoms out of all the atoms spread across those Suns.
+-   可能的私钥总数（2^256）相当于约 1.2 亿亿（1.2 x 10^20）个太阳的原子总和。
+-   碰撞的概率就像从散布在所有这些太阳中的所有原子中随机挑选两个相同的原子一样。
 
 ---
 
-## 4. Checksummed Addresses
+## 4. 校验和地址
 
-Ethereum addresses can be written in two ways as shown in the previous 2 labs:
+以太坊地址可以以前面两个实验中显示的两种方式编写：
 
--   **Lowercase format**: e.g., `0x815da86f4b01e53292541592e82f1fdddb37038a`
--   **Checksummed format**: e.g., `0x815dA86F4B01e53292541592E82f1FDdDB37038A`
+-   **小写格式**：例如 `0x815da86f4b01e53292541592e82f1fdddb37038a`
+-   **校验和格式**：例如 `0x815dA86F4B01e53292541592E82f1FDdDB37038A`
 
-Both represent the same address since hexadecimal is case-insensitive, but the checksummed version provides error detection capabilities.
-The address returned by most Ethereum libraries (like ethers.js) is in checksummed format.
+两者表示相同的地址，因为十六进制不区分大小写，但校验和版本提供错误检测功能。
+大多数以太坊库（如 ethers.js）返回的地址都是校验和格式。
 
-### Why Use Checksummed Addresses
+### 为什么使用校验和地址
 
-Checksummed addresses help prevent costly mistakes by:
+校验和地址通过以下方式帮助防止代价高昂的错误：
 
--   **Error Detection**: Invalid checksums indicate potential typos
--   **Industry Standard**: Most tools and services expect checksummed addresses
--   **Security**: Reduces risk of sending funds to wrong addresses
+-   **错误检测**：无效校验和表示可能有拼写错误
+-   **行业标准**：大多数工具和服务期望校验和地址
+-   **安全性**：降低将资金发送到错误地址的风险
 
-### Methods to Generate Checksummed Addresses
+### 生成校验和地址的方法
 
-1. **Using Etherscan**: Search with any address format and get checksummed result
-2. **Using ethers.js**: `ethers.getAddress(address)` function
-3. **Manual Validation**: Tools can verify checksum correctness
+1. **使用 Etherscan**：使用任何地址格式搜索，获取校验和结果
+2. **使用 ethers.js**：`ethers.getAddress(address)` 函数
+3. **手动验证**：工具可以验证校验和的正确性
 
-## 🛠️ Lab Practice: Create Checksummed Address
+## 🛠️ 实验实践：创建校验和地址
 
--   **Use ethers library to convert lowercase address to checksummed address**
+-   **使用 ethers 库将小写地址转换为校验和地址**
 
     ```javascript
 
-    // Convert to checksummed
+    // 转换为校验和
     > ethers.getAddress("0x815da86f4b01e53292541592e82f1fdddb37038a");
 
-    // Output:
+    // 输出：
     // '0x815dA86F4B01e53292541592E82f1FDdDB37038A'
     ```
 
--   **Task completed ✅** You can exit the console by pressing `Ctrl + C` twice.
+-   **任务完成 ✅** 您可以按两次 `Ctrl + C` 退出控制台。
