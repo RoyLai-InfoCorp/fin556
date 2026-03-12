@@ -1,46 +1,46 @@
-# Transactions and Gas
+# 交易和 Gas
 
-Every action on Ethereum costs **gas**. Gas measures work, and you pay for that work in **ETH**. Gas is the key contributing factor to what makes Solidity unique as compared to other languages. A clear understanding of gas and its impact on your design is a necessity for smart contract developers.
+以太坊上的每个操作都消耗 **Gas**。Gas 衡量工作量，您需要为这项工作支付 **ETH**。Gas 是使 Solidity 与其他语言相比独特的关键因素。清楚了解 Gas 及其对设计的影响是智能合约开发者的必要条件。
 
-**Why gas?**
+**为什么使用 Gas？**
 
-Ethereum use "gas" to keep the network **fair and usable** and to address the **halting problem**. In computing, the halting problem means you can’t reliably know in advance whether a program will ever stop. If smart contracts were free, someone could run code that never ends and clog the network. By charging gas, Ethereum puts a **budget** on every transaction so long-running code eventually stops and spam becomes costly.
+以太坊使用"Gas"来保持网络**公平和可用**，并解决**停机问题**。在计算中，停机问题意味着您无法可靠地提前知道程序是否会停止。如果智能合约是免费的，有人可以运行永不停止的代码并阻塞网络。通过收取 Gas，以太坊为每笔交易设定**预算**，使长时间运行的代码最终停止，垃圾邮件变得昂贵。
 
 ---
 
-## 1. Gas Units
+## 1. Gas 单位
 
 https://ethereum.org/en/developers/docs/gas/
 
-**Gas** = computational effort required for EVM operations.
+**Gas** = EVM 操作所需的计算工作量。
 
-**Example**: Common operations
+**示例**：常见操作
 
-    ETH transfer: 21,000 gas
-    Storage write: 20,000 gas
-    Storage read: 200 gas
+    ETH 转账：21,000 gas
+    存储写入：20,000 gas
+    存储读取：200 gas
 
-👉 ETH transfers cost exactly 21,000 gas - defined in the Ethereum Protocol Yellow Paper https://ethereum.github.io/yellowpaper/paper.pdf (Appendix G) covering signature verification, data processing, and balance updates.
+👉 ETH 转账正好消耗 21,000 gas - 在以太坊协议黄皮书（https://ethereum.github.io/yellowpaper/paper.pdf 附录 G）中有定义，包括签名验证、数据处理和余额更新。
 
 ![min-gas-cost](./img/min-gas-cost.png)
 
 ---
 
-## 🛠️ Lab Practise: Minimum Transaction Cost
+## 🛠️ 实验实践：最低交易成本
 
--   **Install packages**
+-   **安装软件包**
 
     ```bash
     npm i
     ```
 
--   **Start Hardhat Console**
+-   **启动 Hardhat 控制台**
 
     ```bash
     hh console
     ```
 
--   **Send 1 wei to accounts[1]**
+-   **发送 1 wei 给 accounts[1]**
 
     ```js
     const { ethers } = require("hardhat");
@@ -52,10 +52,10 @@ https://ethereum.org/en/developers/docs/gas/
     receipt = await response.wait();
     ```
 
--   **Analyse the result**
+-   **分析结果**
 
-    -   The transaction response indicates that the gasPrice was set at `1875000000`. This settings is configured in hardhat.config.js but can be overridden by passing an options object at the send of sendTraction().
-    -   Once the transaction is mined, it returns a receipt which contains the gasUsed - `21000`.
+    -   交易响应表明 gasPrice 设置为 `1875000000`。这在 hardhat.config.js 中配置，但可以通过在 sendTransaction() 的选项对象中传递来覆盖。
+    -   交易被挖掘后，它返回一个包含 gasUsed 的收据 - `21000`。
 
     ```js
     > response
@@ -80,63 +80,63 @@ https://ethereum.org/en/developers/docs/gas/
 
 ---
 
-## 2. Transaction Cost
+## 2. 交易成本
 
-**Transaction cost** = sum of all EVM operations in your transaction.
+**交易成本** = 交易中所有 EVM 操作的总和。
 
-**Example**: Writing to storage
+**示例**：写入存储
 
-    Base transaction:  21,000 gas
-    SSTORE (write):    20,000 gas
+    基础交易：  21,000 gas
+    SSTORE（写入）：   20,000 gas
     ─────────────────────────────
-    Total:            ~41,000 gas
+    总计：            ~41,000 gas
 
-👉 As Solidity developers, we usually care about the **transaction cost** rather than individual opcode gas, because we think in terms of function calls, not low-level operations.
+👉 作为 Solidity 开发者，我们通常关心**交易成本**而不是单独的 opcode gas，因为我们是按函数调用而不是底层操作来思考。
 
 ---
 
-## 3. Gas Price
+## 3. Gas 价格
 
-**Gas price** = how much ETH you pay per gas unit (market-driven).
+**Gas 价格** = 每单位 Gas 支付多少 ETH（市场驱动）。
 
-**Example**: Storage write with 20 gwei gas price
+**示例**：以 20 gwei 的 Gas 价格写入存储
 
-    Transaction cost:   41,000 gas
-    Gas price:              20 gwei
+    交易成本：   41,000 gas
+    Gas 价格：      20 gwei
     ───────────────────────────────
-    Total fee:         820,000 gwei = 0.00082 ETH
+    总费用：     820,000 gwei = 0.00082 ETH
 
-👉 Higher gas price → transaction confirmed faster.  
-👉 Lower gas price → transaction may be delayed, but costs less.
+👉 Gas 价格越高 → 交易确认越快。  
+👉 Gas 价格越低 → 交易可能会延迟，但成本更低。
 
 ---
 
-## 4. Gas Fees before 2021
+## 4. 2021 年之前的 Gas 费用
 
-Earlier, Ethereum used a simple auction: every user set a single **gas price** and hoped miners would pick their transaction.
+早期，以太坊使用简单的拍卖：每个用户设置一个单一的 **Gas 价格**，希望矿工会选择他们的交易。
 
-### Gas Fee Problem
+### Gas 费用问题
 
--   **Guesswork:** If you set gas price too low, your transaction might sit pending for hours.
--   **Overpaying:** To avoid being stuck, many users overbid and wasted ETH.
--   **Congestion spikes:** During popular events (like token launches or CryptoKitties in 2017), gas prices jumped 10–50× in minutes.
+-   **猜测**：如果 Gas 价格设置得太低，您的交易可能会等待数小时。
+-   **多付**：为避免被卡住，许多用户出价过高，浪费了 ETH。
+-   **拥堵高峰**：在热门活动期间（如 2017 年的代币发行或 CryptoKitties），Gas 价格在几分钟内上涨 10-50 倍。
 
-**Example:**  
-During the CryptoKitties boom in 2017, average gas fees shot up from just a few gwei to over 500 gwei in a matter of hours. That meant a simple ETH transfer, which normally cost only a few cents, could suddenly cost more than $50. Regular users were priced out, while only those willing to drastically overpay saw their transactions included.
+**示例：**  
+在 2017 年 CryptoKitties 热潮期间，平均 Gas 费用在几小时内从仅仅几 gwei 飙升至超过 500 gwei。这意味着一笔简单的 ETH 转账（通常只花费几美分）可能突然花费超过 50 美元。普通用户被价格拒之门外，而只有愿意大幅多付的用户才能看到他们的交易被包含。
 
-Ethereum gas prices are highly volatile. It historically hovers around 20-50 gwei in general but can easily cross the 100 gwei mark during peak. (the highest recorded spike is more than 900).
+以太坊 Gas 价格波动很大。它历史上通常在 20-50 gwei 左右，但在高峰期很容易超过 100 gwei。（记录的最高峰值超过 900）。
 
 ![gas-price](./img/gas-price.png)
 
-👉 The result: fees were unpredictable, stressful, and unfair to regular users.
+👉 结果：费用不可预测，对普通用户压力大，经常多付。
 
 ---
 
-## 🛠️ Lab Practice: Transfer ETH with GasPrice (pre-EIP-1559)
+## 🛠️ 实验实践：使用 GasPrice 转账 ETH（EIP-1559 之前）
 
-This is an extension of the previous example on **Transfer ETH** by overriding the send transaction with an explicit gasPrice.
+这是之前 **转账 ETH** 示例的扩展，通过使用显式 gasPrice 覆盖发送交易。
 
-Sends 1 wei from accounts[0] to accounts[1] with a gasPrice of 10 gwei.
+从 accounts[0] 发送 1 wei 给 accounts[1]，gasPrice 为 10 gwei。
 
 ```js
 > response = await accounts[0].sendTransaction(
@@ -152,48 +152,48 @@ Sends 1 wei from accounts[0] to accounts[1] with a gasPrice of 10 gwei.
 
 ---
 
-## 5. Gas Fees: After 2021
+## 5. 2021 年之后的 Gas 费用
 
-### EIP-1559 Fees
+### EIP-1559 费用
 
-In August 2021, Ethereum introduced **EIP-1559** to fix these problems. Instead of one unpredictable auction price, fees were split into clear parts:
+2021 年 8 月，以太坊引入了 **EIP-1559** 来解决这些问题。费用不再是一个不可预测的拍卖价格，而是被分成清晰的部分：
 
-| Before EIP-1559 (Pre-2021)                                                                                    | After EIP-1559 (2021+)                                                                                                               |
+| EIP-1559 之前（2021 年前）                                                                                    | EIP-1559 之后（2021 年+）                                                                                                               |
 | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Single Gas Price**: Users set one price and hope miners pick their transaction                              | **Base Fee**: Protocol-set minimum per gas unit; adjusts each block (burned)                                                         |
-| **Unpredictable**: Guesswork on pricing; too low = pending, too high = overpaying                             | **Priority Fee**: Small tip you add (e.g. 1–2 gwei) to validator for faster inclusion                                                |
-| **Volatile**: Gas prices jumped 10–50× during congestion (e.g., CryptoKitties: few gwei → 500+ gwei in hours) | **Max Fee**: Your budget cap per gas unit; unused portion refunded                                                                   |
-| **Example**: Set gas price to 50 gwei, pay exactly 50 gwei per gas regardless of network conditions           | **Example**: Set max fee 30 gwei, priority tip 2 gwei. If base fee is 15 gwei, you pay 17 gwei (base + tip), and 13 gwei is refunded |
-| **Result**: Stressful, unfair to regular users, frequent overpaying                                           | **Result**: Predictable fees; set a safe max, protocol handles the rest                                                              |
+| **单一 Gas 价格**：用户设置一个价格，希望矿工选择他们的交易                              | **基础费用**：协议设定的每单位 Gas 最低费用；每个区块调整（销毁）                                                         |
+| **不可预测**：定价猜测；太低 = 待处理，太高 = 多付                                     | **优先费用**：您添加的小费（如 1-2 gwei）给验证者以更快包含                                                |
+| **波动**：在拥堵期间 Gas 价格跳跃 10-50 倍（如 CryptoKitties：几 gwei → 几小时内 500+ gwei） | **最高费用**：您每单位 Gas 的预算上限；未使用部分退还                                                                   |
+| **示例**：设置 Gas 价格为 50 gwei，无论网络条件如何都精确支付 50 gwei                              | **示例**：设置最高费用 30 gwei，优先费 2 gwei。如果基础费用是 15 gwei，您支付 17 gwei（基础 + 费），退还 13 gwei |
+| **结果**：压力大，对普通用户不公平，经常多付                                           | **结果**：可预测的费用；设置安全的最高费用，协议处理其余部分                                                              |
 
-**Example**: ETH transfer with EIP-1559 fees
+**示例**：使用 EIP-1559 费用的 ETH 转账
 
-    Base fee:              15 gwei (protocol-set)
-    Priority tip:           2 gwei (your choice)
-    Max fee:               30 gwei (your cap)
+    基础费用：              15 gwei（协议设定）
+    优先费：               2 gwei（您的选择）
+    最高费用：             30 gwei（您的上限）
     ────────────────────────────
-    Effective price:       17 gwei (base + tip)
+    有效价格：           17 gwei（基础 + 费）
 
-    Transaction cost:  21,000 gas
-    Effective price:       17 gwei
+    交易成本：         21,000 gas
+    有效价格：           17 gwei
     ────────────────────────────
-    Total fee:         357,000 gwei = 0.000357 ETH
+    总费用：         357,000 gwei = 0.000357 ETH
 
-Base fee is burned, tip goes to validator, unused budget refunded.
+基础费用被销毁，优先费给验证者，未使用的预算退还。
 
-👉 Now fees are predictable: you don’t need to guess, you just set a safe max and let the protocol handle the rest.
+👉 现在费用可预测：您不需要猜测，只需设置安全的最高费用，让协议处理其余部分。
 
 ---
 
-## 🛠️ Lab Practice: Transfer ETH with EIP-1559 Fees
+## 🛠️ 实验实践：使用 EIP-1559 费用转账 ETH
 
-In this example, instead of setting a gasPrice, we set a maxPriorityFeePerGas (tip) and maxFeePerGas (cap).
+在这个示例中，我们不是设置 gasPrice，而是设置 maxPriorityFeePerGas（费）和 maxFeePerGas（上限）。
 
--   **Estimate the base fee**
+-   **估算基础费用**
 
-    The base fee is dynamic and is based on the blockchain's network congestion. It can only be known after a block is mined but will be bound by ±12.5% of the previous block's base fee.
+    基础费用是动态的，基于区块链的网络拥堵。它只能在区块被挖掘后知道，但将受前一个区块基础费用的 ±12.5% 限制。
 
-    In the Hardhat console, run the following to estimate the current base fee:
+    在 Hardhat 控制台中，运行以下命令来估算当前基础费用：
 
     ```js
     const block = await ethers.provider.getBlock("latest");
@@ -201,15 +201,15 @@ In this example, instead of setting a gasPrice, we set a maxPriorityFeePerGas (t
         "Estimated base fee gwei:",
         ethers.formatUnits(block.baseFeePerGas, "gwei")
     );
-    // Sample Output:
+    // 示例输出：
     // Estimated base fee gwei: 1.0
     ```
 
--   **Transfer with custom tip and cap**
+-   **使用自定义费率和上限转账**
 
-    -   Sends 1 gwei from accounts[0] to accounts[1].
-    -   Set a maxPriorityFeePerGas(tip) of 1 gwei.
-    -   Set the maxFeePerGas(cap) of 3 gwei (est. base fee + tip < 3 gwei)
+    -   从 accounts[0] 发送 1 gwei 给 accounts[1]。
+    -   设置 maxPriorityFeePerGas（费）为 1 gwei。
+    -   设置 maxFeePerGas（上限）为 3 gwei（估算基础费用 + 费 < 3 gwei）
 
     ```js
     > amt = ethers.parseUnits("1","gwei")
@@ -221,7 +221,7 @@ In this example, instead of setting a gasPrice, we set a maxPriorityFeePerGas (t
             maxFeePerGas: ethers.parseUnits("3","gwei")
         }
     )
-    // Sample Output:
+    // 示例输出：
     // {
     //   ...
     //   maxPriorityFeePerGas: 1000000000n,
@@ -229,33 +229,33 @@ In this example, instead of setting a gasPrice, we set a maxPriorityFeePerGas (t
     //   value: 1000000000n,
     ```
 
-    Find the gasUsed after the transaction is confirmed.
+    交易确认后找到 gasUsed。
 
     ```js
     > receipt = await tx.wait();
     > gasUsed = receipt.gasUsed;
-    // Sample Output:
+    // 示例输出：
     // 21000n
     ```
 
--   **Check Balance**
+-   **检查余额**
 
-    Check the balance after transaction.
+    检查交易后的余额。
 
     ```js
     > await ethers.provider.getBalance(accounts[0].address)
     // 9999999960624000000000n
     ```
 
--   **Calculate and confirm the effective gas price**
+-   **计算并确认有效 Gas 价格**
 
-    **Part 1 - Calculate the gas fee paid**
+    **第 1 部分 - 计算支付的 Gas 费用**
 
-    -   Original balance: `10000000000000000000000` (10,000 ETH)
+    -   原始余额：`10000000000000000000000`（10,000 ETH）
 
-    -   New balance: `9999999960624000000000` (9,999.9960624 ETH)
+    -   新余额：`9999999960624000000000`（9,999.9960624 ETH）
 
-    -   Gas Fee paid:
+    -   Gas 费用：
 
         ```js
         > delta = 10000000000000000000000n - 9999999960624000000000n
@@ -265,16 +265,16 @@ In this example, instead of setting a gasPrice, we set a maxPriorityFeePerGas (t
         // '39375.0'
         ```
 
-    -   Fee per gas unit:
+    -   每单位 Gas 的费用：
 
         ```js
         > ethers.formatUnits(gasFee / gasUsed, "gwei")
         // '1.875'
         ```
 
-    **Part 2 - Confirm with on-chain data**
+    **第 2 部分 - 用链上数据确认**
 
-    -   Find the actual base fee from the block:
+    -   从区块中找出实际基础费用：
 
         ```js
         > block = await ethers.provider.getBlock("latest")
@@ -282,7 +282,7 @@ In this example, instead of setting a gasPrice, we set a maxPriorityFeePerGas (t
         // 875000000n
         ```
 
-    -   Calculate the effective gas price:
+    -   计算有效 Gas 价格：
 
         ```js
         > priorityFee = ethers.parseUnits("1","gwei")
@@ -293,31 +293,31 @@ In this example, instead of setting a gasPrice, we set a maxPriorityFeePerGas (t
         // '1.875'
         ```
 
-    The effective gas price calculated from the balance change matches the on-chain data.
+    从余额变化计算的有效 Gas 价格与链上数据匹配。
 
 ---
 
-## 6. Real-World Cost Considerations
+## 6. 现实世界成本考虑
 
-Understanding transaction costs is crucial for practical Ethereum development:
+理解交易成本对于实际的以太坊开发至关重要：
 
-### USD Cost Calculation
+### 美元成本计算
 
-To calculate the real-world cost of transactions:
+要计算交易的现实世界成本：
 
 ```
-USD Cost = Gas Fee (in ETH) × ETH Price (in USD)
+美元成本 = Gas 费用（ETH）× ETH 价格（美元）
 ```
 
-**Example**: If a transaction costs 0.000023 ETH and ETH is $4,000:
+**示例**：如果一笔交易花费 0.000023 ETH，ETH 价格为 $4,000：
 
--   USD Cost = 0.000023 × $4,000 = $0.093 (about 9.3 cents)
+-   美元成本 = 0.000023 × $4,000 = $0.093（约 9.3 美分）
 
 ---
 
-## 🛠️ Lab Practice: Calculate USD Costs
+## 🛠️ 实验实践：计算美元成本
 
--   **Calculate gas cost from transaction receipt**
+-   **从交易收据计算 Gas 成本**
 
     ```js
     > gasUsed = receipt.gasUsed
@@ -335,49 +335,49 @@ USD Cost = Gas Fee (in ETH) × ETH Price (in USD)
     // '0.000023255859375'
     ```
 
--   **Calculate USD cost (assuming ETH = $4000)**
+-   **计算美元成本（假设 ETH = $4000）**
 
     ```js
     > gasFeeInUSD = gasFeeInETH * 4000
-    // 0.093023437  // Approximately $0.093
+    // 0.093023437  // 约 $0.093
     ```
 
 ---
 
-## 7. Gas Limit
+## 7. Gas 限制
 
-**Gas limit** = maximum gas you're willing to spend on a transaction (safety cap).
+**Gas 限制** = 您愿意在交易上花费的最大 Gas（安全上限）。
 
-### a) Example 1 - Deploying a simple contract:
+### a) 示例 1 - 部署一个简单合约：
 
-Some contracts are simple (like a basic ERC-20).
+一些合约很简单（如基础 ERC-20）。
 
-    Estimated gas:     41,000 gas
-    Gas limit set:     50,000 gas (buffer for safety)
-    Actual gas used:   41,000 gas
+    估算 Gas：     41,000 gas
+    Gas 限制设置： 50,000 gas（安全缓冲）
+    实际使用：    41,000 gas
     ────────────────────────────
-    Unused gas:         9,000 gas (refunded to you)
+    未使用 Gas：   9,000 gas（退还给您）
 
-👉 Gas limit sufficient → unused portion refunded
+👉 Gas 限制足够 → 未使用部分退还
 
-### b) Example 2 - Deploying a complex contract:
+### b) 示例 2 - 部署一个复杂合约：
 
-Bigger contracts take more gas to deploy because the constructor runs more code and stores more data. If there were no cap, a mistake in your code (e.g., pre-minting thousands of tokens, seeding registries, or writing large data) could burn through unlimited ETH.
+更大的合约需要更多 Gas 来部署，因为构造函数运行更多代码并存储更多数据。如果没有上限，您的代码中的错误（如预铸造数千个代币、种子注册表或写入大量数据）可能会烧掉无限的 ETH。
 
-    Estimated gas:    1,200,000 gas
-    Gas limit set:       50,000 gas (buffer for safety)
-    Actual gas used:     50,000 gas
+    估算 Gas：    1,200,000 gas
+    Gas 限制设置：  50,000 gas（安全缓冲）
+    实际使用：     50,000 gas
     ────────────────────────────
-    Unused gas:               0 gas (refunded to you)
+    未使用 Gas：        0 gas（丢失）
 
-👉 Gas limit too low → transaction fails, gas spent is lost
-👉 You are safeguarded from overspending.
+👉 Gas 限制太低 → 交易失败，已花费的 Gas 丢失
+👉 您被保护免于超支。
 
 ---
 
-## 🛠️ Lab: Estimate Deployment Cost
+## 🛠️ 实验：估算部署成本
 
-### Create `test/deploymentTest.js`
+### 创建 `test/deploymentTest.js`
 
 ```js
 describe("Contract Deployment Cost Comparison", () => {
@@ -402,17 +402,17 @@ describe("Contract Deployment Cost Comparison", () => {
 });
 ```
 
-### Run the deployment test:
+### 运行部署测试：
 
 ```bash
 hh test test/deploymentTest.js
 ```
 
-**Expected results:**
+**预期结果：**
 
--   **Counter**: ~150,000-200,000 gas (simple contract)
--   **ERC20**: ~800,000-1,200,000 gas (complex contract with mappings, events)
--   **Ratio**: ERC20 costs 4-6x more than Counter
--   **Key factors**: Contract size, storage initialization, constructor complexity
+-   **Counter**：约 150,000-200,000 gas（简单合约）
+-   **ERC20**：约 800,000-1,200,000 gas（复杂合约，有映射、事件）
+-   **比率**：ERC20 比 Counter 贵 4-6 倍
+-   **关键因素**：合约大小、存储初始化、构造函数复杂性
 
 ---

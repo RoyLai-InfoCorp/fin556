@@ -1,30 +1,30 @@
-# ERC20 Token Standard Advanced
+# ERC20 代币标准进阶
 
-## 1. Intro
+## 1. 简介
 
-In **ERC20 Token Standard Basics**, we learnt about how to create a basic ERC20 token contract that adheres to the ERC20 standard and nothing more. We call this the Vanilla ERC20 Token. In practice, most ERC20 tokens have additional functionalities such as minting, burning, pausing, etc. In this lesson, we will learn how to extend the Vanilla ERC20 token to create a more functional token.
-
----
-
-## 2. ERC20 Variants
-
--   **Mintable**: A mintable token allows new tokens to be created and added to the total supply. This is useful for tokens that need to be issued over time, such as in a crowdsale or as rewards.
-
--   **Burnable**: A burnable token allows tokens to be destroyed or removed from the total supply. This is useful for tokens that need to be taken out of circulation, such as in a deflationary model or as a penalty for certain actions.
-
--   **Pausable**: A pausable token allows the contract owner to pause or unpause the token transfers. This is useful for emergency situations, such as a security breach or a bug in the contract.
-
--   **Capped**: A capped token has a maximum supply limit that cannot be exceeded. This is useful for tokens that need to have a fixed supply, such as in a scarcity model or as a store of value.
-
--   **Ownable**: An ownable token has an owner who has special privileges, such as minting or pausing the token. This is useful for tokens that need to have a central authority, such as in a governance model or as a utility token.
+在 **ERC20 代币标准基础** 中，我们学习了如何创建一个符合 ERC20 标准的基础 ERC20 代币合约，仅此而已。我们称之为香草代币（Vanilla ERC20）。在实践中，大多数 ERC20 代币都有额外的功能，如铸造、销毁、暂停等。在本课程中，我们将学习如何扩展香草 ERC20 代币以创建更具功能的代币。
 
 ---
 
-## 3. Mintable ERC20 Token
+## 2. ERC20 变体
 
-Open the file at `node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol` to see OpenZeppelin's implementation of the ERC20 contract.
+-   **可铸造（Mintable）**：可铸造代币允许创建新代币并添加到总供应量。这对于需要随时间发行的代币很有用，例如众筹或作为奖励。
 
-Notice that the contract has an internal function `_mint(address account, uint256 value)`.
+-   **可销毁（Burnable）**：可销毁代币允许销毁或从总供应量中移除代币。这对于需要退出流通的代币很有用，例如通缩模型或作为某些行为的惩罚。
+
+-   **可暂停（Pausable）**：可暂停代币允许合约所有者暂停或取消暂停代币转账。这对于紧急情况很有用，例如安全漏洞或合约中的错误。
+
+-   **有上限（Capped）**：有上限代币有最大供应量限制，不能超过。这对于需要有固定供应量的代币很有用，例如稀缺模型或价值存储。
+
+-   **可拥有（Ownable）**：可拥有代币有一个所有者，拥有特殊权限，如铸造或暂停代币。这对于需要有中心权威的代币很有用，例如治理模型或实用代币。
+
+---
+
+## 3. 可铸造 ERC20 代币
+
+打开 `node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol` 文件查看 OpenZeppelin 的 ERC20 合约实现。
+
+注意合约有一个内部函数 `_mint(address account, uint256 value)`。
 
 ```solidity
     /**
@@ -43,7 +43,7 @@ Notice that the contract has an internal function `_mint(address account, uint25
     }
 ```
 
-The line `_update(address(0), account, value);` is a call to another internal function `_update()`. 
+`_update(address(0), account, value);` 这一行是对另一个内部函数 `_update()` 的调用。
 
 ```solidity
     /**
@@ -72,22 +72,22 @@ The line `_update(address(0), account, value);` is a call to another internal fu
     }
 ```
 
-Therefore the line of code in `_mint()` function `_update(address(0), account, value);` means that we are increasing the balance of `account` by `value` amount of tokens and deducting `value` amount from no one's balance (address(0)). This effectively increases the total supply of the token by `value` amount of tokens.
+因此，`_mint()` 函数中的代码 `_update(address(0), account, value);` 意味着我们正在将 `account` 的余额增加 `value` 数量的代币，并从没有人的余额（address(0)）中扣除 `value` 数量。这有效地将代币的总供应量增加了 `value` 数量。
 
 ---
 
-## 🛠️ Lab Practice: MintableDemoToken
+## 🛠️ 实验实践：MintableDemoToken
 
-1.  **Install project dependencies**
+1.  **安装项目依赖**
 
     ```bash
     cd /workspace/day-2/08-erc20-advanced
     npm i
     ```
 
-2. **Create MintableDemoToken.sol**
+2. **创建 MintableDemoToken.sol**
 
-    Create a new file `contracts/MintableDemoToken.sol`.
+    创建新文件 `contracts/MintableDemoToken.sol`。
 
     **contracts/MintableDemoToken.sol**
 
@@ -106,10 +106,10 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     }
     ```
 
-3. **Add mint() function**
+3. **添加 mint() 函数**
 
-    Add a public `mint()` function to the `MintableDemoToken` contract.
-    Since OpenZeppelin's ERC20 contract already has an internal `_mint()` function, we can simply call it from our `mint()` function.
+    为 `MintableDemoToken` 合约添加一个公共 `mint()` 函数。
+    由于 OpenZeppelin 的 ERC20 合约已经有一个内部 `_mint()` 函数，我们可以简单地从我们的 `mint()` 函数调用它。
 
     **contracts/MintableDemoToken.sol**
 
@@ -120,11 +120,11 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
         }
     ```
 
-    This `mint()` function is declared as `virtual` so that it can be overridden in derived contracts.
+    这个 `mint()` 函数声明为 `virtual`，以便可以在派生合约中被覆盖。
 
-4. **Create test for MintableDemoToken**
+4. **为 MintableDemoToken 创建测试**
 
-    Create a new file `test/testMintableDemoToken.js`.
+    创建新文件 `test/testMintableDemoToken.js`。
 
     **test/testMintableDemoToken.js**
 
@@ -161,12 +161,12 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     });
     ```
 
-5. **Run the test**
+5. **运行测试**
 
     ```bash
     hh test test/testMintableDemoToken.js
 
-     # Sample Output:
+     # 示例输出：
      #  MintableDemoToken
      #    ✔ Should have correct name and symbol (123ms)
      #    ✔ Should assign initial supply to owner (78ms)
@@ -176,19 +176,19 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     ```
 ---
 
-## 4. Ownable Contract
+## 4. 可拥有合约
 
--   An ownable contract is a contract that has an owner who has special privileges, such as minting or pausing the token. This is useful for tokens that need to have a central authority, such as in a governance model or as a utility token.
+-   可拥有合约是一个有所有者的合约，所有者拥有特殊权限，如铸造或暂停代币。这对于需要有中心权威的代币很有用，例如治理模型或实用代币。
 
--   OpenZeppelin provides an implementation of the Ownable contract in `node_modules/@openzeppelin/contracts/access/Ownable.sol`.
+-   OpenZeppelin 在 `node_modules/@openzeppelin/contracts/access/Ownable.sol` 中提供了可拥有合约的实现。
 
--   The **Ownable** contract has an internal variable `owner` that stores the address of the owner.
+-   **可拥有**合约有一个内部变量 `owner`，存储所有者的地址。
 
     ```solidity
     address private _owner;
     ```
 
--   The **Ownable** contract has a constructor accepting an address parameter `initialOwner` to set the initial owner of the contract.
+-   **可拥有**合约有一个接受地址参数 `initialOwner` 的构造函数，用于设置合约的初始所有者。
 
     ```solidity
     constructor(address initialOwner) {
@@ -199,7 +199,7 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     }
     ```
 
--   The **Ownable** contract has a public function `owner()` that returns the address of the owner.
+-   **可拥有**合约有一个公共函数 `owner()`，返回所有者的地址。
 
     ```solidity
     function owner() public view virtual returns (address) {
@@ -207,7 +207,7 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     }
     ```
 
--   The **Ownable** contract has a public function `transferOwnership(address newOwner)` that allows the current owner to transfer ownership to a new owner.
+-   **可拥有**合约有一个公共函数 `transferOwnership(address newOwner)`，允许当前所有者将所有权转移给新所有者。
 
     ```solidity
     function transferOwnership(address newOwner) public virtual onlyOwner {
@@ -218,7 +218,7 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     }
     ```
 
--   The **Ownable** contract has a modifier `onlyOwner` that restricts access to certain functions to only the owner.
+-   **可拥有**合约有一个修饰符 `onlyOwner`，限制某些函数只能由所有者访问。
 
     ```solidity
     modifier onlyOwner() {
@@ -227,11 +227,11 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     }
     ```
 
-    In the modifier, the function `_checkOwner()` is called to check if the caller is the owner. If not, it reverts the transaction.
+    在修饰符中，调用函数 `_checkOwner()` 来检查调用者是否是所有者。如果不是，它将回滚交易。
 
-    The `_;` is a special symbol that tells the compiler to insert the rest of the function body at that point. Since `_;` is added to the end of the ownable modifier. that means the modifier logic is executed before the function body.
+    `_;` 是一个特殊符号，告诉编译器在那个点插入函数体的其余部分。由于 `_;` 添加到可拥有修饰符的末尾，意味着修饰符逻辑在函数体之前执行。
 
-    **Example: Using onlyOwner modifier**
+    **示例：使用 onlyOwner 修饰符**
 
     ```solidity
     function mint(address to, uint256 amount) public override onlyOwner {
@@ -240,7 +240,7 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
     }
     ```
 
-    In the example above, **onlyOwner** modifier is added to the `mint()` function. This transforms the function to
+    在上面的示例中，**onlyOwner** 修饰符被添加到 `mint()` 函数。这将函数转换为：
 
     ```solidity
     function mint(address to, uint256 amount) public override {
@@ -252,16 +252,15 @@ Therefore the line of code in `_mint()` function `_update(address(0), account, v
 
 ---
 
-## 5. Multiple Inheritance [Optional]
+## 5. 多重继承 [可选]
 
 https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inheritance#multiple-inheritance-and-linearization
 
+-   想象一个场景，您想创建一个结合两个现有合约功能的新合约，例如 `MintableDemoToken` 和 `Ownable`。一种方法是继承一个合约，然后将另一个合约的代码复制到新合约中。然而，代码重复不是一个好习惯，因为重复的代码可能与原始代码不同步，导致错误和维护问题。
 
--   Imagine a scenario where you want to create a new contract that combines the functionalities of two existing contracts, such as `MintableDemoToken` and `Ownable`. One way is to inherit one contract and then copy the code from the other contract into the new contract. However, code duplication is not a good practice because the duplicated code can become out of sync with the original code, leading to bugs and maintenance issues.
+    **示例：带代码重复的单继承**
 
-    **Example: Single Inheritance with Code Duplication**
-
-    Derive from `MintableDemoToken` and copy the code from OpenZeppelin's Ownable contract into the new contract.
+    从 `MintableDemoToken` 派生，并将 OpenZeppelin 的可拥有合约的代码复制到新合约中。
 
     ```solidity
     contract OwnableMintableDemoToken is MintableDemoToken {
@@ -297,9 +296,9 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     }
     ```
 
-    **Example: Single Inheritance with Code Library**
+    **示例：带代码库的单继承**
 
-    Another way is to use a library that contains the code from the other contract. However, that means the contract has to implement "wrapper" functions to call the library functions.
+    另一种方法是使用包含另一个合约代码的库。然而，这意味着合约必须实现"包装"函数来调用库函数。
 
     ```solidity
     library OwnableLib {
@@ -335,11 +334,11 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     }
     ```
 
--   A better way is to use multiple inheritance, where the new contract inherits from both existing contracts. This way, the new contract can access the functionalities of both contracts without code duplication or wrapper functions. 
+-   更好的方法是使用多重继承，新合约继承自两个现有合约。这样，新合约可以在没有代码重复或包装函数的情况下访问两个合约的功能。
 
-    **Example: Multiple Inheritance**
+    **示例：多重继承**
 
-    Derive from both `MintableDemoToken` and OpenZeppelin's `Ownable` contract.
+    同时从 `MintableDemoToken` 和 OpenZeppelin 的 `Ownable` 合约派生。
 
     ```solidity
     import "./MintableDemoToken.sol";
@@ -359,11 +358,11 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     }
     ```
 
--   However, multiple inheritance can lead to **diamond problem** if the two base contracts have a common ancestor contract. Solidity uses [C3 linearization](https://en.wikipedia.org/wiki/C3_linearization) algorithm to resolve the diamond problem.
+-   但是，如果两个基合约有一个共同的祖先合约，多重继承可能导致**菱形问题**。Solidity 使用 [C3 线性化](https://en.wikipedia.org/wiki/C3_linearization) 算法来解决菱形问题。
 
-    **Multiple inheritance function overriding**
+    **多重继承函数覆盖**
 
-    - Consider the following parent classes, A and B, each with a function of the same name:
+    -   考虑以下父类 A 和 B，每个都有一个同名函数：
 
         ```solidity
         contract A {
@@ -374,23 +373,23 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
         }
         ```
 
-    - The child contract C of A and B will not compile because the compiler requires you to explicitly override when two base contracts define the same function signature. The child must implement the function, even if it doesn’t add new logic:
+    -   A 和 B 的子合约 C 将无法编译，因为编译器要求当两个基合约定义相同的函数签名时，您必须明确覆盖。子合约必须实现该函数，即使它不添加新逻辑：
 
         ```solidity
         contract C is A, B {
             // Error: missing override for conflict()
         }
-        ```
+    ```
 
-    - Simply writing `override` is not enough. When multiple parents define the same function, you must list all parent contracts explicitly. For example, contract D will fail:
+    -   仅仅写 `override` 是不够的。当多个父合约定义相同的函数时，您必须明确列出所有父合约。例如，合约 D 将失败：
 
         ```solidity
         contract D is A, B {
             function conflict() public override {} // Error
         }
-        ```
+    ```
 
-    - The correct form is to use `override(A, B)`:
+    -   正确的形式是使用 `override(A, B)`：
 
         ```solidity
         contract E is A, B {
@@ -398,13 +397,13 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
                 // choose implementation
             }
         }
-        ```
+    ```
 
-    **Multiple inheritance constructor**
+    **多重继承构造函数**
 
-    -   The order of constructor calls follows the order in which the base contracts are defined,ie. left to right.
+    -   构造函数调用顺序遵循基合约定义的顺序，即从左到右。
 
-    -   Consider the following parent classes, A and B.
+    -   考虑以下父类 A 和 B。
 
         ```solidity
         contract TestParentA is TestGrantParent {
@@ -420,9 +419,9 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
                 age=age_;
             }
         }
-        ```
+    ```
 
-    -   The constructor for base contracts are specified explicitly using their names as modifier.
+    -   基合约的构造函数使用其名称作为修饰符明确指定。
         ```solidity
         contract TestChildA is TestParentA, TestParentB {
             constructor() TestParentA('A') TestParentB(100) {
@@ -432,19 +431,19 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
 ---
 
-## 🛠️ Lab Practice: OwnableMintableDemoToken
+## 🛠️ 实验实践：OwnableMintableDemoToken
 
-1. **Install Hardhat Chai Matchers**
+1. **安装 Hardhat Chai Matchers**
 
     ```bash
     npm i --save-dev @nomicfoundation/hardhat-chai-matchers --legacy-peer-deps
     ```
 
-    This is required to use the `to.be.revertedWith` assertion in the test.
+    这是为了在测试中使用 `to.be.revertedWith` 断言。
 
-2. **Update hardhat.config.js**
+2. **更新 hardhat.config.js**
 
-    Update `hardhat.config.js` to insert Hardhat Chai Matchers plugin at the top.
+    更新 `hardhat.config.js` 在顶部插入 Hardhat Chai Matchers 插件。
 
     **hardhat.config.js**
 
@@ -452,9 +451,9 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     require("@nomicfoundation/hardhat-chai-matchers");
     ```
 
-3.  **Create OwnableMintableDemoToken.sol**
+3.  **创建 OwnableMintableDemoToken.sol**
 
-    Create a new file `contracts/OwnableMintableDemoToken.sol`.
+    创建新文件 `contracts/OwnableMintableDemoToken.sol`。
 
     **contracts/OwnableMintableDemoToken.sol**
 
@@ -475,7 +474,7 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     }
     ```
 
-    Notice that we are inheriting from both `MintableDemoToken` and OpenZeppelin's `Ownable` contract so we need to call both constructors. Remember that the order of constructor calls follows the order in which the base contracts are defined, ie. left to right.
+    注意我们同时从 `MintableDemoToken` 和 OpenZeppelin 的 `Ownable` 合约继承，所以我们需要调用两个构造函数。请记住，构造函数调用顺序遵循基合约定义的顺序，即从左到右。
 
     ```solidity
 
@@ -488,10 +487,9 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
     ```
 
+4. **覆盖 mint() 函数**
 
-4. **Override mint() function**
-
-    Override the `mint()` function to add the `onlyOwner` modifier.
+    覆盖 `mint()` 函数以添加 `onlyOwner` 修饰符。
 
     **contracts/OwnableMintableDemoToken.sol**
 
@@ -503,9 +501,9 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
     ```
 
-5. **Create test for OwnableMintableDemoToken**
+5. **为 OwnableMintableDemoToken 创建测试**
 
-    Create a new file `test/testOwnableMintableDemoToken.js`.
+    创建新文件 `test/testOwnableMintableDemoToken.js`。
 
     **test/testOwnableMintableDemoToken.js**
 
@@ -539,11 +537,11 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     });
     ```
 
-6. **Run the test**
+6. **运行测试**
 
     ```bash
     hh test test/ownable-mintable-demo-token.js
-        # Sample Output:
+        # 示例输出：
         #  OwnableMintableDemoToken
         #    ✔ Owner should mint new tokens (85ms)
         #    ✔ Non-owner should not mint new tokens (61ms)
@@ -553,13 +551,13 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
 ---
 
-## 6. Crowdsale Contract
+## 6. 众筹合约
 
--   A crowdsale contract is a contract that allows users to buy tokens with Ether. This is useful for raising funds for a project or distributing tokens to a community.
+-   众筹合约是一个允许用户用以太币购买代币的合约。这对于为项目筹集资金或向社区分发代币很有用。
 
--   For a contract to receive ETH, it needs to have a function declared as `payable`.
+-   为了让合约接收以太币，它需要有一个声明为 `payable` 的函数。
 
-    **example: Payable function**
+    **示例：Payable 函数**
 
     ```solidity
     function buyTokens() public payable {
@@ -568,19 +566,19 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     }
     ```
 
-    -   The `msg.value` is a special variable that contains the amount of Ether sent with the transaction. The `payable` keyword allows the function to accept Ether.
+    -   `msg.value` 是一个特殊变量，包含随交易发送的以太币数量。`payable` 关键字允许函数接收以太币。
 
-    -  To send Ether to a payable function from JavaScript, you need to specify the `value` field in the transaction object.
+    -   要从 JavaScript 向 payable 函数发送以太币，您需要在交易对象中指定 `value` 字段。
 
-    **example: Sending ETH to payable function from JavaScript**
+    **示例：从 JavaScript 向 payable 函数发送 ETH**
 
     ```js
     await contract.buyTokens({ value: ethers.utils.parseEther("1.0") });
     ```
 
--   In order for crowdsale contract to mint tokens, it needs the ability to control and interact with the token contract. This can be achieved by making the crowdsale contract the owner of the token contract.
+-   为了让众筹合约铸造代币，它需要有能力控制和与代币合约交互。这可以通过使众筹合约成为代币合约的所有者来实现。
 
-    **example: Crowdsale contract as owner of token contract**
+    **示例：众筹合约作为代币合约的所有者**
 
     ```solidity
     contract Crowdsale {
@@ -596,12 +594,13 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     }
     ```
 
+---
 
-## 🛠️ Lab Practice: Crowdsale Contract
+## 🛠️ 实验实践：众筹合约
 
-1.  **Create Crowdsale.sol**
+1.  **创建 Crowdsale.sol**
 
-    Create a new file `contracts/Crowdsale.sol`.
+    创建新文件 `contracts/Crowdsale.sol`。
 
     **contracts/Crowdsale.sol**
 
@@ -630,9 +629,9 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
     }
     ```
 
-2. **Create test for Crowdsale**
+2. **为 Crowdsale 创建测试**
 
-    Create a new file `test/testCrowdsale.js`.
+    创建新文件 `test/testCrowdsale.js`。
 
     **test/testCrowdsale.js**
 
@@ -649,19 +648,19 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
         beforeEach(async function () {
             [owner, addr1] = await ethers.getSigners();
 
-            // Deploy Token contract
+            // 部署代币合约
             const Token = await ethers.getContractFactory(
                 "OwnableMintableDemoToken"
             );
             token = await Token.deploy(1000, owner.address);
             await token.waitForDeployment();
 
-            // Deploy Crowdsale contract
+            // 部署众筹合约
             const Crowdsale = await ethers.getContractFactory("Crowdsale");
             crowdsale = await Crowdsale.deploy(await token.getAddress(), 1000); // 1000 tokens per wei
             await crowdsale.waitForDeployment();
 
-            // Transfer token ownership to crowdsale contract
+            // 将代币所有权转移给众筹合约
             await token.transferOwnership(await crowdsale.getAddress());
         });
 
@@ -686,16 +685,15 @@ https://docs.soliditylang.org/en/v0.8.8/contracts.html?highlight=multiple%20inhe
 
     ```
 
-3. **Run the test**
+3. **运行测试**
 
     ```bash
     hh test test/crowdsale.js
 
-        # Sample Output:
+        # 示例输出：
         #  Crowdsale
         #    ✔ Should allow users to buy tokens (123ms)
         #    ✔ Should emit TokensPurchased event (78ms)
         #
         #   2 passing (1s)
     ```
-
