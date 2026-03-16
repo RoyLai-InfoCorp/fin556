@@ -1,73 +1,73 @@
-# Deploying ERC20 Tokens on Testnet
+# 在测试网上部署 ERC20 代币
 
-⚠️ You must have completed the previous lesson on HD Wallets before you can continue with this lesson. Otherwise, please refer to:
+⚠️ 您必须先完成上一节关于 HD 钱包的课程，才能继续本课程。否则，请参考：
 
--   [Hierarchical Deterministic Wallets](../../day-1/home-assignments/06-hd-wallet/README.md)
-    -   You need to understand how .env file works and because you will need to configure the network settings for testnet.
-    -   The account created using the mnemonic will be used to receive test ETH and deploy the smart contracts.
+-   [分层确定性钱包](../../day-1/home-assignments/06-hd-wallet/README.md)
+    -   您需要了解 .env 文件如何工作，因为您需要为测试网配置网络设置。
+    -   使用助记词创建的账户将用于接收测试 ETH 并部署智能合约。
 
-By now you should be familiar with writing and deploying smart contracts on a local Hardhat Network. In this lab, you will apply what you have learnt onto a public testnet called **Hoodi**. Hoodi is a fork of the Ethereum mainnet and is used for testing purposes. More information about Hoodi can be found here: https://github.com/eth-clients/hoodi
+到目前为止，您应该熟悉在本地 Hardhat Network 上编写和部署智能合约。在本实验中，您将把学到的知识应用到名为 **Hoodi** 的公共测试网上。Hoodi 是以太坊主网的分支，用于测试目的。关于 Hoodi 的更多信息可以在这里找到：https://github.com/eth-clients/hoodi
 
-There are 2 parts to this lab:
+本实验有两个部分：
 
-1. Sending Transaction on Public Testnet
-2. Deploying ERC20 tokens on Public Testnet
+1. 在公共测试网上发送交易
+2. 在公共测试网上部署 ERC20 代币
 
-## 🛠️ Lab Practise: Sending Transaction on Public Testnet
+## 🛠️ 实验实践：在公共测试网上发送交易
 
-💀⚠️ **IMPORTANT: NEVER USE YOUR REAL PRODUCTION WALLET KEY FOR LAB**
+💀⚠️ **重要：切勿将您的真实生产钱包密钥用于实验**
 
-### Step 1: Generate a Mnemonic Phrase for Test Wallet
+### 步骤 1：为测试钱包生成助记词短语
 
-Since we are no longer using the default Hardhat Network for this lab, we will need to create our own test wallet account using a mnemonic phrase.
+由于本实验不再使用默认的 Hardhat Network，我们将需要使用助记词短语创建自己的测试钱包账户。
 
--   Copy the **.env** file created from the previous lesson [Hierarchical Deterministic Wallets](../../day-1/home-assignments/06-hd-wallet/README.md) to this directory.
+-   从上一节课[分层确定性钱包](../../day-1/home-assignments/06-hd-wallet/README.md)中将 **.env** 文件复制到此目录。
 
-    Your `.env` file should look similar to this:
+    您的 `.env` 文件应该类似如下：
 
     ```.env
-    FIN556_MNEMONIC=replace this with your passphrase
+    FIN556_MNEMONIC=用您的密码短语替换
     ```
 
--   Take note of the account address as you will be needing it to collect test ETH later.
+-   记下账户地址，因为您稍后需要用它来领取测试 ETH。
 
-    If you have "lost" your address, you can get it from hardhat console:
+    如果您"丢失"了您的地址，您可以从 hardhat console 获取：
 
     ```js
     > accounts = await ethers.getSigners();
     > accounts[0].address
-    // Sample Output:
+    // 示例输出：
     // '0x6976827c1fC851546a202a5159a48Cac2b0649FF'
     ```
 
-### Step 2: Signup for an account with Alchemy
+### 步骤 2：注册 Alchemy 账户
 
-Alchemy is a web3 gateway provider. They do not own the testnet, they simply provide access to nodes that are connected to the testnet.
-To use their API, you will need to create an account with Alchemy and obtain an API key.
+Alchemy 是一个 web3 网关提供商。他们不拥有测试网，只是提供访问连接到测试网的节点。
+要使用他们的 API，您需要在 Alchemy 创建账户并获取 API 密钥。
 
-a) Signup an account with Alchemy (https://www.alchemy.com/)
+a) 在 Alchemy 注册账户（https://www.alchemy.com/）
 
-b) Create new app:
+b) 创建新应用：
 
--   Name: FIN556
--   Description: FIN556 Testing
--   Choose Chains: Ethereum
--   Choose Network: Hoodi
+-   名称：FIN556
+-   描述：FIN556 Testing
+-   选择链：以太坊
+-   选择网络：Hoodi
 
-c) Note down the **Network URL** provided.
+c) 记下提供的**网络 URL**。
 
 ![Alchemy App](./img/testnet.png)
 
-### Step 3: Configure Hardhat for Hoodi
+### 步骤 3：为 Hoodi 配置 Hardhat
 
-a) Create a `.env` file with the mnemonic and Alchemy URL and API Key.
+a) 创建包含助记词和 Alchemy URL 及 API 密钥的 `.env` 文件。
 
 ```.env
-FIN556_MNEMONIC=replace this with your passphrase
-FIN556_ALCHEMY_URL=replace this with Alchemy URL
+FIN556_MNEMONIC=用您的密码短语替换
+FIN556_ALCHEMY_URL=用 Alchemy URL 替换
 ```
 
-b) Update hardhat.config.js with a network entry for Hoodi below.
+b) 在 hardhat.config.js 中更新，为 Hoodi 添加网络条目。
 
 ```js
 require("@nomicfoundation/hardhat-ethers");
@@ -97,48 +97,48 @@ module.exports = {
 };
 ```
 
-### Step 5: Request for test ETH
+### 步骤 5：请求测试 ETH
 
-**NOTE:** Make sure you are using the Test Wallet address obtained in Step 2 above when requesting for test ETH.
+**注意：** 确保您使用上面步骤 2 中获取的测试钱包地址来请求测试 ETH。
 
-a) Go to this repository https://github.com/pk910/PoWFaucet and refer to the link for "Hoodi Testnet". Follow the instruction to mine the test ETH.
+a) 转到此仓库 https://github.com/pk910/PoWFaucet 并参考"Hoodi Testnet"的链接。按照说明挖掘测试 ETH。
 
-### Step 6: Check your test ETH balance using Etherscan
+### 步骤 6：使用 Etherscan 检查您的测试 ETH 余额
 
--   Go to Etherscan (https://hoodi.etherscan.io) and enter your wallet address obtained in Step 2 above. Eg. https://hoodi.etherscan.io/address/0x...
+-   转到 Etherscan（https://hoodi.etherscan.io）并输入上面步骤 2 中获取的钱包地址。例如 https://hoodi.etherscan.io/address/0x...
 
--   You should see the test ETH balance in your wallet.
+-   您应该在钱包中看到测试 ETH 余额。
 
     ![Hoodi Etherscan](./img/etherscan-balance.png)
 
-### Step 7: Transfer ETH using Hardhat console
+### 步骤 7：使用 Hardhat console 转账 ETH
 
--   Start Hardhat console by connecting to Hoodi network
+-   通过连接到 Hoodi 网络启动 Hardhat console
 
     ```bash
     hh console --network hoodi
     ```
 
--   Get the list of accounts
+-   获取账户列表
 
     ```javascript
     > const { ethers } = require("hardhat");
     > let accounts = await ethers.getSigners();
     ```
 
--   Check the balance of the first account
+-   检查第一个账户的余额
 
     ```javascript
     > await ethers.provider.getBalance(accounts[0].address);
 
-    // Sample Output:
+    // 示例输出：
     // 91150338056558588n
     ```
 
-    If you have received the test ETH, you should see a non-zero balance.
-    Otherwise, stop here and review the previous steps.
+    如果您收到了测试 ETH，您应该看到非零余额。
+    否则，在此停止并检查前面的步骤。
 
--   Send 0.00001 ETH from the first account to the second account
+-   从第一个账户向第二个账户发送 0.00001 ETH
 
     ```javascript
     > let tx = await accounts[0].sendTransaction({
@@ -147,38 +147,38 @@ a) Go to this repository https://github.com/pk910/PoWFaucet and refer to the lin
     });
     > await tx.wait();
     > console.log(`txHash = ${tx.hash}`);
-    // Sample Output:
+    // 示例输出：
     // txHash = 0x2973bea6b1221e61506c65ef6057c9acb7be8b6c1882884ba9086aebbc6619e9
     ```
 
--   Check the transaction on etherscan using the transaction hash above. Eg. https://hoodi.etherscan.io/tx/0x...
+-   使用上面的交易哈希在 etherscan 上检查交易。例如 https://hoodi.etherscan.io/tx/0x...
 
-    It should look similar to the screenshot below.
+    它应该看起来像下面的截图。
 
     ![Hoodi Etherscan](./img/etherscan-txn.png)
 
 ---
 
-## 🛠️ Lab Practise: Deploying ERC20 and Crowdsale token on Public Testnet
+## 🛠️ 实验实践：在公共测试网上部署 ERC20 和 Crowdsale 代币
 
-In this section, you will learn how to deploy ERC20 token contract which you have learned in **Lesson 8 (ERC20 Token Standard Advanced)** to the Hoodi testnet.
+在本节中，您将学习如何将您在**第 8 课（ERC20 代币标准进阶）**中学到的 ERC20 代币合约部署到 Hoodi 测试网。
 
-### Step 1. Write the deployment and buy token scripts
+### 步骤 1. 编写部署和购买代币脚本
 
--   Create `deployToken.js` in the `scripts` directory.
+-   在 `scripts` 目录中创建 `deployToken.js`。
 
-    This script will deploy the `OwnableMintableDemoToken` contract with 1 ether initial supply to the deployer's address.
+    此脚本将部署 `OwnableMintableDemoToken` 合约，初始供应量为 1 ether，部署到部署者的地址。
 
     **scripts/deployToken.js**
 
     ```javascript
     const { ethers } = require("hardhat");
     async function main() {
-        // Get the first signer/account to deploy the contract
+        // 获取第一个签名者/账户来部署合约
         const signer = (await ethers.getSigners())[0];
         console.log(`Using account: ${await signer.getAddress()}`);
 
-        // Deploy the OwnableMintableDemoToken contract
+        // 部署 OwnableMintableDemoToken 合约
         const factory = await ethers.getContractFactory(
             "OwnableMintableDemoToken"
         );
@@ -190,7 +190,7 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
         demoTokenAddress = await demoToken.getAddress();
         console.log(`DemoToken deployed to: ${demoTokenAddress}`);
 
-        // Check gas usage
+        // 检查 gas 使用量
         const deploymentTx = demoToken.deploymentTransaction();
         const receipt = await ethers.provider.getTransactionReceipt(
             deploymentTx.hash
@@ -213,11 +213,11 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
     });
     ```
 
--   Create `deployCrowdsale.js` in the `scripts` directory with the following code.
+-   在 `scripts` 目录中创建 `deployCrowdsale.js`，代码如下。
 
-    This script will deploy the `Crowdsale` contract and transfer the ownership of the `OwnableMintableDemoToken` contract to the `Crowdsale` contract.
+    此脚本将部署 `Crowdsale` 合约并将 `OwnableMintableDemoToken` 合约的所有权转移给 `Crowdsale` 合约。
 
-    **NOTE:** that the `deployCrowdsale.js` script requires the `DEMO_TOKEN_ADDRESS` environment variable to be set. This means `OwnableMintableDemoToken` must be deployed first. After that, the `DEMO_TOKEN_ADDRESS` environment variable should be used in the deployment of the `Crowdsale` contract.
+    **注意：** `deployCrowdsale.js` 脚本需要设置 `DEMO_TOKEN_ADDRESS` 环境变量才能运行。这意味着必须先部署 `OwnableMintableDemoToken`。之后，`DEMO_TOKEN_ADDRESS` 环境变量应该用于部署 `Crowdsale` 合约。
 
     **scripts/deployCrowdsale.js**
 
@@ -234,7 +234,7 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
             );
         }
 
-        // Deploy the Crowdsale contract
+        // 部署 Crowdsale 合约
         const CrowdsaleFactory = await ethers.getContractFactory("Crowdsale");
         const crowdsale = await CrowdsaleFactory.deploy(
             demoTokenAddress,
@@ -244,7 +244,7 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
         crowdsaleAddress = await crowdsale.getAddress();
         console.log(`Crowdsale deployed to: ${crowdsaleAddress}`);
 
-        // Transfer token ownership to the Crowdsale contract
+        // 将代币所有权转移给 Crowdsale 合约
         const demoToken = await ethers.getContractAt(
             "OwnableMintableDemoToken",
             demoTokenAddress
@@ -257,15 +257,15 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
     }
     main().catch((error) => {
         console.error(error);
-        process.exitCode = 1;
+        process.exitCode = 1);
     });
     ```
 
--   Create `buyTokens.js` in the `scripts` directory.
+-   在 `scripts` 目录中创建 `buyTokens.js`。
 
-    This script will buy 0.0001 ether worth of tokens from the `Crowdsale` contract and show the balance of the buyer after the purchase.
+    此脚本将从 `Crowdsale` 合约购买价值 0.0001 ether 的代币，并显示购买后购买者的余额。
 
-    **NOTE:** that the `buyToken.js` script requires the `CROWDSALE_ADDRESS` environment variable to be set for it to work.
+    **注意：** `buyToken.js` 脚本需要设置 `CROWDSALE_ADDRESS` 环境变量才能运行。
 
     **scripts/buyTokens.js**
 
@@ -281,13 +281,13 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
             );
         }
 
-        // Get the first signer/account to buy the tokens
+        // 获取第一个签名者/账户来购买代币
         const signer = (await ethers.getSigners())[0];
         console.log(
             `Purchasing tokens with account: ${await signer.getAddress()}`
         );
 
-        // Get the Crowdsale contract
+        // 获取 Crowdsale 合约
         const crowdsale = await ethers.getContractAt(
             "Crowdsale",
             crowdsaleAddress,
@@ -295,15 +295,15 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
         );
         console.log(`CrowdSale contract: ${crowdsaleAddress}`);
 
-        // Buy tokens
-        const ethAmount = ethers.parseUnits("0.0001", "ether"); // 0.0001 ether worth of tokens
+        // 购买代币
+        const ethAmount = ethers.parseUnits("0.0001", "ether"); // 价值 0.0001 ether 的代币
         const tx = await crowdsale.buyTokens({
             value: ethAmount,
         });
         console.log(`Transaction sent: ${tx.hash}`);
         await tx.wait();
 
-        // Check balance
+        // 检查余额
         const tokenAddr = await crowdsale.token();
         const token = await ethers.getContractAt(
             "OwnableMintableDemoToken",
@@ -322,20 +322,20 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
     });
     ```
 
-### Step 2. Test the scripts on local Hardhat Network
+### 步骤 2. 在本地 Hardhat Network 上测试脚本
 
--   Start a local Hardhat Network
+-   启动本地 Hardhat Network
 
     ```bash
     hh node
     ```
 
--   In another terminal, run the deployment script to deploy the `OwnableMintableDemoToken` contract to the local Hardhat Network.
+-   在另一个终端，运行部署脚本将 `OwnableMintableDemoToken` 合约部署到本地 Hardhat Network。
 
     ```bash
     hh run scripts/deployToken.js --network localhost
 
-     # Sample output:
+     # 示例输出：
      # Using account: 0x6976827c1fC851546a202a5159a48Cac2b0649FF
      # DemoToken deployed to: 0xa0fd5073B66aB43a76523e9c648af62D72560A09
      # Gas used: 1187601
@@ -343,21 +343,21 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
      # Total deployment cost: 0.002226751875 ETH
     ```
 
--   Now run the deployment script to deploy the `Crowdsale` contract to the local Hardhat Network by passing the `DEMO_TOKEN_ADDRESS` environment variable.
+-   现在，通过传递 `DEMO_TOKEN_ADDRESS` 环境变量，运行部署脚本将 `Crowdsale` 合约部署到本地 Hardhat Network。
 
     ```bash
-    DEMO_TOKEN_ADDRESS=replace-with-demo-token-address hh run scripts/deployCrowdsale.js --network localhost
+    DEMO_TOKEN_ADDRESS=替换为-demo-token-地址 hh run scripts/deployCrowdsale.js --network localhost
 
-     # Sample output:
+     # 示例输出：
      # Crowdsale deployed to: 0x8E7d01da12C167B35604A8F288Ad4a6d3F099412
      # Transferred token ownership to Crowdsale at: 0x8E7d01da12C167B35604A8F288Ad4a6d3F099412
     ```
 
--   Now, run the buy token script to buy tokens from the `Crowdsale` contract by passing the `CROWDSALE_ADDRESS` environment variable.
+-   现在，通过传递 `CROWDSALE_ADDRESS` 环境变量，运行购买代币脚本从 `Crowdsale` 合约购买代币。
 
     ```bash
-    CROWDSALE_ADDRESS=replace-with-crowdsale-address hh run scripts/buyTokens.js --network localhost
-     # Sample output:
+    CROWDSALE_ADDRESS=替换为-crowdsale-地址 hh run scripts/buyTokens.js --network localhost
+     # 示例输出：
      # Purchasing tokens with account: 0x6976827c1fC851546a202a5159a48Cac2b0649FF
      # CrowdSale contract: 0x1D05A2919220e944bDDc54C5A37d4738D2944110
      # Transaction sent: 0xcdc1cb51b952a8e835eceae9b9519b700d25acbc1bdcbdd3d4461c5cab93d184
@@ -365,32 +365,32 @@ In this section, you will learn how to deploy ERC20 token contract which you hav
      # Tokens purchased: 1.4 DEMO
     ```
 
--   You can run the buy token script multiple times to buy more tokens and each time you should see the token balance increasing by 0.1 DEMO.
+-   您可以多次运行购买代币脚本，每次都应该看到代币余额增加 0.1 DEMO。
 
-### Step 3. Run the scripts on testnet
+### 步骤 3. 在测试网上运行脚本
 
--   Run the deployment script to deploy the `OwnableMintableDemoToken` contract to testnet
+-   运行部署脚本将 `OwnableMintableDemoToken` 合约部署到测试网
 
     ```bash
     hh run scripts/deployToken.js --network hoodi
 
-     # Sample output:
+     # 示例输出：
     ```
 
--   Now run the deployment script to deploy the `Crowdsale` contract to the local Hardhat Network by passing the `DEMO_TOKEN_ADDRESS` environment variable.
-    **NOTE:** Make you are using the `DEMO_TOKEN_ADDRESS` from the output of testnet deployment above.
+-   现在，通过传递 `DEMO_TOKEN_ADDRESS` 环境变量，运行部署脚本将 `Crowdsale` 合约部署到本地 Hardhat Network。
+    **注意：** 确保使用上面测试网部署输出中的 `DEMO_TOKEN_ADDRESS`。
 
     ```bash
-    DEMO_TOKEN_ADDRESS=replace-with-demo-token-address hh run scripts/deployCrowdsale.js --network hoodi
+    DEMO_TOKEN_ADDRESS=替换为-demo-token-地址 hh run scripts/deployCrowdsale.js --network hoodi
 
-     # Sample output:
+     # 示例输出：
     ```
 
--   Now, run the buy token script to buy tokens from the `Crowdsale` contract by passing the `CROWDSALE_ADDRESS` environment variable.
-    **NOTE:** Make you are using the `CROWDSALE_ADDRESS` from the output of testnet deployment above.
+-   现在，通过传递 `CROWDSALE_ADDRESS` 环境变量，运行购买代币脚本从 `Crowdsale` 合约购买代币。
+    **注意：** 确保使用上面测试网部署输出中的 `CROWDSALE_ADDRESS`。
 
     ```bash
-    CROWDSALE_ADDRESS=replace-with-crowdsale-address hh run scripts/buyTokens.js --network hoodi
+    CROWDSALE_ADDRESS=替换为-crowdsale-地址 hh run scripts/buyTokens.js --network hoodi
 
-     # Sample output:
+     # 示例输出：
     ```
