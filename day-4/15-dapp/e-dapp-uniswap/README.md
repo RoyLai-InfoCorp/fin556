@@ -1,52 +1,52 @@
-## 🛠️ Lab Practise: DApp - Deploy Contracts
+## 🛠️ 实验实践：DApp - 部署合约
 
-**High-Level DApp Objectives:**
+**DApp 高级目标：**
 
-The DApp we are going to build will have the following features:
+我们要构建的 DApp 将具有以下功能：
 
--   Connects to Metamask wallet.
--   Interacts with contracts deployed on local Hardhat node.
--   Shows the current token balances of the user.
--   Show the current pool reserves.
--   Allow the user to swap tokens.
+-   连接到 Metamask 钱包。
+-   与部署在本地 Hardhat 节点上的合约交互。
+-   显示用户当前的代币余额。
+-   显示当前池储备。
+-   允许用户交换代币。
 
-The lab will be divided into the following parts:
+实验将分为以下部分：
 
-a) Setting up the web framework (React)  
-b) Create a mock-up of the DApp with hardcoded data  
-c) Extend the DApp to integrate with Metamask  
-d) Deploy Uniswap contracts to local Hardhat node  
-e) Complete the DApp to allow token swaps - this part ✅
+a) 设置 Web 框架（React）
+b) 使用硬编码数据创建 DApp 模型
+c) 扩展 DApp 以集成 Metamask
+d) 将 Uniswap 合约部署到本地 Hardhat 节点
+e) 完成 DApp 以允许代币交换 - 这部分 ✅
 
-### Step 1: Setup
+### 步骤 1：设置
 
--   **Go to the React project directory**
+-   **转到 React 项目目录**
 
     ```bash
     cd /workspace/day-4/15-dapp/e-dapp-uniswap/fin556-dapp
     ```
 
--   **Install dependencies**
+-   **安装依赖**
 
     ```bash
     npm i
     ```
 
-### 1. Update React hook script library
+### 1. 更新 React Hook 脚本库
 
--   **Open the fin556-dapp/src/useDapp.js**
+-   **打开 fin556-dapp/src/useDapp.js**
 
-    Open the file **useDapp.js** in the **fin556-dapp/src** directory and make the following changes.
+    打开 **fin556-dapp/src** 目录中的文件 **useDapp.js** 并进行以下更改。
 
--   **Update useDapp parameters**
+-   **更新 useDapp 参数**
 
-    Replace the following line.
+    替换以下行。
 
     ```js
     const useDapp = ({ setSigner }) => {
     ```
 
-    with this
+    为此
 
     ```js
     const useDapp = ({
@@ -58,15 +58,15 @@ e) Complete the DApp to allow token swaps - this part ✅
     }) => {
     ```
 
-    This is to expand the list of arguments that can be passed into the useDapp hook to include other state variables such as the Uniswap router and factory addresses, and the token addresses.
+    这是扩展可以传入 useDapp hook 的参数列表，以包含其他状态变量，如 Uniswap 路由器和工厂地址，以及代币地址。
 
--   **Insert the following code inside useDapp()**
+-   **在 useDapp() 内插入以下代码**
 
-    Insert the following code inside the `useDapp` function to implement the required functionalities.
+    在 `useDapp` 函数内插入以下代码以实现所需的功能。
 
-    -   **Add getBalance() function**
+    -   **添加 getBalance() 函数**
 
-        Add the following code to get the token balances of the user and reserve balances in the liquidity pool.
+        添加以下代码以获取用户的代币余额和流动性池中的储备余额。
 
         ```js
         const getBalance = async (signer) => {
@@ -84,7 +84,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                 signer
             );
 
-            // Pool
+            // 池
             const factory = new ethers.Contract(
                 uniswapFactoryAddress,
                 ["function getPair(address,address) view returns(address)"],
@@ -106,7 +106,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                 signer
             );
 
-            // Get Reserves
+            // 获取储备
             const { reserve0, reserve1 } = await pool.getReserves();
             const reservesA = tokenAddrA < tokenAddrB ? reserve0 : reserve1;
             const reservesB = tokenAddrA > tokenAddrB ? reserve0 : reserve1;
@@ -121,11 +121,11 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-    -   **Add a private \_getAmountOut() function**
+    -   **添加一个私有的 _getAmountOut() 函数**
 
-        Add the following code to swap tokens in the liquidity pool.
+        添加以下代码以在流动性池中交换代币。
 
-        NOTE: This function is only used internally by sellTokens and buyTokens functions that is why it is prefixed with an underscore(\_) as a convention to indicate that it is private.
+        注意：此函数仅在 sellTokens 和 buyTokens 函数内部使用，这就是为什么它用下划线（_）作为前缀来指示它是私有的约定。
 
         ```js
         function _getAmountOut(amountIn, reserveIn, reserveOut) {
@@ -144,11 +144,11 @@ e) Complete the DApp to allow token swaps - this part ✅
         }
         ```
 
-    -   **Add \_getReserves() function**
+    -   **添加 _getReserves() 函数**
 
-        Add the following code to get the reserves of the liquidity pool.
+        添加以下代码以获取流动性池的储备。
 
-        NOTE: This function is only used internally by sellTokens and buyTokens functions that is why it is prefixed with an underscore(\_) as a convention to indicate that it is private.
+        注意：此函数仅在 sellTokens 和 buyTokens 函数内部使用，这就是为什么它用下划线（_）作为前缀来指示它是私有的约定。
 
         ```js
         const _getReserves = async (factory, { TOKEN_0, TOKEN_1 }, account) => {
@@ -171,13 +171,13 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-    -   **Add sellTokens() function**
+    -   **添加 sellTokens() 函数**
 
-        Add the following code to sell tokens in the liquidity pool. This function will be called when the user clicks the "SELL" button by providing the input amount, input token address, output token address, and the user's account.
+        添加以下代码以在流动性池中卖出代币。当用户通过提供输入金额、输入代币地址、输出代币地址和用户账户点击"SELL"按钮时，将调用此函数。
 
         ```js
         const sellTokens = async (inputAmt, inputAddr, outputAddr, account) => {
-            // Get Reserves
+            // 获取储备
             const factory = new ethers.Contract(
                 uniswapFactoryAddress,
                 ["function getPair(address,address) view returns(address)"],
@@ -199,14 +199,14 @@ e) Complete the DApp to allow token swaps - this part ✅
                 throw new Error("Failed to fetch reserves from the pool");
             }
 
-            // Get OutputAmt
+            // 获取输出金额
             const outputAmt = _getAmountOut(
                 inputAmt,
                 reserves.reserveA,
                 reserves.reserveB
             );
 
-            // Load contract A and contract B
+            // 加载合约 A 和合约 B
             const uniswap = new ethers.Contract(
                 uniswapRouterAddress,
                 [
@@ -215,7 +215,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                 account
             );
 
-            // Approve router to withdraw 2000 TokenA from trader account
+            // 批准路由器从交易者账户提取 2000 TokenA
             const inputToken = new ethers.Contract(
                 inputAddr,
                 ["function approve(address,uint)"],
@@ -228,7 +228,7 @@ e) Complete the DApp to allow token swaps - this part ✅
             await response.wait();
             console.log("trade: approved. receipt=", response.hash);
 
-            // Trade 2000 TokenA for 1662 TokenB using trader account
+            // 使用交易者账户将 2000 TokenA 换成 1662 TokenB
             const ts = (await provider.getBlock()).timestamp + 1000;
             await uniswap.swapExactTokensForTokens(
                 inputAmt,
@@ -242,9 +242,9 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-    -   **Add buyTokens() function**
+    -   **添加 buyTokens() 函数**
 
-        You should implement this function on your own based on what you have learned so far. For now, calling this function will throw an error.
+        您应该根据目前所学自行实现此函数。现在，调用此函数将抛出错误。
 
         ```js
         const buyTokens = async (inputAmt, inputAddr, outputAddr, account) => {
@@ -252,15 +252,15 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-    -   **Return the new functions from useDapp**
+    -   **从 useDapp 返回新函数**
 
-        Replace the following return statement.
+        替换以下返回语句。
 
         ```js
         return { connect };
         ```
 
-        with this
+        为此
 
         ```js
         return {
@@ -271,19 +271,19 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-### 2. Update App.jsx
+### 2. 更新 App.jsx
 
--   **Open App.jsx**
+-   **打开 App.jsx**
 
-    Open the file **App.jsx** in the **fin556-dapp/src** directory.
+    打开 **fin556-dapp/src** 目录中的文件 **App.jsx**。
 
--   **Update the App component**
+-   **更新 App 组件**
 
-    Insert the following code inside the `App` component.
+    在 `App` 组件内插入以下代码。
 
-    -   **Add token address state variables**
+    -   **添加代币地址状态变量**
 
-        Replace the following lines.
+        替换以下行。
 
         ```js
         const [tokenAddrA, setTokenAddrA] = useState(
@@ -307,7 +307,7 @@ e) Complete the DApp to allow token swaps - this part ✅
         });
         ```
 
-        with
+        为
 
         ```js
         const [tokenAddrA, setTokenAddrA] = useState("");
@@ -317,33 +317,33 @@ e) Complete the DApp to allow token swaps - this part ✅
         const [balance, setBalance] = useState(null);
         ```
 
-        -   Replace all hardcoded initial values with empty string or null to indicate that they are not set yet.
+        -   用空字符串或 null 替换所有硬编码的初始值，以指示它们尚未设置。
 
-    -   **Add isLoading state variable to display a spinner while loading data**
+    -   **添加 isLoading 状态变量以在加载数据时显示微调器**
 
-        Add the following state variable to control the visual effect when loading data from the blockchain. This is useful to know that the DApp is working and not frozen.
+        添加以下状态变量以在从区块链加载数据时控制视觉效果。这对于了解 DApp 是否在工作且没有冻结很有用。
 
         ```js
         const [isLoading, setIsLoading] = useState(false);
         ```
 
-    -   **Add amtA and amtB state variables**
-        Add the following state variables to store the amount of TokenA and TokenB to be swapped.
+    -   **添加 amtA 和 amtB 状态变量**
+        添加以下状态变量以存储要交换的 TokenA 和 TokenB 金额。
 
         ```js
         const [amtA, setAmtA] = useState(0);
         const [amtB, setAmtB] = useState(0);
         ```
 
-    -   **Load the useDapp() hook**
+    -   **加载 useDapp() hook**
 
-        Replace the following line.
+        替换以下行。
 
         ```js
         const { connect } = useDapp({ setSigner });
         ```
 
-        with this
+        为此
 
         ```js
         const { connect, getBalance, sellTokens } = useDapp({
@@ -355,9 +355,9 @@ e) Complete the DApp to allow token swaps - this part ✅
         });
         ```
 
-    -   **Create handleCheckBalance() function**
+    -   **创建 handleCheckBalance() 函数**
 
-        Add the following function to handle the "Check" button click event.
+        添加以下函数来处理"Check"按钮点击事件。
 
         ```js
         const handleCheckBalance = async () => {
@@ -375,15 +375,15 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-        -   This function is called when the "Check" button is clicked.
-        -   It sets the loading state variable to true to show the loading spinner.
-        -   It calls the `getAccount()` function to get the signer from Metamask.
-        -   If no account is found, it will show an alert message and set the loading state variable to false.
-        -   If an account is found, it will call the `getBalance()` function to
-            get the token balances and pool reserves from the blockchain.
+        -   当点击"Check"按钮时调用此函数。
+        -   它将加载状态变量设置为 true 以显示加载微调器。
+        -   它调用 `getAccount()` 函数以从 Metamask 获取签名者。
+        -   如果未找到账户，它将显示警报消息并将加载状态变量设置为 false。
+        -   如果找到账户，它将调用 `getBalance()` 函数来
+            从区块链获取代币余额和池储备。
 
-    -   **Create handleSellA() and handleSellB() functions**
-        Add the following functions to handle the "Sell" button click events.
+    -   **创建 handleSellA() 和 handleSellB() 函数**
+        添加以下函数来处理"Sell"按钮点击事件。
 
         ```js
         const handleSell = async (aOrB) => {
@@ -423,24 +423,24 @@ e) Complete the DApp to allow token swaps - this part ✅
         };
         ```
 
-        -   The function expects a parameter `aOrB` to be either "A" or "B" to indicate which token to sell.
-        -   They check if the amount entered is valid (greater than 0).
-        -   They set the loading state variable to true to show the loading spinner.
-        -   It will call the `sellTokens()` function to swap the tokens in the liquidity pool.
-        -   After the swap is done, it will log the result and set the loading state variable to false to hide the loading spinner.
+        -   该函数期望参数 `aOrB` 为"A"或"B"以指示要卖出哪个代币。
+        -   它们检查输入的金额是否有效（大于 0）。
+        -   它们将加载状态变量设置为 true 以显示加载微调器。
+        -   它将调用 `sellTokens()` 函数以在流动性池中交换代币。
+        -   交换完成后，它将记录结果并将加载状态变量设置为 false 以隐藏加载微调器。
 
-    -   Update the **return** statement to replace the hardcoded values with the state variables and add the loading spinner.
+    -   更新 **return** 语句以用状态变量替换硬编码值并添加加载微调器。
 
-        -   **Update the "Check" button to invoke handleCheckBalance()**
+        -   **更新"Check"按钮以调用 handleCheckBalance()**
 
-            Update the following line in the "Check" button.
+            在"Check"按钮中更新以下行。
 
             <!-- prettier-ignore -->
             ```js
                 <Button variant='contained'>Check</Button>
             ```
 
-            to
+            为
 
             <!-- prettier-ignore -->
             ```js
@@ -451,16 +451,16 @@ e) Complete the DApp to allow token swaps - this part ✅
                 )}    
             ```
 
-            -   If the loading state variable is true, show a loading spinner using the `CircularProgress` component from Material UI.
-            -   If the loading state variable is false, show the "Check" button.
-            -   Add an onClick event handler to the button to invoke the `handleCheckBalance()` function when the button is clicked.
-            -   This will fetch the token balances and pool reserves from the blockchain and update the state variable `balance`.
+            -   如果加载状态变量为 true，则使用 Material UI 的 `CircularProgress` 组件显示加载微调器。
+            -   如果加载状态变量为 false，则显示"Check"按钮。
+            -   在按钮上添加 onClick 事件处理程序以在点击按钮时调用 `handleCheckBalance()` 函数。
+            -   这将从区块链获取代币余额和池储备并更新状态变量 `balance`。
 
-            **NOTE:** It is important for the spinner and button to be mutually exclusive, ie. both cannot be shown at the same time. This is to prevent the user from clicking the button multiple times while the data is being fetched.
+            **注意：** 微调器和按钮互斥很重要，即两者不能同时显示。这是为了防止用户在数据获取时多次点击按钮。
 
-        -   **Update the "Sell" buttons to invoke handleSellA() and handleSellB()**
+        -   **更新"Sell"按钮以调用 handleSellA() 和 handleSellB()**
 
-            Update the following lines in the "Sell" buttons.
+            在"Sell"按钮中更新以下行。
 
             <!-- prettier-ignore -->
             ```js
@@ -471,7 +471,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                     </Box>
             ```
 
-            to
+            为
 
             <!-- prettier-ignore -->
             ```js
@@ -489,7 +489,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                     </Box>
             ```
 
-            and
+            和
 
             <!-- prettier-ignore -->
             ```js
@@ -500,7 +500,7 @@ e) Complete the DApp to allow token swaps - this part ✅
                     </Box>
             ```
 
-            to
+            为
 
             <!-- prettier-ignore -->
             ```js
@@ -519,55 +519,55 @@ e) Complete the DApp to allow token swaps - this part ✅
 
             ```
 
-            -   If the loading state variable is true, show a loading spinner using the `CircularProgress` component from Material UI.
-            -   If the loading state variable is false, show the "Sell" button.
-            -   Add an onClick event handler to the button to invoke the `handleSellA()` or `handleSellB()` function when the button is clicked.
-            -   This will swap the tokens in the liquidity pool and update the state variable `balance`.
+            -   如果加载状态变量为 true，则使用 Material UI 的 `CircularProgress` 组件显示加载微调器。
+            -   如果加载状态变量为 false，则显示"Sell"按钮。
+            -   在按钮上添加 onClick 事件处理程序以在点击按钮时调用 `handleSellA()` 或 `handleSellB()` 函数。
+            -   这将在流动性池中交换代币并更新状态变量 `balance`。
 
-### 3. Run the DApp
+### 3. 运行 DApp
 
--   **Start the React development server**
+-   **启动 React 开发服务器**
 
     ```bash
     cd /workspace/day-4/15-dapp/e-dapp-uniswap/fin556-dapp
     npm run dev
     ```
 
--   **Open browser at http://localhost:5173**
+-   **在 http://localhost:5173 打开浏览器**
 
--   **Enter the contract addresses**
+-   **输入合约地址**
 
-    Enter the contract addresses using the **addresses.json** file from the scripts directory in the lab **d-dapp-network** (../../d-dapp-network/scripts/addresses.json).
+    使用实验 **d-dapp-network** (../../d-dapp-network/scripts/addresses.json) 脚本目录中的 **addresses.json** 文件输入合约地址。
 
-    Refresh the balances by clicking the "Check" button.
+    通过点击"Check"按钮刷新余额。
 
     ![swap-0](./img/swap-0.png)
 
--   **Check the token Balance for TokenA and TokenB**
+-   **检查 TokenA 和 TokenB 的代币余额**
 
-    If you have provided the correct wallet address and token address, the token balance should be greater than 0.
+    如果您提供了正确的钱包地址和代币地址，代币余额应大于 0。
 
-    If the token balances are displayed as 0, check the following:
+    如果代币余额显示为 0，请检查以下内容：
 
-    -   Compare the wallet address in Metamask with the accounts[0] address in the hardhat node terminal. If they are different, that means the .env file contains a different mnemonic than the one used to create your Metamask wallet.
+    -   将 Metamask 中的钱包地址与 hardhat 节点终端中的 accounts[0] 地址进行比较。如果它们不同，意味着 .env 文件包含的助记词与用于创建 Metamask 钱包的助记词不同。
 
-    -   Compare the token contract addresses with the ones in the **addresses.json** file from the scripts directory in the lab **d-dapp-network** (../../d-dapp-network/scripts/addresses.json). If they are different, update the contract addresses in the DApp accordingly.
+    -   将代币合约地址与实验 **d-dapp-network** (../../d-dapp-network/scripts/addresses.json) 脚本目录中的 **addresses.json** 文件中的地址进行比较。如果它们不同，请相应更新 DApp 中的合约地址。
 
--   **Swap pool reserves**
+-   **交换池储备**
 
-    If pool reserves are not displayed, check the router and factory contract addresses.
+    如果池储备未显示，请检查路由器和工厂合约地址。
 
--   **Perform a token swap**
+-   **执行代币交换**
 
-    b) Enter an amount in the "TokenA Amount" text box
-    c) Click the "Sell" button next to it to swap TokenA for TokenB.
+    b) 在"TokenA Amount"文本框中输入金额
+    c) 点击旁边的"Sell"按钮以将 TokenA 换成 TokenB。
 
     ![swap-1](./img/swap-1.png)
 
-    d) Approve the transaction in Metamask.
+    d) 在 Metamask 中批准交易。
 
     ![swap-2](./img/swap-2.png)
 
-    d) After the transaction is confirmed, refresh the balances by clicking the "Check" button again to see the updated balances.
+    d) 交易确认后，通过再次点击"Check"按钮刷新余额以查看更新的余额。
 
     ![swap-3](./img/swap-3.png)

@@ -1,97 +1,97 @@
-## 🛠️ Lab Practise: Integrate with Metamask
+## 🛠️ 实验实践：集成 Metamask
 
-**High-Level DApp Objectives:**
+**DApp 高级目标：**
 
-The DApp we are going to build will have the following features:
+我们要构建的 DApp 将具有以下功能：
 
--   Connects to Metamask wallet.
--   Interacts with contracts deployed on local Hardhat node.
--   Shows the current token balances of the user.
--   Show the current pool reserves.
--   Allow the user to swap tokens.
+-   连接到 Metamask 钱包。
+-   与部署在本地 Hardhat 节点上的合约交互。
+-   显示用户当前的代币余额。
+-   显示当前池储备。
+-   允许用户交换代币。
 
-The lab will be divided into the following parts:
+实验将分为以下部分：
 
-a) Setting up the web framework (React)  
-b) Create a mock-up of the DApp with hardcoded data  
-c) Extend the DApp to integrate with Metamask - this part ✅  
-d) Deploy Uniswap contracts to local Hardhat node  
-e) Complete the DApp to allow token swaps
+a) 设置 Web 框架（React）
+b) 使用硬编码数据创建 DApp 模型
+c) 扩展 DApp 以集成 Metamask - 这部分 ✅
+d) 将 Uniswap 合约部署到本地 Hardhat 节点
+e) 完成 DApp 以允许代币交换
 
-### Step 1: Setup
+### 步骤 1：设置
 
-1.  **Go to the React project directory**
+1.  **转到 React 项目目录**
 
     ```bash
     cd /workspace/day-4/15-dapp/c-dapp-metamask/fin556-dapp
     ```
 
-2.  **Install React**
+2.  **安装 React**
 
     ```bash
     npm i
     ```
 
-3.  **Install ethers.js**
+3.  **安装 ethers.js**
 
-    This package will be used by our script library to interact with the blockchain.
+    此包将被我们的脚本库用于与区块链交互。
 
-    **NOTE:** We are only installing ethers.js because it will be bundled into the browser. We cannot use hardhat in the browser because it is a node.js library and is not designed to run in the browser.
+    **注意：** 我们只安装 ethers.js，因为它将被打包到浏览器中。我们不能在浏览器中使用 hardhat，因为它是一个 node.js 库，不是为在浏览器中运行而设计的。
 
     ```bash
     npm i ethers
     ```
 
-### Step 2: Create a React hook script library for blockchain interaction
+### 步骤 2：创建用于区块链交互的 React Hook 脚本库
 
-We want to separate the code for blockchain interaction from the code for web interaction. This will make the code cleaner and easier to maintain.  
-Therefore, we will create a separate script library file called **useDapp.js** for the blockchain interaction code in the React project. This library is known as a "React Hook" because it uses React's hook system to manage state and side effects.
+我们希望将区块链交互代码与 Web 交互代码分开。这将使代码更清晰、更容易维护。  
+因此，我们将在 React 项目中创建一个名为 **useDapp.js** 的单独脚本库文件用于区块链交互代码。这个库被称为"React Hook"，因为它使用 React 的 Hook 系统来管理状态和副作用。
 
-1.  **Create a fin556-dapp/src/useDapp.js**
+1.  **创建 fin556-dapp/src/useDapp.js**
 
-    Create a new file called **useDapp.js** in the **fin556-dapp/src** directory of the React project.
+    在 React 项目的 **fin556-dapp/src** 目录中创建一个名为 **useDapp.js** 的新文件。
 
-    > ⚠️ Becareful here:
+    > ⚠️ 这里要小心：
     >
-    > -   This script is used by the React project and not by Hardhat so it must be created in the React project directory.
-    > -   Make sure you are creating it in the **fin556-dapp/src** directory where you created the React project previously.
-    > -   Do not create it the wrong directory.
+    > -   此脚本由 React 项目使用，而不是由 Hardhat 使用，因此必须创建在 React 项目目录中。
+    > -   确保您在之前创建 React 项目的 **fin556-dapp/src** 目录中创建它。
+    > -   不要在错误的目录中创建它。
 
-2.  **Add the following code to the useDapp.js**
+2.  **将以下代码添加到 useDapp.js**
 
-    -   **Import ethers**
+    -   **导入 ethers**
 
-        Insert the following import statement at the top of the file.
+        在文件顶部插入以下导入语句。
 
         ```js
         import { ethers } from "ethers";
         ```
 
-    -   **Create an empty useDapp() function**
+    -   **创建一个空的 useDapp() 函数**
 
-        Create an empty function called `useDapp()`.
+        创建一个名为 `useDapp()` 的空函数。
 
-        `useDapp()` will take in a function called `setSigner()` as parameter. When the DApp connects to Metamask and gets the connected signer, it will call this function to update the signer in the DApp UI.
+        `useDapp()` 将接受一个名为 `setSigner()` 的函数作为参数。当 DApp 连接到 Metamask 并获取连接的签名者时，它将调用此函数来更新 DApp UI 中的签名者。
 
         ```js
         const useDapp = ({ setSigner }) => {
-            // Blockchain interaction code will go here
+            // 区块链交互代码将在此处
         };
 
         export default useDapp;
         ```
 
-    -   **Insert the following code inside useDapp() function**
+    -   **在 useDapp() 函数内插入以下代码**
 
-        We will add the code to connect to Metamask and get the connected account.
+        我们将添加代码以连接到 Metamask 并获取连接的账户。
 
-        -   **Add provider**
+        -   **添加 provider**
 
-            We want to get the Metamask provider (`window.ethereum`) so that we can interact with the Metamask wallet extension in the browser. And through Metamask, let us send commands to the blockchain. If Metamask is not installed, `window.ethereum` will be null and the function will return null so that the DApp can display an error message to the user.
+            我们希望获取 Metamask provider（`window.ethereum`），以便我们可以与浏览器中的 Metamask 钱包扩展进行交互。通过 Metamask，让我们向区块链发送命令。如果没有安装 Metamask，`window.ethereum` 将为 null，函数将返回 null，以便 DApp 可以向用户显示错误消息。
 
-            **NOTE:** In Hardhat, we configure the provider using **hardhat.config.js** file but since we are not using Hardhat here, we need to get the provider from Metamask.
+            **注意：** 在 Hardhat 中，我们使用 **hardhat.config.js** 文件配置 provider，但既然我们这里不使用 Hardhat，我们需要从 Metamask 获取 provider。
 
-            Insert the following code inside the `useDapp()` function.
+            在 `useDapp()` 函数内插入以下代码。
 
             ```js
             const provider = window.ethereum
@@ -99,43 +99,43 @@ Therefore, we will create a separate script library file called **useDapp.js** f
                 : null;
             ```
 
-        -   **Add connect() function**
+        -   **添加 connect() 函数**
 
-            This function will be used by the DApp to get the signer from Metamask. In Hardhat, we were able to use `ethers.getSigners()` to get a list of accounts because we delegated the key management to Hardhat. In Metamask, you need to first connect to it using your password to unlock the wallet. That is what the `eth_requestAccounts` command in the code below does.
+            此函数将被 DApp 用于从 Metamask 获取签名者。在 Hardhat 中，我们能够使用 `ethers.getSigners()` 获取账户列表，因为我们已将密钥管理委托给 Hardhat。在 Metamask 中，您需要首先使用密码连接它以解锁钱包。这就是下面的代码中 `eth_requestAccounts` 命令所做的事情。
 
-            Insert the following code inside the `useDapp()` function.
+            在 `useDapp()` 函数内插入以下代码。
 
             ```js
             const connect = async () => {
                 if (!provider) return null;
 
-                await provider.send("eth_requestAccounts", []); // Login to metamask
+                await provider.send("eth_requestAccounts", []); // 登录到 metamask
                 const signer = await provider.getSigner();
 
                 const { chainId } = await provider.getNetwork();
                 console.log("Connected to chainId:", chainId);
 
-                // const DESIRED_CHAIN_ID = 31337; // This is the default chain ID for hardhat localhost network
+                // const DESIRED_CHAIN_ID = 31337; // 这是 hardhat 本地网络的默认 chain ID
                 // if (chainId !== DESIRED_CHAIN_ID) {
                 //     await provider.send("wallet_switchEthereumChain", [
-                //         { chainId: `0x${DESIRED_CHAIN_ID.toString(16)}` }, // Must be in hex format
+                //         { chainId: `0x${DESIRED_CHAIN_ID.toString(16)}` }, // 必须是十六进制格式
                 //     ]);
                 // }
 
-                // Get and set the address
+                // 获取并设置地址
                 setSigner(signer);
 
                 return signer;
             };
             ```
 
-            **Optional:** We can also control which network the user should connect to by uncommenting the code after `const signer = provider.getSigner();` line. This is useful if you want to ensure the user is connected to localhost instead of anywhere else.
+            **可选：** 我们还可以通过取消注释 `const signer = provider.getSigner();` 行后的代码来控制用户应该连接到的网络。如果您想确保用户连接到 localhost 而不是其他地方，这很有用。
 
-        -   **Return the functions from useDapp()**
+        -   **从 useDapp() 返回函数**
 
-            Finally, we need to return the `connect()` so that it can be used by the DApp.
+            最后，我们需要返回 `connect()`，以便 DApp 可以使用它。
 
-            Insert the following code inside the `useDapp()` function.
+            在 `useDapp()` 函数内插入以下代码。
 
             ```js
             return {
@@ -143,31 +143,31 @@ Therefore, we will create a separate script library file called **useDapp.js** f
             };
             ```
 
-### Step 3: Update the UI to show Metamask connected address
+### 步骤 3：更新 UI 以显示 Metamask 连接的地址
 
-1.  **Open App.jsx**
+1.  **打开 App.jsx**
 
-    Open the file **fin556-dapp/src/App.jsx**.
+    打开 **fin556-dapp/src/App.jsx** 文件。
 
-    **NOTE:** Make sure you are referring to the correct file.
+    **注意：** 确保您引用的是正确的文件。
 
-2.  **Add the following code to App.jsx**
+2.  **将以下代码添加到 App.jsx**
 
-    -   **Import useDapp**
+    -   **导入 useDapp**
 
-        Import the `useDapp` function from **useDapp.js** at the top of the file.
+        在文件顶部从 **useDapp.js** 导入 `useDapp` 函数。
 
         ```js
         import useDapp from "./useDapp";
         ```
 
-    -   **Update the App() component**
+    -   **更新 App() 组件**
 
-        Insert the following code inside the `App()` component to connect to Metamask and get the connected address.
+        在 `App()` 组件内插入以下代码以连接到 Metamask 并获取连接的地址。
 
-        -   **Initialize signer state variable**
+        -   **初始化 signer 状态变量**
 
-            Replace the following line.
+            替换以下行。
 
             ```js
             const [signer, setSigner] = useState({
@@ -175,27 +175,27 @@ Therefore, we will create a separate script library file called **useDapp.js** f
             });
             ```
 
-            with
+            为
 
             ```js
             const [signer, setSigner] = useState(null);
             ```
 
-            -   Initialize the state variable to null instead of a hardcoded address so that we can detect if the user is connected or not.
+            -   将状态变量初始化为 null 而不是硬编码地址，这样我们就可以检测用户是否已连接。
 
-        -   **Load the useDapp() hook**
+        -   **加载 useDapp() hook**
 
-            Insert the following code after the state variable declarations.
+            在状态变量声明后插入以下代码。
 
             ```js
             const { connect } = useDapp({ setSigner });
             ```
 
-            -   This will load the `useDapp()` hook and get the `connect()` function that we defined earlier.
+            -   这将加载 `useDapp()` hook 并获取我们之前定义的 `connect()` 函数。
 
-        -   **Load address from Metamask**
+        -   **从 Metamask 加载地址**
 
-            Insert the following code before the `return()` section.
+            在 `return()` 部分之前插入以下代码。
 
             <!-- prettier-ignore -->
             ```js
@@ -212,28 +212,28 @@ Therefore, we will create a separate script library file called **useDapp.js** f
             }, []);
             ```
 
-            -   The code will call the `connect()` function to connect to Metamask and update the signer state variable.
-            -   If Metamask is not installed, it will show an alert message.
+            -   代码将调用 `connect()` 函数以连接到 Metamask 并更新 signer 状态变量。
+            -   如果未安装 Metamask，它将显示警报消息。
 
-### Step 4: Run the DApp
+### 步骤 4：运行 DApp
 
--   **Start the Server**
+-   **启动服务器**
 
     ```bash
     cd /workspace/day-4/15-dapp/c-dapp-metamask/fin556-dapp
     npm run dev
     ```
 
-2.  **Open the browser at [http://localhost:5173](http://localhost:5173)**
+2.  **在 [http://localhost:5173](http://localhost:5173) 打开浏览器**
 
-    It should look like this in the browser:
+    在浏览器中应该看起来像这样：
 
     ![connected-address](./img/connected-address.png)
 
-3.  **Stop React server**
+3.  **停止 React 服务器**
 
-    Go back to terminal and press `Ctrl + C` to stop the server.
+    返回终端并按 `Ctrl + C` 停止服务器。
 
-4.  **Task completed ✅**
+4.  **任务完成 ✅**
 
-    You have successfully updated the DApp to connect to Metamask and show the connected address.
+    您已成功更新 DApp 以连接到 Metamask 并显示连接的地址。

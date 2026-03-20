@@ -50,7 +50,7 @@ contract DataLocationExample {
 }
 ```
 
-### Gas 成本（大概，伦敦升级后）
+### Gas 成本（以太坊伦敦硬分叉）
 
 -   **SSTORE（写入存储槽）：**
 

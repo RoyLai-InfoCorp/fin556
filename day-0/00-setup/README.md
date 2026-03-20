@@ -1,214 +1,214 @@
-# Setup Guide (15 minutes to complete)
+# 环境配置指南（15分钟完成）
 
-## Overview
+## 概述
 
-Please follow the steps below to set up your development environment for the course. This guide covers installation and configuration of all necessary tools and software.
+请按照以下步骤为您在本课程中的开发环境进行设置。本指南涵盖所有必要工具和软件的安装和配置。
 
--   [ ] Step 1. Setup terminal.
--   [ ] Step 2. Install Git.
--   [ ] Step 3. Clone FIN556 repository.
--   [ ] Step 4. Install Docker Desktop.
--   [ ] Step 5. Install Visual Studio Code.
--   [ ] Step 6. Verify DevContainer setup.
-
----
-
-## Step 1. Setup Terminal
-
-📌 **NOTE: Moving forward, whenever the guide refers to **"Terminal"**, it is referring either to the Windows Terminal for Windows/WSL2 users, or the native Terminal application for macOS users.**
-
-The purpose of this step is to standardize the terminal environment for all students in the class to use Linux-based commands. This is important because most blockchain development tools are designed to work in a Unix-like environment.
-
--   **🪟 Windows Users**
-
-    1. Install WSL2 (Windows Subsystem for Linux). Follow the official Microsoft guide **[here](https://learn.microsoft.com/en-us/windows/wsl/install)**.
-
-        - During installation, choose Ubuntu **24.04 LTS**.
-        - You will be prompted to create a username and password for your Linux environment. ⚠️ Remember these credentials as you'll need them later.
-
-    📌 NOTE: If you failed to install using the link above, try using the manual approach instead **[here](https://learn.microsoft.com/en-us/windows/wsl/install-manual)**
-
-    2. Install **[Windows Terminal](https://aka.ms/terminal)** from the Microsoft Store.
-
-    3. Open Windows Terminal, select **Ubuntu** from the dropdown, and confirm you can see a terminal prompt.
-
-    4. Task completed ✅.
-
--   **🍎 macOS Users**
-
-    1. There is no need to install anything extra, as macOS comes with a built-in terminal application.
-
-    2. Find Terminal using one of these methods:
-
-        - Press **Cmd + Space** and type **Terminal**
-        - Go to Applications > Utilities > Terminal
-        - Use Launchpad and search for **Terminal**
-
-    3. Open Terminal and confirm you see a command prompt with your username.
-
-    4. Task completed ✅.
+-   [ ] 步骤 1. 配置终端。
+-   [ ] 步骤 2. 安装 Git。
+-   [ ] 步骤 3. 克隆 FIN556 仓库。
+-   [ ] 步骤 4. 安装 Docker Desktop。
+-   [ ] 步骤 5. 安装 Visual Studio Code。
+-   [ ] 步骤 6. 验证 DevContainer 配置。
 
 ---
 
-## Step 2. Check Your Architecture
+## 步骤 1. 配置终端
 
-The subsequent steps may require you to know your computer's CPU architecture (e.g., x86_64 or ARM64). This is important for downloading the correct versions of software.
+📌 **注意：从现在开始，本指南中提到的"终端"对于 Windows/WSL2 用户指的是 Windows Terminal，对于 macOS 用户指的是原生的 Terminal 应用程序。**
 
--   **🪟 Windows Users**
+此步骤的目的是标准化所有学生的终端环境，使用基于 Linux 的命令。这很重要，因为大多数区块链开发工具都设计用于类 Unix 环境。
 
-    1. Open **Windows Terminal** (with WSL2 enabled).
-    2. Run the following command:
+-   **🪟 Windows 用户**
+
+    1.  安装 WSL2（Windows Subsystem for Linux）。请按照 Microsoft 官方指南**[点击这里](https://learn.microsoft.com/en-us/windows/wsl/install)**进行操作。
+
+        -   安装时，请选择 **Ubuntu 24.04 LTS**。
+        -   系统将提示您为 Linux 环境创建用户名和密码。⚠️ 请记住这些凭据，因为稍后需要用到。
+
+    📌 注意：如果使用上述链接安装失败，请尝试使用手动方法**[点击这里](https://learn.microsoft.com/en-us/windows/wsl/install-manual)**
+
+    2.  从 Microsoft Store 安装 **[Windows Terminal](https://aka.ms/terminal)**。
+
+    3.  打开 Windows Terminal，从下拉菜单中选择 **Ubuntu**，确认您可以看到终端提示符。
+
+    4.  任务完成 ✅。
+
+-   **🍎 macOS 用户**
+
+    1.  无需安装任何额外软件，因为 macOS 自带终端应用程序。
+
+    2.  使用以下方法之一查找终端：
+
+        -   按 **Cmd + Space** 并输入 **Terminal**
+        -   转到 Applications > Utilities > Terminal
+        -   使用 Launchpad 并搜索 **Terminal**
+
+    3.  打开终端，确认您可以看到带有用户名的命令提示符。
+
+    4.  任务完成 ✅。
+
+---
+
+## 步骤 2. 检查您的架构
+
+后续步骤可能需要您知道计算机的 CPU 架构（例如 x86_64 或 ARM64）。这对于下载正确版本的软件很重要。
+
+-   **🪟 Windows 用户**
+
+    1.  打开 **Windows Terminal**（已启用 WSL2）。
+    2.  运行以下命令：
 
         ```bash
         uname -m
         ```
 
-    3. Note down the output:
+    3.  记下输出结果：
 
-        - If it shows `x86_64`, your architecture is x86_64.
-        - If it shows `aarch64`, your architecture is ARM64.
+        -   如果显示 `x86_64`，您的架构是 x86_64。
+        -   如果显示 `aarch64`，您的架构是 ARM64。
 
-    4. Task completed ✅.
+    4.  任务完成 ✅。
 
--   **🍎 macOS Users**
+-   **🍎 macOS 用户**
 
-    1. Open **Terminal**.
-    2. Run the following command:
+    1.  打开 **终端**。
+    2.  运行以下命令：
 
         ```bash
         uname -m
         ```
 
-    3. Note down the output:
+    3.  记下输出结果：
 
-        - If it shows `x86_64`, your architecture is x86_64 (Intel).
-        - If it shows `arm64`, your architecture is ARM64 (Apple Silicon).
+        -   如果显示 `x86_64`，您的架构是 x86_64（英特尔）。
+        -   如果显示 `arm64`，您的架构是 ARM64（Apple Silicon）。
 
-    4. Task completed ✅.
+    4.  任务完成 ✅。
 
 ---
 
-## Step 3. Install Git
+## 步骤 3. 安装 Git
 
-Git is a version control system that allows you to track changes in your code and collaborate with others. It is required for downloading course materials and managing your project files.
+Git 是一个版本控制系统，允许您跟踪代码更改并与他人协作。它是下载课程材料和管理项目文件所必需的。
 
--   **🪟 Windows Users**
+-   **🪟 Windows 用户**
 
-    1. Download Git for Windows from **[this link](https://git-scm.com/download/win)**.
+    1.  从 **[此链接](https://git-scm.com/download/win)** 下载 Git for Windows。
 
-    2. Run the installer and follow the installation wizard with default settings.
+    2.  运行安装程序，使用默认设置进行安装。
 
-    3. Git for Windows includes Git for WSL2 integration.
+    3.  Git for Windows 包含 Git for WSL2 集成。
 
-    4. Open Windows Terminal with WSL2 and verify installation:
-
-        ```bash
-        git --version
-        ```
-
-    5. Task completed ✅.
-
--   **🍎 macOS Users**
-
-    1. Git is often pre-installed on macOS. Check if it's already installed:
+    4.  打开带 WSL2 的 Windows Terminal 并验证安装：
 
         ```bash
         git --version
         ```
 
-    2. **Only if not installed**, you can install it via:
+    5.  任务完成 ✅。
 
-        - **Option 1**: Download from **[this link](https://git-scm.com/download/mac)**
-        - **Option 2**: Install Xcode Command Line Tools:
+-   **🍎 macOS 用户**
+
+    1.  Git 通常预装在 macOS 上。检查是否已安装：
+
+        ```bash
+        git --version
+        ```
+
+    2.  **仅在未安装的情况下**，可以通过以下方式安装：
+
+        -   **选项 1**：从 **[此链接](https://git-scm.com/download/mac)** 下载
+        -   **选项 2**：安装 Xcode Command Line Tools：
             ```bash
             xcode-select --install
             ```
 
-    3. Verify installation:
+    3.  验证安装：
 
         ```bash
         git --version
         ```
 
-    4. Task completed ✅.
+    4.  任务完成 ✅。
 
 ---
 
-## Step 4. Install Docker Desktop
+## 步骤 4. 安装 Docker Desktop
 
-Docker Desktop is required for DevContainer functionality used in this course.
-For non-technical users, Docker allows you to run applications in isolated environments called containers. This is essential for ensuring that all students have the same development environment regardless of their host operating system.
+Docker Desktop 是本课程中 DevContainer 功能所必需的。
+对于非技术用户来说，Docker 允许您在称为容器的隔离环境中运行应用程序。这对于确保所有学生无论主机操作系统是什么，都具有相同的开发环境至关重要。
 
-### a) Download Docker Desktop
+### a) 下载 Docker Desktop
 
--   Download Docker Desktop from the official download page:
+-   从官方下载页面下载 Docker Desktop：
 
     **👉 [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/)**
 
-### b) Installation by Operating System
+### b) 按操作系统安装
 
--   **🪟 Windows Users**
+-   **🪟 Windows 用户**
 
-    1. Download the correct version for your system, based on your architecture identified in [Step 2](#step-2-check-your-architecture):
-        - For **x86_64**, download the x86_64 version.
-        - For **aarch64**, download the ARM64 version.
-    2. Run the installer and follow the prompts.
-    3. After installation, open **Docker Desktop → Settings → Resources → WSL Integration**, and **enable integration for your WSL2 distribution**.
+    1.  根据 [步骤 2](#step-2-check-your-architecture) 中识别的架构，为您的系统下载正确版本：
+        -   对于 **x86_64**，下载 x86_64 版本。
+        -   对于 **aarch64**，下载 ARM64 版本。
+    2.  运行安装程序，按照提示进行操作。
+    3.  安装后，打开 **Docker Desktop → Settings → Resources → WSL Integration**，并**为您的 WSL2 发行版启用集成**。
 
--   **🍎 macOS Users**
+-   **🍎 macOS 用户**
 
-    1. Download the correct version for your system, based on your architecture identified in [Step 2](#step-2-check-your-architecture):
-        - Intel Macs (**x86_64**) → download the Intel build.
-        - Apple Silicon Macs (**ARM64**) → download the Apple Silicon build.
-    2. Run the installer and follow the on-screen instructions.
-    3. If prompted, allow permissions under:  
-       **System Settings ▸ Privacy & Security ▸ Allow Docker Desktop.**
+    1.  根据 [步骤 2](#step-2-check-your-architecture) 中识别的架构，为您的系统下载正确版本：
+        -   英特尔 Mac（**x86_64**）→ 下载英特尔版本。
+        -   Apple Silicon Mac（**ARM64**）→ 下载 Apple Silicon 版本。
+    2.  运行安装程序，按照屏幕上的说明进行操作。
+    3.  如果出现提示，请在以下位置授予权限：  
+       **System Settings ▸ Privacy & Security ▸ Allow Docker Desktop。**
 
-### c) Verify Docker Desktop Installation
+### c) 验证 Docker Desktop 安装
 
-1. Launch **Docker Desktop**.
+1.  启动 **Docker Desktop**。
 
-    - Make sure the whale 🐳 icon in the menu bar shows “Docker Desktop is running.”
+    -   确保菜单栏中的鲸鱼 🐳 图标显示 "Docker Desktop is running"。
 
-2. Open **Terminal** and run:
+2.  打开 **终端**并运行：
 
     ```bash
     docker --version
     ```
 
-    You should see a version number, e.g., `Docker version 24.0.5, build 0a4c701`.
+    您应该看到一个版本号，例如 `Docker version 24.0.5, build 0a4c701`。
 
-3. Task completed ✅.
+3.  任务完成 ✅。
 
 ---
 
-## Step 4. Install Visual Studio Code
+## 步骤 4. 安装 Visual Studio Code
 
-Visual Studio Code is the code editor that we will use for development in this course.
+Visual Studio Code 是本课程中我们将用于开发的代码编辑器。
 
-### a) Download Visual Studio Code
+### a) 下载 Visual Studio Code
 
-1. Download Visual Studio Code from **[this link](https://code.visualstudio.com/)**.
+1.  从 **[此链接](https://code.visualstudio.com/)** 下载 Visual Studio Code。
 
-### b) Installation by Operating System
+### b) 按操作系统安装
 
--   **🪟 Windows Users**
+-   **🪟 Windows 用户**
 
-    Proceed with the default installation options.
+    使用默认安装选项继续。
 
--   **🍎 macOS Users**
+-   **🍎 macOS 用户**
 
-    Follow these steps to enable the `code` command in your terminal:
+    按照以下步骤在终端中启用 `code` 命令：
 
-    1. Install **Visual Studio Code.app** in your **Applications** folder.
-    2. Open the Terminal app.
-    3. Run this command.
+    1.  将 **Visual Studio Code.app** 安装到您的 **Applications** 文件夹。
+    2.  打开终端应用程序。
+    3.  运行此命令。
 
         ```bash
         sudo ln -s "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" /usr/local/bin/code
         ```
 
-    4. Close and reopen Terminal, then test with:
+    4.  关闭并重新打开终端，然后测试：
 
         ```bash
         code .
@@ -216,102 +216,102 @@ Visual Studio Code is the code editor that we will use for development in this c
 
 ---
 
-## Step 5. Clone FIN556 Repository
+## 步骤 5. 克隆 FIN556 仓库
 
-**Cloning** the repository means downloading a copy of the course materials from GitHub to your local machine. These files are necessary for all your lab exercises and assignments and will be updated throughout the course on a weekly basis.
+**克隆**仓库意味着从 GitHub 将课程材料的副本下载到本地计算机。这些文件是所有实验练习和作业所必需的，并将每周更新。
 
-1. Open your **Terminal** (Windows Terminal with WSL2 or macOS Terminal).
+1.  打开您的 **终端**（Windows Terminal 带 WSL2 或 macOS 终端）。
 
-2. Go to your home directory.
+2.  进入您的主目录。
 
     ```bash
     cd ~
     ```
 
-3. Create a courses directory (if not already created):
+3.  创建一个 courses 目录（如果尚未创建）：
 
-    NOTE: If the `courses` directory already exists, you can skip this step. Otherwise, it will raise an error.
+    注意：如果 `courses` 目录已存在，可以跳过此步骤。否则会报错。
 
     ```bash
     mkdir courses
     ```
 
-4. Change into the `courses` directory:
+4.  进入 `courses` 目录：
 
     ```bash
     cd courses
     ```
 
-5. Clone the FIN556 repository from GitHub:
+5.  从 GitHub 克隆 FIN556 仓库：
 
-    NOTE: Make sure FIN556 is capitalized as shown below.
+    注意：确保 FIN556 按如下所示大写。
 
     ```bash
     git clone https://github.com/RoyLai-InfoCorp/FIN556.git
     ```
 
-6. Verify the courses directory contains the `FIN556` folder:
+6.  验证 courses 目录包含 `FIN556` 文件夹：
 
     ```bash
     ls -la
     ```
 
-7. Change into the FIN556 directory:
+7.  进入 FIN556 目录：
 
     ```bash
     cd FIN556
     ```
 
-8. Verify the FIN556 directory contains the `day-0` folder:
+8.  验证 FIN556 目录包含 `day-0` 文件夹：
 
     ```bash
     ls -la
     ```
 
-9. Task completed ✅.
+9.  任务完成 ✅。
 
-## Step 6. Update FIN556 Repository
+## 步骤 6. 更新 FIN556 仓库
 
-In subsequent weeks, you can go to your `FIN556` directory directly by running:
+在后续几周，您可以直接通过运行以下命令进入 `FIN556` 目录：
 
 ```bash
 cd ~/courses/FIN556
 ```
 
-Then, to update your local repository with the latest course materials, run:
+然后，要使用最新课程材料更新本地仓库，请运行：
 
 ```bash
 git pull
 ```
 
-## Step 5. Open Repository in Visual Studio Code
+## 步骤 5. 在 Visual Studio Code 中打开仓库
 
-Continuing from the previous step, enter the following commands in your terminal:
+继续前一步，在终端中输入以下命令：
 
 ```bash
 code .
 ```
 
-This will open the FIN556 repository in Visual Studio Code containing all your lab exercises and assignments.
+这将在 Visual Studio Code 中打开 FIN556 仓库，其中包含您所有的实验练习和作业。
 
 ---
 
-## Step 6. Open Repository in DevContainer
+## 步骤 6. 在 DevContainer 中打开仓库
 
-### a) Install Dev Containers Extension
+### a) 安装 Dev Containers 扩展
 
--   Click on the Extensions icon in the sidebar (or press **Ctrl + Shift + X**)
--   Search for "Dev Containers" and click "Install"
--   Task completed ✅.
+-   单击侧边栏中的扩展图标（或按 **Ctrl + Shift + X**）
+-   搜索 "Dev Containers" 并点击 "Install"
+-   任务完成 ✅。
 
-### b) Configure Platform for DevContainer (macOS or ARM64 users only)
+### b) 为 DevContainer 配置平台（仅限 macOS 或 ARM64 用户）
 
-**NOTE:** Refer to earlier [step 2](#step-2-check-your-architecture) to identify your architecture.
+**注意：** 请参考之前的 [步骤 2](#step-2-check-your-architecture) 来识别您的架构。
 
-The following instructions are only necessary if your computer architecture is **aarch64** (Apple Silicon Macs or ARM64 Windows PCs). If your architecture is **x86_64**, you can skip this section.
+仅当您的计算机架构为 **aarch64**（Apple Silicon Mac 或 ARM64 Windows PC）时才需要以下说明。如果您的架构是 **x86_64**，可以跳过此部分。
 
--   Create a file named **docker-compose.override.yml** in the **.devcontainer** directory.
--   Add the following content to the file:
+-   在 **.devcontainer** 目录中创建一个名为 **docker-compose.override.yml** 的文件。
+-   将以下内容添加到文件中：
 
     ```yaml
     services:
@@ -319,41 +319,41 @@ The following instructions are only necessary if your computer architecture is *
         platform: linux/arm64
     ```
 
-### c) Open Course Repository in DevContainer
+### c) 在 DevContainer 中打开课程仓库
 
--   **Prerequisites Check**
+-   **先决条件检查**
 
-    -   Ensure Docker Desktop is running
-    -   Ensure Visual Studio Code is installed with Dev Containers extension
-    -   Ensure you have successfully cloned the FIN556 repository
+    -   确保 Docker Desktop 正在运行
+    -   确保已安装带 Dev Containers 扩展的 Visual Studio Code
+    -   确保您已成功克隆 FIN556 仓库
 
-1. Click "Reopen in Container" (or press **Ctrl + Shift + P** and type **Dev Containers: Reopen in Container**)
+1.  点击 "Reopen in Container"（或按 **Ctrl + Shift + P** 并输入 **Dev Containers: Reopen in Container**）
 
     ![open in container](./img/dev-container.png)
 
-2. VS Code will automatically:
+2.  VS Code 将自动：
 
-    - Build the development container
-    - Install all required blockchain development tools
-    - Install extensions (Solidity, Hardhat, etc.)
-    - Set up the complete development environment
+    -   构建开发容器
+    -   安装所有必需的区块链开发工具
+    -   安装扩展（Solidity、Hardhat 等）
+    -   设置完整的开发环境
 
-3. Wait for the container to build (this may take a few minutes on first run)
+3.  等待容器构建（首次运行可能需要几分钟）
 
-4. Once complete, you should see:
-    - The FIN556 project files in the explorer
-    - A terminal with the development environment ready
-    - Extensions automatically installed and active
+4.  完成后，您应该看到：
+    -   资源管理器中的 FIN556 项目文件
+    -   已准备好开发环境的终端
+    -   已自动安装并激活的扩展
 
 ---
 
-## Step 7. Verify DevContainer Setup
+## 步骤 7. 验证 DevContainer 设置
 
-DevContainers allow you to develop inside a Docker container with all necessary dependencies pre-installed. This ensures a consistent development environment across different machines.
+DevContainers 允许您在具有所有必要依赖项预装的 Docker 容器中进行开发。这确保了不同机器之间的一致开发环境。
 
-1. Open the integrated terminal in VS Code (**Ctrl + `**)
+1.  在 VS Code 中打开集成终端（**Ctrl + `**）
 
-2. Verify the development tools are installed:
+2.  验证开发工具已安装：
 
     ```bash
     node --version
@@ -369,7 +369,7 @@ DevContainers allow you to develop inside a Docker container with all necessary 
      # git version 2.34.1
     ```
 
-3. Test that hardhat-shorthand is available (this will be used in day-1 lessons):
+3.  测试 hardhat-shorthand 是否可用（这将在第 1 天的课程中使用）：
 
     ```bash
     npm ls -g
@@ -380,90 +380,90 @@ DevContainers allow you to develop inside a Docker container with all necessary 
      #└── npm@10.9.2
     ```
 
-4. Task completed ✅.
+4.  任务完成 ✅。
 
 ---
 
-## Step 8. Find your Student Group in Canvas
+## 步骤 8. 在 Canvas 上找到您的学生组
 
-1. Login to Canvas
+1.  登录 Canvas
 
-2. Go to your Course site (e.g., FIN556_JUL25_L01)
+2.  进入您的课程网站（例如 FIN556_JUL25_L01）
 
-3. Click on "People" in the left-hand menu
+3.  点击左侧菜单中的 "People"
 
-4. Click on "Groups" tab
+4.  点击 "Groups" 标签
 
     ![canvas_groups](./img/canvas_groups.png)
 
-5. Identify your assigned group (there can be no more than 5 members in a group).
+5.  找到您被分配的组（每组最多 5 人）。
 
 ---
 
-## Step 9. Send Confirmation Email
+## 步骤 9. 发送确认邮件
 
-Upon successful completion of all setup steps, please send a confirmation email to the course instructor indicating that your development environment is ready for class. Please include:
+完成所有设置步骤后，请向课程讲师发送一封确认邮件，表明您的开发环境已准备好上课。请包括：
 
--   your full name
--   student identification number
--   Windows or macOS or others.
--   Your assigned student group (from Step 7)
-
----
-
-## About the DevContainer
-
-This section is purely informational and describes the configuration and tools pre-installed in the DevContainer.
-
-### a) Installed Tools
-
-The following tools are pre-installed in the DevContainer:
-
--   **Node.js**: JavaScript runtime for building blockchain applications.
--   **npm**: Package manager for JavaScript.
--   **git**: Version control system for tracking changes in code.
--   **hardhat-shorthand**: Global npm package that allows using `hh` instead of `npx hardhat` commands.
-
-### b) Installed Visual Studio Code Extensions
-
-The following Visual Studio Code extensions are pre-installed in the DevContainer:
-
--   **Solidity (Juan Blanco)**: Language support for Solidity contracts.
--   **Prettier**: Code formatter for consistent styling.
--   **ESLint**: Linter for identifying and fixing code issues.
--   **JavaScript(ES6) code snippets**: Enhances JavaScript development with useful snippets.
+-   您的全名
+-   学生证号
+-   Windows 或 macOS 或其他操作系统
+-   您被分配的学生组（来自步骤 7）
 
 ---
 
-## Troubleshooting
+## 关于 DevContainer
 
-### Common Issues
+本节仅为信息性内容，描述了 DevContainer 中预装的配置和工具。
 
-These are some common issues you may encounter while setting up your development environment. The solutions are provided for convenience only. If the suggested actions does not work for you, please search on the web for more details.
+### a) 已安装的工具
 
-**Docker Desktop not starting:**
+DevContainer 中预装了以下工具：
 
--   Ensure virtualization is enabled in BIOS/UEFI
--   On Windows, ensure WSL2 is properly installed
--   Restart your computer after installation
--   Google "Docker Desktop not starting" for more help
+-   **Node.js**：用于构建区块链应用程序的 JavaScript 运行时。
+-   **npm**：JavaScript 的包管理器。
+-   **git**：用于跟踪代码更改的版本控制系统。
+-   **hardhat-shorthand**：全局 npm 包，允许使用 `hh` 而不是 `npx hardhat` 命令。
 
-**DevContainer fails to build:**
+### b) 已安装的 Visual Studio Code 扩展
 
--   Check Docker Desktop is running
--   Ensure you have stable internet connection
--   Try rebuilding with **Ctrl + Shift + P** → **Dev Containers: Rebuild Container**
--   Google "DevContainer fails to build" for more help
+DevContainer 中预装了以下 Visual Studio Code 扩展：
 
-**VS Code extensions not working:**
+-   **Solidity (Juan Blanco)**：Solidity 合约的语言支持。
+-   **Prettier**：用于一致样式的代码格式化工具。
+-   **ESLint**：用于识别和修复代码问题的检查器。
+-   **JavaScript(ES6) code snippets**：通过有用的代码片段增强 JavaScript 开发。
 
--   Reload VS Code window: **Ctrl + Shift + P** → **Developer: Reload Window**
--   Check if extensions are enabled
--   Update VS Code to latest version
+---
 
-**macOS-specific issues:**
+## 故障排除
 
--   **Docker Desktop permission denied**: Go to System Preferences > Security & Privacy > General and allow Docker
--   **Terminal command not found**: Ensure you're using the correct terminal (not zsh with restricted PATH)
--   **Apple Silicon compatibility**: Download ARM64 versions of Docker Desktop and VS Code for M1/M2/M3/M4 Macs
--   **File permissions in DevContainer**: If you encounter permission issues, try rebuilding the container
+### 常见问题
+
+以下是您在设置开发环境时可能遇到的一些常见问题。提供的解决方案仅供方便。如果建议的操作对您不起作用，请在网上搜索更多详细信息。
+
+**Docker Desktop 无法启动：**
+
+-   确保在 BIOS/UEFI 中启用了虚拟化
+-   在 Windows 上，确保 WSL2 已正确安装
+-   安装后重启计算机
+-   Google "Docker Desktop not starting" 获取更多帮助
+
+**DevContainer 构建失败：**
+
+-   检查 Docker Desktop 是否正在运行
+-   确保您有稳定的网络连接
+-   尝试使用 **Ctrl + Shift + P** → **Dev Containers: Rebuild Container** 重新构建
+-   Google "DevContainer fails to build" 获取更多帮助
+
+**VS Code 扩展不工作：**
+
+-   重新加载 VS Code 窗口：**Ctrl + Shift + P** → **Developer: Reload Window**
+-   检查扩展是否已启用
+-   更新 VS Code 到最新版本
+
+**macOS 特定问题：**
+
+-   **Docker Desktop 权限被拒绝**：转到 System Preferences > Security & Privacy > General 并允许 Docker
+-   **终端命令找不到**：确保您使用的是正确的终端（不是带有受限 PATH 的 zsh）
+-   **Apple Silicon 兼容性**：为 M1/M2/M3/M4 Mac 下载 ARM64 版本的 Docker Desktop 和 VS Code
+-   **DevContainer 中的文件权限**：如果遇到权限问题，请尝试重建容器

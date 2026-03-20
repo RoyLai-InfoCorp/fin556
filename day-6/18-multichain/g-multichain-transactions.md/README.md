@@ -1,72 +1,72 @@
-# Transactions
+# 交易
 
-## 1. MultiChain Transactions
+## 1. MultiChain 交易
 
-Blockchain is made up of chains of blocks and each block is made up of a list of transactions. So what are transactions?
-Each multichain transaction is essentially made up of 2 lists: A list of transaction inputs and a list of transaction outputs.
-There is one exception which is the coinbase referring to the transaction for the first block which has no input.
-Each transaction is referred to by its transaction ID – the transaction ID is not stored in the transaction but is derived from its hash.
-That is why transaction id is also called the transaction hash.
+区块链由区块链组成，每个区块由一系列交易组成。那么什么是交易？
+每个 multichain 交易本质上由 2 个列表组成：交易输入列表和交易输出列表。
+有一个例外是 coinbase，指的是第一个区块的交易，没有输入。
+每笔交易都以其交易 ID 来引用——交易 ID 不存储在交易中，而是从其哈希派生。
+这就是为什么交易 ID 也称为交易哈希。
 
 ![mc-8-1](./img/mc-8-1.png)
 
-### a. Transaction Inputs
+### a. 交易输入
 
-Each transaction input contains 2 parts:
+每个交易输入包含两部分：
 
-One part is a reference to the previous transaction output.
-This reference is formed using the previous transaction’s ID as well as the index or the position of the output in the previous transaction starting from 0.
+一部分是对前一个交易输出的引用。
+这个引用使用前一个交易的 ID 以及输出在前一个交易中的索引或位置（从 0 开始）形成。
 
-The other part is often known as ScriptSig. This is the unlocking script or the key used to unlock the value held in the previous transaction output.
+另一部分通常称为 ScriptSig。这是解锁脚本或用于解锁前一个交易输出中持有价值的密钥。
 
 ![mc-8-2](./img/mc-8-2.png)
 
-You can imagine that a transaction input represents the spending or unlocking of a transaction output.
+您可以想象交易输入代表花费或解锁一个交易输出。
 
-### b. Transaction Outputs
+### b. 交易输出
 
-The transaction output is made up of 3 parts.
+交易输出由三部分组成。
 
-The first part is a single number representing the native cryptocurrency. In the case of bitcoin, this represents the amount of bitcoin locked within this transaction output.
+第一部分是一个表示原生加密货币的数字。在比特币的情况下，这表示锁定在此交易输出中的比特币数量。
 
-The second part is commonly called the ScriptPubKey – this is the locking script used to lock the value contained within the transaction output.
+第二部分通常称为 ScriptPubKey——这是用于锁定交易输出内包含的值的锁定脚本。
 
 ![mc-8-3](./img/mc-8-3.png)
 
-The original purpose of this locking script is to lock a transaction output based on a recipient’s wallet address so that the transaction output can only be unlocked with a transaction input using the recipient’s private key. This is the reason why it was called the ScriptPubkey for conventional reasons where pubkey means public key.
-Although the traditional use for this script is to allow the spending of the transaction, the script can actually be used to do other things to give the transactions some level of programmability. And I will talk a little bit more about this script later on.
+这个锁定脚本的原始目的是基于接收者的钱包地址锁定交易输出，以便交易输出只能使用接收者的私钥通过交易输入来解锁。这就是为什么出于传统原因它被称为 ScriptPubkey，其中 pubkey 表示公钥。
+尽管这个脚本的传统用途是允许花费交易，但脚本实际上可以用来做其他事情，以赋予交易一定程度的可编程性。我稍后会详细讨论这个脚本。
 
-The third part is used for storage of meda data which is what MultiChain used to extend the bitcoin protocol to carry multichain asset, multichain streams, permission etc.
-Each transaction output can be either spent or unspent.
+第三部分用于存储元数据，这就是 MultiChain 用来扩展比特币协议以承载 multichain 资产、multichain 流、权限等的方式。
+每个交易输出可以已花费或未花费。
 
-### c. Unspent Transaction Outputs (UTXO)
+### c. 未花费交易输出 (UTXO)
 
-Spent transaction outputs are always referenced by the transaction inputs belonging to another transaction where the spending takes place.
+已花费的交易输出总是被属于发生花费的另一笔交易的交易输入引用。
 
-The transactions are connected to each other by linking past transaction outputs to new transaction inputs.
+交易通过将过去的交易输出链接到新的交易输入而相互连接。
 
-The transaction output of the latest transactions will not be referenced by any transaction input yet.
+最新交易的交易输出尚不会被任何交易输入引用。
 
-This is why these new transaction outputs are known as unspent transaction output and the set of all unspent transaction output in the blockchain is known as UTXO.
+这就是为什么这些新交易输出被称为未花费交易输出，区块链中所有未花费交易输出的集合称为 UTXO。
 
 ![mc-8-4](./img/mc-8-4.png)
 
-Understanding what UTXO means is necessary to help you understand how to derive your wallet balance.
+理解 UTXO 的含义对于帮助您理解如何推导钱包余额是必要的。
 
-### d. Transaction Validation
+### d. 交易验证
 
-In order for a transaction to be valid, it must satisfy the following conditions:
+为了使交易有效，必须满足以下条件：
 
-1. The transaction must be well-formed. This means that the transaction must be properly formatted and must contain all the necessary parts.
+1. 交易格式正确。这意味着交易必须格式正确且必须包含所有必要部分。
 
-2. The transaction must be legitimate. This means that the transaction must be valid according to the rules of the application. For example, the transaction must be signed by the correct private key.
+2. 交易必须合法。这意味着交易必须根据应用程序的规则有效。例如，交易必须由正确的私钥签名。
 
-3. The transaction must be confirmed. This means that the transaction must be included in a block and the block must be mined.
+3. 交易必须被确认。这意味着交易必须被包含在一个区块中，并且该区块必须被挖掘。
 
-4. The transaction must be valid. This means that the transaction must be valid according to the rules of the protocol. For example, the transaction must not spend more than the amount of the transaction output.
+4. 交易必须有效。这意味着交易必须根据协议规则有效。例如，交易不能花费超过交易输出的金额。
 
 ![mc-8-6](./img/mc-8-6.png)
 
-In order to validate the last point, the transaction must be checked against the UTXO set to ensure that the transaction output being spent is not already spent by another transaction.
+为了验证最后一点，必须针对 UTXO 集检查交易，以确保正在花费的交易输出尚未被另一笔交易花费。
 
 ![mc-8-5](./img/mc-8-5.png)

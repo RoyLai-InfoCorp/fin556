@@ -1,106 +1,106 @@
-The focus of this lesson is on how to create and use multichain asset.
+本课程的重点是介绍如何创建和使用 multichain 资产。
 
-## 1. Overview
+## 1. 概述
 
-A MultiChain stream serves as the mechanism for storing and retrieving data on the blockchain, much like a database. The diagram below describes the general flow of how to create a stream and publish stream items on MultiChain for illustration purpose.
+MultiChain 流用作在区块链上存储和检索数据的机制，非常类似于数据库。下图描述了在 MultiChain 上创建流和发布流项目的一般流程，用于说明。
 
 ```mermaid
 sequenceDiagram
   participant Node1 as Node1
   participant Node2 as Node2
 
-  Node1->>Node1: 1. Create Stream
-  Node1->>Node2: 2. Grant Write Permission
-  Node2->>Node1: 3. Subscribe Stream
-  Node2->>Node2: 4. Publish Stream Item
-  Node2->>Node2: 5. List Stream Items
+  Node1->>Node1: 1. 创建流
+  Node1->>Node2: 2. 授予写入权限
+  Node2->>Node1: 3. 订阅流
+  Node2->>Node2: 4. 发布流项目
+  Node2->>Node2: 5. 列出流项目
 ```
 
-In this diagram, Node1 is a node with "create" permission and Node2 is a node that wanted to publish items into the stream created by Node1.
+在此图中，Node1 是具有"创建"权限的节点，Node2 是希望向 Node1 创建的流中发布项目的节点。
 
-1. Node1 creates a stream. This means that Node1 sets up a stream where data can be stored.
+1. Node1 创建一个流。这意味着 Node1 设置了一个可以存储数据的流。
 
-2. Node1 grants write permission to Node2. This allows Node2 to write or add data to the stream created by Node1.
+2. Node1 向 Node2 授予写入权限。这允许 Node2 向 Node1 创建的流写入或添加数据。
 
-3. Node2 subscribes to the stream. By subscribing, Node2 indicates its interest in receiving updates or notifications related to the stream.
+3. Node2 订阅该流。通过订阅，Node2 表示有兴趣接收与该流相关的更新或通知。
 
-4. Node2 publishes a stream item. This means that Node2 adds a new piece of data, referred to as a stream item, to the stream. The content of the stream item can be text, a JSON object, or a hexadecimal string.
+4. Node2 发布一个流项目。这意味着 Node2 添加了一段新数据，称为流项目。流项目的内容可以是文本、JSON 对象或十六进制字符串。
 
-5. Node2 lists stream items. This action involves retrieving and displaying a list of stream items that have been published to the stream. It allows Node2 to view the existing data in the stream.
-
----
-
-## 2. MultiChain Stream and Stream Items
-
-We can draw an analogy between a stream and a database table. A stream is like a database table, and a stream item is like a database record. However, unlike a database, a stream item cannot be deleted once it is created; it can only be appended to the stream.
-
-These are the characteristics of a stream item:
-
--   A stream item is a key-value pair.
--   Key is **NOT** unique for MultiChain stream items. This means that you can have multiple stream items with the same key in a stream. A stream item can have multiple keys and you can search for an item using any of its key.
--   The key is between 0 and 256 bytes in length.
--   The data can be represented as a hexadecimal string, text, or a JSON object.
--   The data can also be configured for storage on-chain or off-chain.
--   The size of the value is determined by the maximum block size and the number of transactions in the block.
--   Each stream item contains an ID of the transaction used to publish to the block.
-
-These characteristics enable the blockchain to be used in a way that is distinct from a traditional database with auditable and anti-forgery capabilities:
-
--   **Time-Series Database (When)**: This type of database is useful for storing auditable information that requires accurate time stamps. The design of the blockchain inherently time-stamps and serializes the data chronologically when it is added to each block. This allows for easy verification and validation of the sequence of events, as well as anchoring a snapshot of data in time for future reference.
-
--   **Identity-Driven Database (Who)**: This type of database provides proof of origin or authenticity for the source of data stored on the blockchain. Each publish transaction is immutable and can be traced back to its owner, ensuring the integrity and accountability of the data.
-
--   **Key-Value Database (What)**: As every transaction is unique and immutable, implementing a registry for reference data using a key-value database is a good approach. This type of data seldom changes, and it is essential to tightly control the integrity of this data since it serves as a golden source for many downstream data consumers.
-
-**NOTE:** The MultiChain stream mechanism is generally readable by everyone, and permissions can only be used to control who has write or admin access to it. However, MultiChain has incorporated a new feature for storing encrypted data on the blockchain. If you are interested, it would be worth finding out more about this feature on your own. Regardless, as a general rule-of-thumb, never store any sensitive data on the blockchain.
+5. Node2 列出流项目。此操作涉及检索和显示已发布到该流的流项目列表。它允许 Node2 查看流中的现有数据。
 
 ---
 
-## 3. MultiChain Stream Commands
+## 2. MultiChain 流和流项目
 
-### a. "create stream" Command
+我们可以将流与数据库表进行类比。流就像数据库表，流项目就像数据库记录。然而，与数据库不同的是，流项目一旦创建就无法删除；它只能追加到流中。
 
-Creates a stream (ie. a database table) on the blockchain.
+流项目的特征如下：
 
-**Syntax:**
+-   流项目是键值对。
+-   键在 MultiChain 流项目中**不**是唯一的。这意味着您可以在一个流中拥有具有相同键的多个流项目。流项目可以有多个键，您可以使用其任何键来搜索项目。
+-   键的长度在 0 到 256 字节之间。
+-   数据可以表示为十六进制字符串、文本或 JSON 对象。
+-   数据也可以配置为链上或链下存储。
+-   值的大小由最大区块大小和区块中的交易数量决定。
+-   每个流项目包含用于发布到区块的交易 ID。
+
+这些特性使区块链能够以不同于传统数据库的方式使用，具有可审计和防伪能力：
+
+-   **时序数据库（何时）**：这种数据库对于存储需要精确时间戳的可审计信息很有用。区块链的设计固有地在数据添加到每个区块时按时间顺序对其进行时间戳和序列化。这允许轻松验证和验证事件顺序，以及在时间为数据快照以便将来参考。
+
+-   **身份驱动的数据库（谁）**：这种数据库为存储在区块链上的数据来源或真实性提供证明。每个发布交易都是不可变的，可以追溯到其所有者，确保数据的完整性和问责制。
+
+-   **键值数据库（什么）**：由于每笔交易都是唯一且不可变的，使用键值数据库实现参考数据注册表是一种很好的方法。这种数据很少更改，对这种数据的完整性进行严格控制至关重要，因为它作为许多下游数据消费者的黄金数据源。
+
+**注意：** MultiChain 流机制通常所有人都可以读取，权限只能用于控制谁具有写入或管理员访问权限。但是，MultiChain 引入了一项新功能，用于在区块链上存储加密数据。如果您感兴趣，值得自己进一步了解此功能。无论如何，作为一般准则，切勿在区块链上存储任何敏感数据。
+
+---
+
+## 3. MultiChain 流命令
+
+### a. "create stream" 命令
+
+在区块链上创建流（即数据库表）。
+
+**语法：**
 
 ```
 create stream "stream-name" open|restrictions|options "custom-fields" "javascript-code"
 ```
 
-**Arguments:**
+**参数：**
 
 1. **"entity-type" (string, required)**: stream
-2. **"stream-name" (string, required)**: Stream name, if not "" should be unique.
-3. **open (boolean, required)**: Allow anyone to publish in this stream
-   or
-4. **restrictions (object, optional)**: Stream restrictions provides more granular control over who can publish to the stream. The restrictions object can contain the following:
+2. **"stream-name" (string, required)**: 流名称，如果不是 "" 则应该唯一。
+3. **open (boolean, required)**: 允许任何人在此流中发布
+   或者
+4. **restrictions (object, optional)**: 流限制提供了更细粒度的控制来控制谁可以发布到流。限制对象可以包含以下内容：
 
     ```json
     {
-        "restrict" : "restrictions" (string, optional) Stream restrictions,   comma    delimited. Possible values: write,read,offchain,onchain
-        "salted" : true|false (boolean, optional) Indicates whether offchain   item    chunk hashes should be salted
+        "restrict" : "restrictions" (string, optional) 流限制，用逗号分隔。可能的值：write,read,offchain,onchain
+        "salted" : true|false (boolean, optional) 表示是否应该对链下项目块哈希加盐
     }
     ```
 
-5. custom-fields (object, optional) a JSON object with custom fields
+5. custom-fields (object, optional) 包含自定义字段的 JSON 对象
    {...}
 
-**Examples:**
+**示例：**
 
-The following command creates a stream that is closed; only the creator of the stream can publish to it.
+以下命令创建一个封闭的流；只有流的创建者可以向其中发布。
 
 ```
 > create stream test-stream
 ```
 
-The following command creates a stream that is opened; anyone can publish to it.
+以下命令创建一个开放的流；任何人都可以向其中发布。
 
 ```
 > create stream test-stream true
 ```
 
-The following command creates a stream that is read-only; only address with test-stream.write permission can publish to it.
+以下命令创建一个只读的流；只有具有 test-stream.write 权限的地址可以向其中发布。
 
 ```
 > create stream test-stream {"restrict":"write"}
@@ -108,64 +108,64 @@ The following command creates a stream that is read-only; only address with test
 
 ---
 
-### b. "publish" Command
+### b. "publish" 命令
 
-Publishes a stream item (ie. append a record in a database table) on the blockchain.
+在区块链上发布流项目（即在数据库表中追加记录）。
 
-**Syntax:**
+**语法：**
 
 ```
 publish "stream-identifier" "key"|keys "data-hex"|data-obj "options"
 ```
 
-**Arguments:**
+**参数：**
 
-1. **"stream-identifier" (string, required)**: Stream identifier - either txid, stream reference, stream name.
+1. **"stream-identifier" (string, required)**: 流标识符 - 以下之一：交易 ID、流引用、流名称。
 
-2. **"key" (string, required)**: Item key
+2. **"key" (string, required)**: 项目键
 
-or
+或者
 
-2. **keys (array, required)**: Array of item keys
+2. **keys (array, required)**: 项目键数组
 
-3. **"data-hex" (string, required)**: Data hex string
+3. **"data-hex" (string, required)**: 数据十六进制字符串
 
-or
+或者
 
-3. **data-json (object, required)**: JSON data object
+3. **data-json (object, required)**: JSON 数据对象
     ```json
     {
-        "json" : data-json (object, required) Valid JSON object
+        "json" : data-json (object, required) 有效的 JSON 对象
     }
     ```
 
-or
+或者
 
-3. **data-text (object, required)**: Text data object
+3. **data-text (object, required)**: 文本数据对象
 
     ```json
     {
-        "text" : "data-text" (string, required) Data string
+        "text" : "data-text" (string, required) 数据字符串
     }
     ```
 
-4. **"options" (string, optional)**: Should be "offchain" or omitted
+4. **"options" (string, optional)**: 应为 "offchain" 或省略
 
-**Examples:**
+**示例：**
 
-The following command publishes a stream item with a key of "key1" with a hexadecimal string representing "Hello World!" in ASCII. You can verify using online hexadecimal to text converter. This is the raw form of a stream item and is not human-readable but useful for binary data.
+以下命令发布一个流项目，键为 "key1"，十六进制字符串表示 ASCII 中的 "Hello World!"。您可以使用在线十六进制转文本转换器验证。这是流项目的原始形式，不是人类可读的，但对二进制数据很有用。
 
 ```
 publish "test-stream1" "key1" 48656C6C6F20576F726C64210A
 ```
 
-The following command publishes a stream item with a key of "key2" with a JSON object nested within a JSON argument under the "json" attribute.
+以下命令发布一个流项目，键为 "key2"，JSON 对象嵌套在 "json" 属性下的 JSON 参数中。
 
 ```
 publish "test-stream1" "key2" '{"json":{"name":"John Smith"}}'
 ```
 
-The following command publishes a stream item with a key of "key3" with a text string in JSON argument under the "text" attribute.
+以下命令发布一个流项目，键为 "key3"，文本字符串在 "text" 属性下的 JSON 参数中。
 
 ```
 publish "test-stream1" "key3" '{"text":"Hello world!"}'
@@ -173,70 +173,70 @@ publish "test-stream1" "key3" '{"text":"Hello world!"}'
 
 ---
 
-### c. "subscribe" Command
+### c. "subscribe" 命令
 
-Subscribes to the stream.
+订阅流。
 
-**Syntax:**
+**语法：**
 
 ```
 subscribe entity-identifier(s) ( rescan parameters )
 ```
 
-**Arguments:**
+**参数：**
 
-1. "stream-identifier" (string, required) Stream identifier - one of: create txid, stream reference, stream name.
+1. "stream-identifier" (string, required) 流标识符 - 以下之一：创建交易 ID、流引用、流名称。
 
-or
+或者
 
-1. "asset-identifier" (string, required) Asset identifier - one of: issue txid, asset reference, asset name.
+1. "asset-identifier" (string, required) 资产标识符 - 以下之一：发行交易 ID、资产引用、资产名称。
 
-or
+或者
 
-1. entity-identifier(s) (array, optional) A JSON array of stream or asset identifiers
+1. entity-identifier(s) (array, optional) 流或资产标识符的 JSON 数组
 
-2. rescan (boolean, optional, default=true) Rescan the wallet for transactions
-   Note: This call can take minutes to complete if rescan is true.
+2. rescan (boolean, optional, default=true) 重新扫描钱包中的交易
+   注意：如果 rescan 为 true，此调用可能需要几分钟才能完成。
 
-**Examples:**
+**示例：**
 
-Subscribe to the stream with rescan
+订阅流并重新扫描
 
 > multichain-cli chain1 subscribe "test-stream"
 
-Subscribe to the stream without rescan
+订阅流但不重新扫描
 
 > multichain-cli chain1 subscribe "test-stream" false
 
 ---
 
-### d. "liststreams" Command
+### d. "liststreams" 命令
 
-Returns list of defined streams
+返回已定义流的列表。
 
-**Syntax:**
+**语法：**
 
 ```
 liststreams ( stream-identifier(s) verbose count start )
 ```
 
-**Arguments:**
+**参数：**
 
-1. **"stream-identifier(s)" (string, optional, default=\*)**: Stream identifier - one of: create txid, stream reference, stream name.
+1. **"stream-identifier(s)" (string, optional, default=\*)**: 流标识符 - 以下之一：创建交易 ID、流引用、流名称。
 
-or
+或者
 
-1. **stream-identifier(s) (array, optional)**: A JSON array of stream identifiers
+1. **stream-identifier(s) (array, optional)**: 流标识符的 JSON 数组
 
-2. **verbose (boolean, optional, default=false)**: If true, returns list of stream creators
+2. **verbose (boolean, optional, default=false)**: 如果为 true，返回流创建者列表
 
-3. **count (number, optional, default=INT_MAX - all)**: The number of streams to display
+3. **count (number, optional, default=INT_MAX - all)**: 要显示的流数量
 
-4. **start (number, optional, default=-count - last)**: Start from specific stream, 0 based, if negative - from the end
+4. **start (number, optional, default=-count - last)**: 从特定流开始，0 开始，如果为负数 - 从末尾开始
 
-**Examples:**
+**示例：**
 
-The following command returns a list of all streams.
+以下命令返回所有流的列表。
 
 ```
 > liststreams
@@ -244,43 +244,43 @@ The following command returns a list of all streams.
 
 ---
 
-### e. "liststreamitems" Command
+### e. "liststreamitems" 命令
 
-Returns stream items.
+返回流项目。
 
-**Syntax:**
+**语法：**
 
 ```
 liststreamitems "stream-identifier" ( verbose count start local-ordering )
 ```
 
-**Arguments:**
+**参数：**
 
-1. **"stream-identifier" (string, required)**: Stream identifier - one of: create txid, stream reference, stream name.
+1. **"stream-identifier" (string, required)**: 流标识符 - 以下之一：创建交易 ID、流引用、流名称。
 
-2. **verbose (boolean, optional, default=false)**: If true, returns information about item transaction
+2. **verbose (boolean, optional, default=false)**: 如果为 true，返回有关项目交易的信息
 
-3. **count (number, optional, default=10)**: The number of items to display
+3. **count (number, optional, default=10)**: 要显示的项目数量
 
-4. **start (number, optional, default=-count - last)**: Start from specific item, 0 based, if negative - from the end
+4. **start (number, optional, default=-count - last)**: 从特定项目开始，0 开始，如果为负数 - 从末尾开始
 
-5. **local-ordering (boolean, optional, default=false)**: If true, items appear in the order they were processed by the wallet, if false - in the order they appear in blockchain
+5. **local-ordering (boolean, optional, default=false)**: 如果为 true，项目按钱包处理的顺序出现，如果为 false - 按它们在区块链中出现的顺序
 
-**Examples:**
+**示例：**
 
-The following command returns a list of all stream items in the stream "test-stream1".
+以下命令返回流 "test-stream1" 中所有流项目的列表。
 
 ```
 > liststreamitems "test-stream1"
 ```
 
-The following command returns a list of all stream items in the stream "test-stream1" with verbose information.
+以下命令返回流 "test-stream1" 中所有流项目的列表，带有详细信息。
 
 ```
 > liststreamitems "test-stream1" true
 ```
 
-The following command returns a list of all stream items in the stream "test-stream1" with verbose information, 20 items per page, starting from the 10th item.
+以下命令返回流 "test-stream1" 中所有流项目的列表，带有详细信息，每页 20 项，从第 10 项开始。
 
 ```
 > liststreamitems "test-stream1" true 20 10
@@ -288,40 +288,40 @@ The following command returns a list of all stream items in the stream "test-str
 
 ---
 
-### f. "liststreamkeyitems" Command
+### f. "liststreamkeyitems" 命令
 
-Returns stream items for a specific key.
+返回特定键的流项目。
 
-**Syntax:**
+**语法：**
 
 ```
 liststreamkeyitems "stream-identifier" "key" ( verbose count start local-ordering )
 ```
 
-**Arguments:**
+**参数：**
 
-1. **"stream-identifier" (string, required)**: Stream identifier - one of: create txid, stream reference, stream name.
-2. **"key" (string, required)**: Stream key
-3. **verbose (boolean, optional, default=false)**: If true, returns information about item transaction
-4. **count (number, optional, default=10)**: The number of items to display
-5. **start (number, optional, default=-count - last)**: Start from specific item, 0 based, if negative - from the end
-6. **local-ordering (boolean, optional, default=false)**: If true, items appear in the order they were processed by the wallet, if false - in the order they appear in blockchain
+1. **"stream-identifier" (string, required)**: 流标识符 - 以下之一：创建交易 ID、流引用、流名称。
+2. **"key" (string, required)**: 流键
+3. **verbose (boolean, optional, default=false)**: 如果为 true，返回有关项目交易的信息
+4. **count (number, optional, default=10)**: 要显示的项目数量
+5. **start (number, optional, default=-count - last)**: 从特定项目开始，0 开始，如果为负数 - 从末尾开始
+6. **local-ordering (boolean, optional, default=false)**: 如果为 true，项目按钱包处理的顺序出现，如果为 false - 按它们在区块链中出现的顺序
 
-**Examples:**
+**示例：**
 
-The following command returns a list of all stream items in the stream "test-stream1" with key "key1".
+以下命令返回流 "test-stream1" 中键为 "key1" 的所有流项目的列表。
 
 ```
 > liststreamkeyitems test-stream1 key1
 ```
 
-The following command returns a list of all stream items in the stream "test-stream1" with key "key1" with verbose information.
+以下命令返回流 "test-stream1" 中键为 "key1" 的所有流项目的列表，带有详细信息。
 
 ```
 > liststreamkeyitems test-stream1 key1 true 10 100
 ```
 
-The following example creates a stream item with multiple keys and then retrieves the item using one of the keys.
+以下示例创建一个具有多个键的流项目，然后使用其中一个键检索该项目。
 
 ```
 > publish test-stream1 '["key1","key2","key3"]' '{"json":{"name":"John Smith"}}'
@@ -330,54 +330,52 @@ The following example creates a stream item with multiple keys and then retrieve
 > liststreamkeyitems test-stream1 key4
 ```
 
-The example output shows that key1 returns 1 item while key2 returns 2 items. That is because key2 included another item which also contains key2. The last command returns 0 items because key4 does not exist.
+示例输出显示 key1 返回 1 个项目，而 key2 返回 2 个项目。这是因为 key2 包含另一个也包含 key2 的项目。最后一个命令返回 0 个项目，因为 key4 不存在。
 
 ---
 
-## 🛠️ Lab Practice: MultiChain Streams
+## 🛠️ 实验实践：MultiChain 流
 
--   For this lab session, we will try to implement the flow below.
+-   在本实验课程中，我们将尝试实现以下流程。
 
 ```mermaid
 sequenceDiagram
   participant Node1 as Node1
   participant Node2 as Node2
 
-  Node1->>Node1: 1. Create Stream
-  Node1->>Node2: 2. Grant Write Permission
-  Node2->>Node1: 3. Subscribe Stream
-  Node2->>Node2: 4. Publish Stream Item
-  Node2->>Node2: 5. List Stream Items
+  Node1->>Node1: 1. 创建流
+  Node1->>Node2: 2. 授予写入权限
+  Node2->>Node1: 3. 订阅流
+  Node2->>Node2: 4. 发布流项目
+  Node2->>Node2: 5. 列出流项目
 ```
 
--   Node1 and Node2 are arbitrary so you can choose any 2 nodes in your group to assume the role of Node1 and Node2.
+-   Node1 和 Node2 是任意的，因此您可以选择组中任意 2 个节点来担任 Node1 和 Node2 的角色。
 
--   Node1 need not be the admin but it must have "create" permission.
+-   Node1 不一定是管理员，但它必须具有"创建"权限。
 
--   All members of the group should rotate and assume the roles of Node1 and Node2 to complete this lab.
+-   组的所有成员应该轮换并担任 Node1 和 Node2 的角色来完成本实验。
 
--   You may also refer to the MultiChain API reference for details http://www.multichain.com/developers/json-rpc-api/
+-   您也可以参考 MultiChain API 文档获取详细信息 http://www.multichain.com/developers/json-rpc-api/
 
 ---
 
-### step 1: Node1 Create Stream
+### 步骤 1：Node1 创建流
 
-Refer to the notes on [create stream](#a-create-stream-command) command and use it to complete step 1, ie. creating a stream by node1.
+参考 [create stream](#a-create-stream-command) 命令的说明并使用它完成步骤 1，即由 node1 创建流。
 
-### Step 2: Node1 Grant Write Permission to the Stream to Node2
+### 步骤 2：Node1 向 Node2 授予流的写入权限
 
-Refer to the notes on [grant stream-level permission](#e-grant-command) command and use it to complete step 2, ie. granting write permission at stream-level to node2.
+参考 [grant stream-level permission](#e-grant-command) 命令的说明并使用它完成步骤 2，即在流级别向 node2 授予写入权限。
 
-### Step 3: Node2 Subscribe to the Stream
+### 步骤 3：Node2 订阅流
 
-Refer to the notes on [subscribe](#c-subscribe-command) command and use it to complete step 3, ie. subscribing to the stream.
+参考 [subscribe](#c-subscribe-command) 命令的说明并使用它完成步骤 3，即订阅流。
 
-### Step 4: Node2 Publish Stream Item
+### 步骤 4：Node2 发布流项目
 
-Refer to the notes on [publish](#b-publish-command) command and use it to complete step 4, ie. publishing item to the stream.
+参考 [publish](#b-publish-command) 命令的说明并使用它完成步骤 4，即向流中发布项目。
 
-### Step 5: Node2 List Stream Items
+### 步骤 5：Node2 列出流项目
 
-Refer to the notes on [list stream by key](#f-liststreamkeyitems-command) command and use it to complete step 5, ie. list items by key.
-
-
+参考 [list stream by key](#f-liststreamkeyitems-command) 命令的说明并使用它完成步骤 5，即按键列出项目。
