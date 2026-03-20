@@ -215,7 +215,7 @@ e) 完成 DApp 以允许代币交换 - 这部分 ✅
                 account
             );
 
-            // 批准路由器从交易者账户提取 2000 TokenA
+            // 批准路由器从交易者账户提取 输入代币
             const inputToken = new ethers.Contract(
                 inputAddr,
                 ["function approve(address,uint)"],
@@ -228,7 +228,7 @@ e) 完成 DApp 以允许代币交换 - 这部分 ✅
             await response.wait();
             console.log("trade: approved. receipt=", response.hash);
 
-            // 使用交易者账户将 2000 TokenA 换成 1662 TokenB
+            // 使用交易者账户将 输入代币 换成 输出代币
             const ts = (await provider.getBlock()).timestamp + 1000;
             await uniswap.swapExactTokensForTokens(
                 inputAmt,

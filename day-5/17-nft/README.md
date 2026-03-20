@@ -1035,7 +1035,7 @@ function tokenURI(uint256 tokenId) public view returns (string memory) {
 -   **运行部署脚本**
 
     ```bash
-    node scripts/deploy-ipfs-nft.js --network localhost
+    hh run scripts/deploy-ipfs-nft.js --network localhost
     ```
 
 ### 步骤 6：创建从 NFT 检索图像的脚本

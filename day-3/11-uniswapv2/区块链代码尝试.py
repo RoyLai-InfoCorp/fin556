@@ -132,11 +132,11 @@ class Blockchain:
     # 添加待处理交易
     def add_transaction(self, sender: str, recipient: str, amount: float) -> bool:
         if not sender or not recipient:
-            print("发送方和接收方不能为空。")
+            print()
             return False
 
         if amount <= 0:
-            print("交易金额必须大于 0。")
+            print()
             return False
 
         # 简单规则：
@@ -147,7 +147,7 @@ class Blockchain:
                 tx.amount for tx in self.pending_transactions if tx.sender == sender
             )
             if balance - pending_out < amount:
-                print("余额不足，交易无法加入。")
+                print()
                 return False
 
         tx = Transaction(
