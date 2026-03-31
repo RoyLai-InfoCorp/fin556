@@ -86,7 +86,7 @@ The console provides full access to your development environment, including depl
     We also install a tool that allow us to use Hardhat commands by typing `hh` instead of `npx hardhat`. This is installed globally one time since it is just a command line shortcut.
 
     ```bash
-    npm i -g hardhat-shorthand
+    npm i -g hardhat-shorthand@hh2
     ```
 
     **package.json** should now include:
