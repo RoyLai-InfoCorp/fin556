@@ -86,7 +86,7 @@ Hardhat 作为基础设施和 Ethers.js 作为库，两者都设计为协同工�
     我们还安装了一个工具，允许我们通过输入 `hh` 而不是 `npx hardhat` 来使用 Hardhat 命令。这是一个全局安装一次的工具，因为它只是一个命令行快捷方式。
 
     ```bash
-    npm i -g hardhat-shorthand
+    npm i -g hardhat-shorthand@hh2
     ```
 
     **package.json** 现在应该包括：
