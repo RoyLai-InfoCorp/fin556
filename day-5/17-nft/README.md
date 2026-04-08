@@ -1,64 +1,64 @@
-# ERC721 NFT Standard
+# ERC721 NFT 标准
 
-In this lesson, we will learn how to implement the ERC721 token standard, which is the most widely used standard for creating Non-Fungible Tokens (NFTs) on Ethereum. This lesson assumes familiarity with basic Solidity syntax and ERC20 token concepts.
-
----
-
-## 1. Introduction to NFTs and ERC721
-
-A Non-Fungible Token (NFT) is a unique digital asset that represents ownership of a specific item or piece of content on the blockchain. Unlike ERC20 tokens where all tokens are identical and interchangeable (fungible), each NFT is unique and cannot be replaced by another token.
-
-Think of NFTs like:
-
-- A house deed - each property is unique
-- A concert ticket - each seat is different
-- A piece of art - each artwork is one-of-a-kind
-
-ERC721 is the standard that defines how NFTs work on Ethereum. The official specification can be found here **https://eips.ethereum.org/EIPS/eip-721**.
-
-Common use cases for NFTs include:
-
-- Digital art and collectibles
-- Gaming items and characters
-- Real estate records
-- Event tickets
-- Domain names
-- Certificates and credentials
-
-**Key Difference: ERC20 vs ERC721**
-
-| Feature  | ERC20                | ERC721                   |
-| -------- | -------------------- | ------------------------ |
-| Type     | Fungible             | Non-Fungible             |
-| Identity | All tokens identical | Each token unique        |
-| Value    | Same for all tokens  | Different for each token |
-| Example  | Currency, shares     | Art, collectibles        |
+在本课程中，我们将学习如何实现 ERC721 代币标准，这是以太坊上创建非同质化代币（NFT）最广泛使用的标准。本课程假设您熟悉基本的 Solidity 语法和 ERC20 代币概念。
 
 ---
 
-## 2. ERC721 Core Concepts
+## 1. NFT 和 ERC721 简介
 
-### Token ID
+非同质化代币（NFT）是一种独特的数字资产，代表区块链上特定物品或内容的所有权。与所有代币都相同且可互换（同质化）的 ERC20 代币不同，每个 NFT 都是唯一的，不能被另一个代币替代。
 
-Each NFT is identified by a unique `tokenId` which is a `uint256` number. This tokenId is like a serial number that distinguishes one NFT from another within the same contract.
+将 NFT 想象成：
+
+- 房产契约 - 每个房产都是独特的
+- 演唱会门票 - 每个座位都不同
+- 艺术品 - 每件作品都是独一无二的
+
+ERC721 是定义 NFT 在以太坊上如何工作的标准。官方规范可在 **https://eips.ethereum.org/EIPS/eip-721** 找到。
+
+NFT 的常见用例包括：
+
+- 数字艺术和收藏品
+- 游戏物品和角色
+- 房地产记录
+- 活动门票
+- 域名
+- 证书和凭证
+
+**主要区别：ERC20 与 ERC721**
+
+| 特性  | ERC20                | ERC721                   |
+| ---- | -------------------- | ------------------------ |
+| 类型  | 同质化               | 非同质化                 |
+| 身份  | 所有代币相同         | 每个代币唯一             |
+| 价值  | 所有代币相同         | 每个代币不同             |
+| 示例  | 货币、股票           | 艺术、收藏品             |
+
+---
+
+## 2. ERC721 核心概念
+
+### 代币 ID
+
+每个 NFT 都由一个唯一的 `tokenId` 标识，这是一个 `uint256` 数字。这个 tokenId 就像一个序列号，用于在同一合约内区分一个 NFT 与另一个 NFT。
 
 ```solidity
-// Example: tokenId can be any number
-// tokenId: 1 -> represents one unique NFT
-// tokenId: 2 -> represents a different unique NFT
+// 示例：tokenId 可以是任何数字
+// tokenId: 1 -> 代表一个独特的 NFT
+// tokenId: 2 -> 代表另一个不同的 NFT
 ```
 
-### Ownership Tracking
+### 所有权追踪
 
-The contract maintains a mapping that tracks which address owns which tokenId:
+合约维护一个映射，用于追踪哪个地址拥有哪个 tokenId：
 
 ```solidity
 mapping(uint256 => address) private _owners;
 ```
 
-### Balance Tracking
+### 余额追踪
 
-Unlike ERC20 which tracks the amount of tokens, ERC721 tracks the count of how many NFTs each address owns:
+与追踪代币数量的 ERC20 不同，ERC721 追踪每个地址拥有的 NFT 数量：
 
 ```solidity
 mapping(address => uint256) private _balances;
@@ -66,11 +66,11 @@ mapping(address => uint256) private _balances;
 
 ---
 
-## 3. ERC721 Required Functions
+## 3. ERC721 必需函数
 
-According to the ERC721 specification, a compliant NFT contract must implement:
+根据 ERC721 规范，合规的 NFT 合约必须实现：
 
-- **Read-Only Functions**
+-   **只读函数**
 
     ```solidity
     function balanceOf(address _owner) external view returns (uint256);
@@ -80,7 +80,7 @@ According to the ERC721 specification, a compliant NFT contract must implement:
     function tokenURI(uint256 _tokenId) external view returns (string memory);
     ```
 
-- **State-Changing Functions**
+-   **状态更改函数**
 
     ```solidity
     function approve(address _approved, uint256 _tokenId) external;
@@ -92,7 +92,7 @@ According to the ERC721 specification, a compliant NFT contract must implement:
     function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes data) external;
     ```
 
-- **Required Events**
+-   **必需事件**
 
     ```solidity
     event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
@@ -102,11 +102,11 @@ According to the ERC721 specification, a compliant NFT contract must implement:
 
 ---
 
-## 4. Key Function Explanations
+## 4. 关键函数说明
 
 ### balanceOf()
 
-Returns how many NFTs an address owns (count, not which specific tokens).
+返回某个地址拥有的 NFT 数量（计数，而不是具体哪些代币）。
 
 ```solidity
 function balanceOf(address _owner) external view returns (uint256)
@@ -114,7 +114,7 @@ function balanceOf(address _owner) external view returns (uint256)
 
 ### ownerOf()
 
-Returns the address that owns a specific tokenId.
+返回拥有特定 tokenId 的地址。
 
 ```solidity
 function ownerOf(uint256 _tokenId) external view returns (address)
@@ -122,13 +122,13 @@ function ownerOf(uint256 _tokenId) external view returns (address)
 
 ### tokenURI()
 
-Returns a URL or URI that points to metadata about the NFT (image, description, properties). This metadata is typically stored off-chain in JSON format.
+返回指向 NFT 元数据（图像、描述、属性）的 URL 或 URI。这些元数据通常以 JSON 格式存储在链下。
 
 ```solidity
 function tokenURI(uint256 _tokenId) external view returns (string memory)
 ```
 
-**Example metadata JSON:**
+**示例元数据 JSON：**
 
 ```json
 {
@@ -144,7 +144,7 @@ function tokenURI(uint256 _tokenId) external view returns (string memory)
 
 ### approve()
 
-Allows the owner to approve another address to transfer a specific tokenId.
+允许所有者批准另一个地址转移特定的 tokenId。
 
 ```solidity
 function approve(address _approved, uint256 _tokenId) external
@@ -152,7 +152,7 @@ function approve(address _approved, uint256 _tokenId) external
 
 ### transferFrom()
 
-Transfers an NFT from one address to another. Can be called by the owner or approved address.
+将 NFT 从一个地址转移到另一个地址。可以由所有者或已批准的地址调用。
 
 ```solidity
 function transferFrom(address _from, address _to, uint256 _tokenId) external
@@ -160,24 +160,24 @@ function transferFrom(address _from, address _to, uint256 _tokenId) external
 
 ---
 
-## 🛠️ Lab Practice: Create DemoNFT
+## 🛠️ 实验实践：创建 DemoNFT
 
-In this lab, we will implement an ERC721-compliant NFT contract from scratch called **DemoNFT** with the following specifications:
+在本实验中，我们将从头开始实现一个符合 ERC721 标准的 NFT 合约，称为 **DemoNFT**，规格如下：
 
-> - Name: DemoNFT
-> - Symbol: DNFT
-> - Initial Supply: 0 (NFTs will be minted individually)
+> - 名称：DemoNFT
+> - 符号：DNFT
+> - 初始供应量：0（NFT 将单独铸造）
 
-1. **Install project dependencies**
+1.  **安装项目依赖**
 
     ```bash
     cd /workspace/day-5/17-nft
     npm i
     ```
 
-2. **Create package.json**
+2.  **创建 package.json**
 
-    If package.json doesn't exist, create it:
+    如果 package.json 不存在，请创建它：
 
     **package.json**
 
@@ -205,7 +205,7 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
     }
     ```
 
-3. **Create hardhat.config.js**
+3.  **创建 hardhat.config.js**
 
     **hardhat.config.js**
 
@@ -216,15 +216,15 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
     };
     ```
 
-4. **Install dependencies**
+4.  **安装依赖**
 
     ```bash
     npm i
     ```
 
-5. **Create DemoNFT contract**
+5.  **创建 DemoNFT 合约**
 
-    Create a new folder named `contracts` and create a file named `DemoNFT.sol` in it.
+    创建一个名为 `contracts` 的新文件夹，并在其中创建一个名为 `DemoNFT.sol` 的文件。
 
     **contracts/DemoNFT.sol**
 
@@ -252,21 +252,21 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
     }
     ```
 
-    The contract contains the following state variables:
-    - `_name`: a string variable to store the NFT collection name
-    - `_symbol`: a string variable to store the NFT collection symbol
-    - `_tokenIdCounter`: a counter to track the next tokenId to mint
-    - `_owners`: a mapping to store which address owns which tokenId
-    - `_balances`: a mapping to store how many NFTs each address owns
-    - `_tokenApprovals`: a mapping to store which address is approved to transfer each tokenId
+    合约包含以下状态变量：
+    - `_name`：存储 NFT 集合名称的字符串变量
+    - `_symbol`：存储 NFT 集合符号的字符串变量
+    - `_tokenIdCounter`：追踪下一个要铸造的 tokenId 的计数器
+    - `_owners`：映射以存储哪个地址拥有哪个 tokenId
+    - `_balances`：映射以存储每个地址拥有多少个 NFT
+    - `_tokenApprovals`：映射以存储哪个地址被批准转移每个 tokenId
 
-6. **Insert the read-only functions**
+6.  **插入只读函数**
 
-    Insert the following read-only functions into your contract:
+    将以下只读函数插入到您的合约中：
 
     ```solidity
 
-    // ERC721 Read-only functions
+    // ERC721 只读函数
 
     function name() public view returns (string memory) {
         return _name;
@@ -294,13 +294,13 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
 
     ```
 
-7. **Insert the mint function**
+7.  **插入铸造函数**
 
-    Insert the mint function into your contract. This function creates a new NFT and assigns it to an address.
+    将铸造函数插入到您的合约中。此函数创建一个新 NFT 并将其分配给一个地址。
 
     ```solidity
 
-    // Mint function
+    // 铸造函数
 
     function mint(address to) public returns (uint256) {
         require(to != address(0), "ERC721: mint to the zero address");
@@ -318,15 +318,15 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
 
     ```
 
-    **Note:** Minting an NFT is represented by a Transfer event from the zero address (address(0)) to the recipient.
+    **注意：** 铸造 NFT 表示从零地址（address(0)）到接收者的 Transfer 事件。
 
-8. **Insert state-changing functions**
+8.  **插入状态更改函数**
 
-- **approve()** This function allows the owner of a tokenId to approve another address to transfer the NFT.
+-   **approve()** 此函数允许 tokenId 的所有者批准另一个地址转移 NFT。
 
     ```solidity
 
-    // approve: Approve _approved to transfer _tokenId
+    // approve: 批准 _approved 转移 _tokenId
 
     function approve(address approved, uint256 tokenId) public {
         address owner = ownerOf(tokenId);
@@ -338,21 +338,21 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
 
     ```
 
-- **transferFrom()** This function transfers an NFT from one address to another. It can be called by the owner or an approved address.
+-   **transferFrom()** 此函数将 NFT 从一个地址转移到另一个地址。可以由所有者或已批准的地址调用。
 
     ```solidity
 
-    // transferFrom: Transfer _tokenId from _from to _to
+    // transferFrom: 将 _tokenId 从 _from 转移到 _to
 
     function transferFrom(address from, address to, uint256 tokenId) public {
         require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: caller is not token owner or approved");
         require(ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
         require(to != address(0), "ERC721: transfer to the zero address");
 
-        // Clear approvals
+        // 清除批准
         _tokenApprovals[tokenId] = address(0);
 
-        // Transfer ownership
+        // 转移所有权
         _balances[from] -= 1;
         _balances[to] += 1;
         _owners[tokenId] = to;
@@ -362,11 +362,11 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
 
     ```
 
-- **\_isApprovedOrOwner()** This is an internal helper function to check if an address is the owner or approved to manage a tokenId.
+-   **\_isApprovedOrOwner()** 这是一个内部辅助函数，用于检查地址是否是所有者或被批准管理 tokenId 的地址。
 
     ```solidity
 
-    // Internal helper function
+    // 内部辅助函数
 
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view returns (bool) {
         address owner = ownerOf(tokenId);
@@ -375,17 +375,17 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
 
     ```
 
-9. **Compile the contract**
+9.  **编译合约**
 
-    Compile the contract using Hardhat:
+    使用 Hardhat 编译合约：
 
     ```bash
     hh compile
     ```
 
-10. **Create test file**
+10. **创建测试文件**
 
-    Create a new folder named `test` and create a file named `testDemoNFT.js` in it.
+    创建一个名为 `test` 的新文件夹，并在其中创建一个名为 `testDemoNFT.js` 的文件。
 
     **test/testDemoNFT.js**
 
@@ -421,84 +421,84 @@ In this lab, we will implement an ERC721-compliant NFT contract from scratch cal
     });
     ```
 
-11. **Run the tests**
+11. **运行测试**
 
-    Run the tests using Hardhat:
+    使用 Hardhat 运行测试：
 
     ```bash
     hh test
     ```
 
-    You should see the following output:
+    您应该看到以下输出：
 
     ```
       Test DemoNFT
-         Should have correct name and symbol (XXms)
-         Should mint NFT to account[0] (XXms)
-         Should return correct owner of tokenId (XXms)
+        ✔ Should have correct name and symbol (XXms)
+        ✔ Should mint NFT to account[0] (XXms)
+        ✔ Should return correct owner of tokenId (XXms)
         3 passing (XXms)
     ```
 
 ---
 
-## 5. NFT Transfer Mechanics
+## 5. NFT 转移机制
 
-### Minting NFTs
+### 铸造 NFT
 
-When an NFT is minted, a new tokenId is created and assigned to an owner:
+铸造 NFT 时，会创建新的 tokenId 并分配给所有者：
 
 ```js
-// Mint tokenId 0 to Alice
+// 为 Alice 铸造 tokenId 0
 await nft.mint(alice.address);
 ```
 
-**Internal state changes:**
+**内部状态更改：**
 
 - `_owners[0] = alice.address`
 - `_balances[alice.address] = 1`
-- Emits: `Transfer(address(0), alice.address, 0)`
+- 发出：`Transfer(address(0), alice.address, 0)`
 
-### Direct Transfer
+### 直接转移
 
-The owner can directly transfer their NFT to another address:
+所有者可以直接将他们的 NFT 转移给另一个地址：
 
 ```js
-// Alice transfers tokenId 0 to Bob
+// Alice 将 tokenId 0 转移给 Bob
 await nft.connect(alice).transferFrom(alice.address, bob.address, 0);
 ```
 
-**Internal state changes:**
+**内部状态更改：**
 
 - `_owners[0] = bob.address`
 - `_balances[alice.address] -= 1`
 - `_balances[bob.address] += 1`
-- Emits: `Transfer(alice.address, bob.address, 0)`
+- 发出：`Transfer(alice.address, bob.address, 0)`
 
-### Approved Transfer
+### 批准转移
 
-The owner can approve another address to transfer their NFT:
+所有者可以批准另一个地址转移他们的 NFT：
 
 ```js
-// Alice approves Bob to transfer tokenId 0
+// Alice 批准 Bob 转移 tokenId 0
 await nft.connect(alice).approve(bob.address, 0);
 
-// Bob transfers tokenId 0 from Alice to Charlie
+// Bob 将 tokenId 0 从 Alice 转移给 Charlie
 await nft.connect(bob).transferFrom(alice.address, charlie.address, 0);
 ```
 
-This pattern is useful for:
+此模式适用于：
 
-- NFT marketplaces (owner approves marketplace contract)
-- Escrow services
-- Auction contracts
+- NFT 市场（所有者批准市场合约）
+- 托管服务
+- 拍卖合约
 
 ---
 
-## 🛠️ Lab Practice: NFT Transfer
+## 🛠️ 实验实践：NFT 转移
 
-1. **Add test for mint()**
+1.  **添加铸造测试**
 
-    Add a test that mints multiple NFTs and checks the balance:
+    添加一个铸造多个 NFT 并检查余额的测试：
 
     ```js
     it("Should mint multiple NFTs", async () => {
@@ -511,9 +511,9 @@ This pattern is useful for:
     });
     ```
 
-2. **Add test for transferFrom()**
+2.  **添加转移测试**
 
-    Add a test for direct transfer of an NFT:
+    添加 NFT 直接转移的测试：
 
     ```js
     it("Should transfer NFT from accounts[0] to accounts[1]", async () => {
@@ -533,9 +533,9 @@ This pattern is useful for:
     });
     ```
 
-3. **Add test for approve() and transferFrom()**
+3.  **添加批准和转移测试**
 
-    Add a test for approved transfer:
+    添加批准转移的测试：
 
     ```js
     it("Should approve and transfer NFT", async () => {
@@ -554,52 +554,52 @@ This pattern is useful for:
     });
     ```
 
-4. **Run the tests**
+4.  **运行测试**
 
     ```bash
     hh test
     ```
 
-    You should see:
+    您应该看到：
 
     ```
       Test DemoNFT
-         Should have correct name and symbol (XXms)
-         Should mint NFT to account[0] (XXms)
-         Should return correct owner of tokenId (XXms)
-         Should mint multiple NFTs (XXms)
-         Should transfer NFT from accounts[0] to accounts[1] (XXms)
-         Should approve and transfer NFT (XXms)
+        ✔ Should have correct name and symbol (XXms)
+        ✔ Should mint NFT to account[0] (XXms)
+        ✔ Should return correct owner of tokenId (XXms)
+        ✔ Should mint multiple NFTs (XXms)
+        ✔ Should transfer NFT from accounts[0] to accounts[1] (XXms)
+        ✔ Should approve and transfer NFT (XXms)
         6 passing (XXms)
     ```
 
 ---
 
-## 6. OpenZeppelin ERC721 Implementation
+## 6. OpenZeppelin ERC721 实现
 
-Just like with ERC20, manually implementing ERC721 from scratch is good for learning but not recommended for production. OpenZeppelin provides a battle-tested implementation that includes additional safety features and optimizations.
+就像 ERC20 一样，从头手动实现 ERC721 对学习很有好处，但不建议用于生产。OpenZeppelin 提供了经过实战测试的实现，包含额外的安全功能和优化。
 
-OpenZeppelin's ERC721 contract includes:
+OpenZeppelin 的 ERC721 合约包括：
 
-- All required ERC721 functions
-- Safe transfer checks
-- URI storage helpers
-- Enumerable extension (to list all tokens)
-- Burnable extension (to destroy tokens)
+- 所有必需的 ERC721 函数
+- 安全转移检查
+- URI 存储辅助函数
+- 枚举扩展（列出所有代币）
+- 可销毁扩展（销毁代币）
 
-## 🛠️ Lab Practice: Using OpenZeppelin ERC721
+## 🛠️ 实验实践：使用 OpenZeppelin ERC721
 
-1. **Install OpenZeppelin package**
+1.  **安装 OpenZeppelin 包**
 
-    If not already installed:
+    如果尚未安装：
 
     ```bash
     npm i @openzeppelin/contracts@5.4.0
     ```
 
-2. **Create DemoNFT with OpenZeppelin**
+2.  **使用 OpenZeppelin 创建 DemoNFT**
 
-    Create a new file `contracts/DemoNFTOpenZeppelin.sol`:
+    创建新文件 `contracts/DemoNFTOpenZeppelin.sol`：
 
     **contracts/DemoNFTOpenZeppelin.sol**
 
@@ -625,11 +625,11 @@ OpenZeppelin's ERC721 contract includes:
     }
     ```
 
-    **Note:** OpenZeppelin uses `_safeMint()` instead of regular minting. This function checks if the recipient is a contract and if so, verifies that it can handle NFTs properly.
+    **注意：** OpenZeppelin 使用 `_safeMint()` 而不是常规铸造。此函数检查接收者是否是合约，如果是，则验证它是否可以正确处理 NFT。
 
-3. **Create test file**
+3.  **创建测试文件**
 
-    Create `test/testDemoNFTOpenZeppelin.js`:
+    创建 `test/testDemoNFTOpenZeppelin.js`：
 
     **test/testDemoNFTOpenZeppelin.js**
 
@@ -667,7 +667,7 @@ OpenZeppelin's ERC721 contract includes:
     });
     ```
 
-4. **Run the tests**
+4.  **运行测试**
 
     ```bash
     hh test test/testDemoNFTOpenZeppelin.js
@@ -675,53 +675,53 @@ OpenZeppelin's ERC721 contract includes:
 
 ---
 
-## 7. NFT Metadata with IPFS
+## 7. 使用 IPFS 的 NFT 元数据
 
-One of the most important features of NFTs is their metadata - the information that describes what the NFT represents. This typically includes:
+NFT 最重要的特性之一是它们的元数据——描述 NFT 代表什么的信息。这通常包括：
 
-- Name of the NFT
-- Description
-- Image or media file
-- Attributes or properties
+- NFT 的名称
+- 描述
+- 图像或媒体文件
+- 属性或特性
 
-### Why Use IPFS for NFT Metadata?
+### 为什么使用 IPFS 存储 NFT 元数据？
 
-Storing large files directly on the blockchain is:
+直接在区块链上存储大文件：
 
-- **Expensive**: Every byte costs gas fees
-- **Inefficient**: Blockchains are not designed for large file storage
-- **Impractical**: Images, videos, and other media files are too large
+- **昂贵**：每个字节都需要支付 gas 费用
+- **效率低下**：区块链不是为存储大文件而设计的
+- **不切实际**：图像、视频和其他媒体文件太大
 
-Instead, NFTs use off-chain storage solutions like IPFS (InterPlanetary File System) to store:
+相反，NFT 使用链下存储解决方案（如 IPFS（星际文件系统））来存储：
 
-- The actual digital asset (image, video, audio, etc.)
-- The metadata JSON file describing the NFT
+- 实际数字资产（图像、视频、音频等）
+- 描述 NFT 的元数据 JSON 文件
 
-The blockchain only stores:
+区块链只存储：
 
-- The ownership information (who owns which token)
-- A reference (URI) pointing to the off-chain metadata
+- 所有权信息（谁拥有哪个代币）
+- 指向链下元数据的引用（URI）
 
-### How IPFS Works with NFTs
+### IPFS 如何与 NFT 配合工作
 
-IPFS is a peer-to-peer distributed file system where files are identified by their content (not location). Each file gets a unique Content Identifier (CID) based on its content.
+IPFS 是一个点对点分布式文件系统，其中文件通过其内容（而非位置）进行标识。每个文件都会根据其内容获得唯一的内容标识符（CID）。
 
-**Example:**
+**示例：**
 
 ```
-File content → Hash function → CID: QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR
+文件内容 → 哈希函数 → CID: QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR
 ```
 
-Benefits of using IPFS:
+使用 IPFS 的好处：
 
-- **Decentralized**: No single point of failure
-- **Permanent**: Content-addressed, not location-addressed
-- **Verifiable**: CID guarantees content integrity
-- **Cost-effective**: Free to use, no blockchain storage costs
+- **去中心化**：没有单点故障
+- **永久性**：基于内容寻址，而非位置寻址
+- **可验证性**：CID 保证内容完整性
+- **成本效益**：免费使用，无需区块链存储成本
 
-### NFT Metadata Structure
+### NFT 元数据结构
 
-NFT metadata follows a standard JSON format:
+NFT 元数据遵循标准 JSON 格式：
 
 ```json
 {
@@ -735,7 +735,7 @@ NFT metadata follows a standard JSON format:
 }
 ```
 
-The `tokenURI` in your smart contract points to this JSON file on IPFS:
+智能合约中的 `tokenURI` 指向 IPFS 上的此 JSON 文件：
 
 ```solidity
 function tokenURI(uint256 tokenId) public view returns (string memory) {
@@ -745,143 +745,143 @@ function tokenURI(uint256 tokenId) public view returns (string memory) {
 
 ---
 
-## 🛠️ Lab Practice: NFT with IPFS Metadata
+## 🛠️ 实验实践：使用 IPFS 元数据的 NFT
 
-In this lab, we will create an NFT that stores its metadata and images on IPFS. We will:
+在本实验中，我们将创建一个将其元数据和图像存储在 IPFS 上的 NFT。我们将：
 
-1. Prepare NFT images
-2. Upload images to IPFS
-3. Create metadata JSON files
-4. Upload metadata to IPFS
-5. Mint NFTs with IPFS URIs
+1. 准备 NFT 图像
+2. 将图像上传到 IPFS
+3. 创建元数据 JSON 文件
+4. 将元数据上传到 IPFS
+5. 使用 IPFS URI 铸造 NFT
 
-📌 Run the following in **Windows Terminal or terminal for Linux/Mac**
+📌 在 **Windows Terminal 或 Linux/Mac 的终端**中运行以下步骤
 
-### Step 1: Set Up IPFS
+### 步骤 1：设置 IPFS
 
-Follow the steps from lesson 16 - [IPFS](../16-ipfs/README.md) to install and start up your IPFS daemon.
+请按照课程 16 - [IPFS](../16-ipfs/README.md) 中的步骤安装和启动您的 IPFS 守护进程。
 
-### Step 2: Upload Images to IPFS
+### 步骤 2：将图像上传到 IPFS
 
-Under the `assets/images` directory, you will find three images:
+在 `assets/images` 目录下，您将找到三张图像：
 
 - blue-dragon.png
 - red-phoenix.png
 - green-turtle.png
 
-These images will be used for our NFTs.
+这些图像将用于我们的 NFT。
 
-1. **Navigate to the images directory**
+1.  **导航到图像目录**
 
     ```bash
     cd ~/course/FIN556/day-5/17-nft/assets/images
     ```
 
-2. **Add images to IPFS**
+2.  **将图像添加到 IPFS**
 
     ```bash
     ipfs add blue-dragon.png
     ipfs add green-turtle.png
     ipfs add red-phoenix.png
 
-        # Sample Output:
+        # 示例输出：
         # added QmcYcWq82KHsaZK3Ze15s4kt95zkZyj8smTcm6mQfoPMD8 blue-dragon.png
         # added QmdsnZMfRiCpKrCBToNwMzxMe6xKFucWLF2uatYWPwrAbi red-phoenix.png
         # added QmWdktpwmLZfxvXTo45zNnu4UyiBTRUcNAJpAMfF9wDVFp green-turtle.png
     ```
 
-    **Save these CIDs! You will need them for the metadata files.**
+    **保存这些 CID！您将需要它们用于元数据文件。**
 
-3. **Verify upload via local gateway**
+3.  **通过本地网关验证上传**
 
-    Open your browser and check:
+    打开浏览器并检查：
 
     ```bash
     http://localhost:48080/ipfs/<CID>
 
-     # Example:
+     # 示例：
      # http://127.0.0.1:48080/ipfs/QmcYcWq82KHsaZK3Ze15s4kt95zkZyj8smTcm6mQfoPMD8
     ```
 
-4. **Check public IPFS gateway**
+4.  **检查公共 IPFS 网关**
 
-    Force announcement to the IPFS network:
+    强制宣布到 IPFS 网络：
 
     ```bash
     ipfs routing provide <CID>
-    # Example:
+    # 示例：
     #  ipfs routing provide QmcYcWq82KHsaZK3Ze15s4kt95zkZyj8smTcm6mQfoPMD8
     ```
 
-    Open the browser to check the files via a public IPFS gateway:
+    打开浏览器通过公共 IPFS 网关检查文件：
 
     ```bash
     https://dweb.link/ipfs/<CID>
 
-    # Example:
+    # 示例：
     # https://dweb.link/ipfs/QmcYcWq82KHsaZK3Ze15s4kt95zkZyj8smTcm6mQfoPMD8
     ```
 
-### Step 3: Upload Metadata Files
+### 步骤 3：上传元数据文件
 
-Under the `assets/metadata` directory, we will find three JSON files to create:
+在 `assets/metadata` 目录下，我们将找到三个要创建的 JSON 文件：
 
 - blue-dragon.json
 - red-phoenix.json
 - green-turtle.json
 
-Upload these metadata files to IPFS and save their CIDs for minting NFTs later.
+将这些元数据文件上传到 IPFS 并保存它们的 CID 以便以后铸造 NFT。
 
-1. **Navigate to metadata directory**
+1.  **导航到元数据目录**
 
     ```bash
     cd ~/course/FIN556/day-5/17-nft/assets/metadata
     ```
 
-2. **Add metadata files to IPFS**
+2.  **将元数据文件添加到 IPFS**
 
     ```bash
     ipfs add blue-dragon.json
     ipfs add green-turtle.json
     ipfs add red-phoenix.json
 
-        # Sample Output:
+        # 示例输出：
         # added QmeRo8MrBWHRADr2UB6H3Mu7mPHgUvEzGb6mF2pesHCeEU blue-dragon.json
         # added QmUVRhto3YzhnazJPTEpqjF7yZgH4EQv7iMGgyfWnHyVkC green-turtle.json
         # added Qma8SAwuDMJCZtAkgRxLqn2gGCLzez6ZZqJYF932CZTo7b red-phoenix.json
     ```
 
-    **Save these metadata CIDs! You will use them when minting NFTs.**
+    **保存这些元数据 CID！您将在铸造 NFT 时使用它们。**
 
-3. **Verify metadata via local gateway**
+3.  **通过本地网关验证元数据**
 
-    Open your browser and check:
+    打开浏览器并检查：
 
     ```
     http://localhost:48080/ipfs/<METADATA_CID>
     ```
 
-4. **Check public IPFS gateway**
+4.  **检查公共 IPFS 网关**
 
-    Force announcement to the IPFS network:
+    强制宣布到 IPFS 网络：
 
     ```bash
     ipfs routing provide <CID>
     ```
 
-    Open the browser to check the files via a public IPFS gateway:
+    打开浏览器通过公共 IPFS 网关检查文件：
 
     ```bash
     https://dweb.link/ipfs/<CID>
     ```
 
-### Step 4: Create NFT Contract with IPFS Support
+### 步骤 4：创建支持 IPFS 的 NFT 合约
 
-📌 Run the following **from devcontainer in Visual Studio Code**
+📌 **从 Visual Studio Code 的 devcontainer 中运行以下步骤**
 
-1. **Create IPFSStorageNFT contract**
+1.  **创建 IPFSStorageNFT 合约**
 
-    Create `contracts/IPFSStorageNFT.sol`:
+    创建 `contracts/IPFSStorageNFT.sol`：
 
     **contracts/IPFSStorageNFT.sol**
 
@@ -905,7 +905,7 @@ Upload these metadata files to IPFS and save their CIDs for minting NFTs later.
 
             _safeMint(to, tokenId);
 
-            // Store the IPFS CID as the token URI
+            // 将 IPFS CID 存储为 token URI
             string memory uri = string(abi.encodePacked("ipfs://", ipfsCID));
             _setTokenURI(tokenId, uri);
 
@@ -918,17 +918,17 @@ Upload these metadata files to IPFS and save their CIDs for minting NFTs later.
     }
     ```
 
-2. **Compile the contract**
+2.  **编译合约**
 
     ```bash
     hh compile
     ```
 
-### Step 5: Create Tests
+### 步骤 5：创建测试
 
-1. **Create test file**
+1.  **创建测试文件**
 
-    Create `test/testIPFSStorageNFT.js`:
+    创建 `test/testIPFSStorageNFT.js`：
 
     **test/testIPFSStorageNFT.js**
 
@@ -981,7 +981,7 @@ Upload these metadata files to IPFS and save their CIDs for minting NFTs later.
     });
     ```
 
-2. **Run the tests**
+2.  **运行测试**
 
     ```bash
     hh test test/testIPFSStorageNFT.js
@@ -994,11 +994,11 @@ Upload these metadata files to IPFS and save their CIDs for minting NFTs later.
      #  3 passing (692ms)
     ```
 
-### Step 5: Create Script to Deploy and Mint NFT
+### 步骤 5：创建部署和铸造 NFT 的脚本
 
-- **Create deployment script**
+-   **创建部署脚本**
 
-    Create `scripts/deploy-ipfs-nft.js`:
+    创建 `scripts/deploy-ipfs-nft.js`：
 
     **scripts/deploy-ipfs-nft.js**
 
@@ -1032,19 +1032,19 @@ Upload these metadata files to IPFS and save their CIDs for minting NFTs later.
     });
     ```
 
-- **Run deployment script**
+-   **运行部署脚本**
 
     ```bash
-    node scripts/deploy-ipfs-nft.js --network localhost
+    hh run scripts/deploy-ipfs-nft.js --network localhost
     ```
 
-### Step 6: Create Script to Retrieve Images from NFT
+### 步骤 6：创建从 NFT 检索图像的脚本
 
-- **Create script**
+-   **创建脚本**
 
-    Create **scripts/retrieveNFTImage.js**:
+    创建 **scripts/retrieveNFTImage.js**：
 
-    **syntax**
+    **语法**
 
     ```bash
     node scripts/retrieveNFTImage.js <NFT_CONTRACT_ADDRESS> <NFT_ID> <OUTPUT_FILE>
@@ -1108,21 +1108,21 @@ Upload these metadata files to IPFS and save their CIDs for minting NFTs later.
     });
     ```
 
-- **Run the script**
+-   **运行脚本**
 
-    In the example below, running the script will retrieve the image for NFT ID 0 from the deployed contract and save it to `image.png` in the current directory.
+    在下面的示例中，运行脚本将从已部署的合约中检索 NFT ID 0 的图像，并将其保存到当前目录中的 `image.png`。
 
     ```bash
     hh run scripts/retrieveNFTImage.js <NFT_CONTRACT_ADDRESS> <NFT_ID> <OUTPUT_FILE>
 
-    # Example:
+    # 示例：
     # hh run scripts/retrieveNFTImage.js 0xYourNFTContractAddress 0 ./image.png
     ```
 
 ---
 
-## Quiz
+## 测验
 
-1. What is the main difference between ERC20 and ERC721 tokens?
+1.  ERC20 和 ERC721 代币之间的主要区别是什么？
 
-2. Does owning an NFT mean you own the underlying digital asset (e.g., image, video)? How can you prove this?
+2.  拥有 NFT 是否意味着您拥有底层数字资产（例如图像、视频）？您如何证明这一点？

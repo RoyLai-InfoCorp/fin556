@@ -1,65 +1,65 @@
-## 🛠️ Lab Practise: Create Mockup
+## 🛠️ 实验实践：创建模型
 
-**High-Level DApp Objectives:**
+**DApp 高级目标：**
 
-The DApp we are going to build will have the following features:
+我们要构建的 DApp 将具有以下功能：
 
--   Connects to Metamask wallet and display wallet address.
--   Interacts with contracts deployed on local Hardhat node.
--   Shows the current token balances of the user.
--   Show the current pool reserves.
--   Allow the user to swap tokens.
+-   连接到 Metamask 钱包并显示钱包地址。
+-   与部署在本地 Hardhat 节点上的合约交互。
+-   显示用户当前的代币余额。
+-   显示当前池储备。
+-   允许用户交换代币。
 
-The lab will be divided into the following parts:
+实验将分为以下部分：
 
-a) Setting up the web framework (React)  
-b) Create a mock-up of the DApp with hardcoded data - this part ✅  
-c) Extend the DApp to integrate with Metamask  
-d) Deploy Uniswap contracts to local Hardhat node  
-e) Complete the DApp to allow token swaps
+a) 设置 Web 框架（React）
+b) 使用硬编码数据创建 DApp 模型 - 这部分 ✅
+c) 扩展 DApp 以集成 Metamask
+d) 将 Uniswap 合约部署到本地 Hardhat 节点
+e) 完成 DApp 以允许代币交换
 
-You have previously created an [empty React project](../a-dapp-react/README.md) and now we will extend the React code to create a mock-up that only contains UI with hardcoded data and without any blockchain integration. We will incrementally add the blockchain integration code to this React code in future iterations.
+您之前已经创建了一个[空 React 项目](../a-dapp-react/README.md)，现在我们将扩展 React 代码来创建一个只包含 UI 和硬编码数据而没有任何区块链集成的模型。我们将在未来的迭代中逐步向此 React 代码添加区块链集成代码。
 
-### Step 1: Setup
+### 步骤 1：设置
 
-1.  **Make sure you are in the React project directory**
+1.  **确保您在 React 项目目录中**
 
     ```bash
     cd /workspace/day-4/15-dapp/b-dapp-mockup/fin556-dapp
     ```
 
-2.  **Install Material UI**
+2.  **安装 Material UI**
 
-    We will install a third-party UI component library to use pre-built UI components in our DApp. This library is imported into **App.jsx**.
+    我们将安装一个第三方 UI 组件库，以便在我们的 DApp 中使用预建的 UI 组件。此库被导入到 **App.jsx** 中。
 
     ```bash
     npm i @mui/material @emotion/react @emotion/styled
     ```
 
-### Step 2: Update App.jsx
+### 步骤 2：更新 App.jsx
 
-3.  **Open App.jsx**
+3.  **打开 App.jsx**
 
-    Open the file **fin556-dapp/src/App.jsx**.
+    打开 **fin556-dapp/src/App.jsx** 文件。
 
-    **NOTE:** Make sure you are referring to the correct file.
+    **注意：** 确保您引用的是正确的文件。
 
-4.  **Delete all content in the file**
+4.  **删除文件中的所有内容**
 
-    Delete all content in the file so that it is empty.
+    删除文件中的所有内容，使其为空。
 
-5.  **Add the following code to App.jsx**
+5.  **将以下代码添加到 App.jsx**
 
-    -   **Import React packages**
+    -   **导入 React 包**
 
-        Import `useEffect` and `useState` from React to handle side effects and state management. This is not a course on React, so there is no need to understand in detail how these work. Just know that `useEffect` is used to run code when the component is loaded and `useState` is used to store state variables in the web application.
+        导入 React 中的 `useEffect` 和 `useState` 来处理副作用和状态管理。这不是 React 课程，所以不需要详细了解这些是如何工作的。只需知道 `useEffect` 用于在组件加载时运行代码，`useState` 用于在 Web 应用程序中存储状态变量。
 
         <!-- prettier-ignore -->
         ```js
         import React, { useState, useEffect } from "react";
         ```
 
-    -   **Import Material UI components**
+    -   **导入 Material UI 组件**
 
         <!-- prettier-ignore -->
         ```js
@@ -75,27 +75,27 @@ You have previously created an [empty React project](../a-dapp-react/README.md) 
         } from "@mui/material";
         ```
 
-    -   **Add an empty App() component and export it.**
+    -   **添加一个空的 App() 组件并导出它。**
 
         <!-- prettier-ignore -->
         ```js
         const App = () => {        
 
-            // Insert the subsequent code here
+            // 在此处插入后续代码
 
         }
         export default App;
         ```
 
-    -   **Insert subsequent code into App()**
+    -   **将后续代码插入到 App() 中**
 
-        We will start by creating mock data to be displayed in the UI so that you can find where the data originates from. Then we will create the UI components to display the data.
+        我们将首先创建要在 UI 中显示的模拟数据，这样您就可以知道数据来自哪里。然后我们将创建 UI 组件来显示数据。
 
-        -   **Create state variable for signer**
+        -   **为签名者创建状态变量**
 
-            A signer is another term for an account that contains a private key and can be used to sign transactions. The code below creates a state variable called `signer` used to store the account returned from Metamask.
+            签名者是包含私钥并可用于签署交易的账户的另一个术语。下面的代码创建了一个名为 `signer` 的状态变量，用于存储从 Metamask 返回的账户。
 
-            Insert the code below.
+            插入下面的代码。
 
               <!-- prettier-ignore -->
 
@@ -105,31 +105,31 @@ You have previously created an [empty React project](../a-dapp-react/README.md) 
             });
             ```
 
-            **Explanation:**
+            **解释：**
 
-            -   `useState` returns an array with two elements: the current value of the state variable and a function to update it. We use array destructuring to assign these two elements to separate variables.
+            -   `useState` 返回一个包含两个元素的数组：状态变量的当前值和更新它的函数。我们使用数组解构将这些元素分配给单独的变量。
 
-            -   In the code above, `signer` is initialized with an object with address `"0x1234567890123456789012345678901234567890"`.
+            -   在上面的代码中，`signer` 用地址 `"0x1234567890123456789012345678901234567890"` 的对象初始化。
 
                 ```js
                 console.log(signer);
-                // Output:
+                // 输出：
                 // {
                 // address: "0x1234567890123456789012345678901234567890"
                 // }
                 ```
 
-            -   We can change the value of `address` by calling the function `setAddress` using a new value. For example, in the code below, we set the signer to `null`.
+            -   我们可以通过使用新值调用 `setAddress` 函数来更改 `address` 的值。例如，在下面的代码中，我们将签名者设置为 `null`。
 
                 ```js
                 setAddress(null);
                 console.log(address);
-                // Output: null
+                // 输出: null
                 ```
 
-        -   **Create state variable for token address A**
+        -   **为代币地址 A 创建状态变量**
 
-            Insert the code below.
+            插入下面的代码。
 
             <!-- prettier-ignore -->
             ```js
@@ -138,8 +138,8 @@ You have previously created an [empty React project](../a-dapp-react/README.md) 
             );
             ```
 
-        -   **Create state variable for token address B**  
-            Insert the code below.
+        -   **为代币地址 B 创建状态变量**  
+            插入下面的代码。
 
             <!-- prettier-ignore -->
             ```js
@@ -148,9 +148,9 @@ You have previously created an [empty React project](../a-dapp-react/README.md) 
             );
             ```
 
-        -   **Create state variable for Uniswap router and factory addresses**
+        -   **为 Uniswap 路由器和工厂地址创建状态变量**
 
-            Insert the code below.
+            插入下面的代码。
 
             <!-- prettier-ignore -->
             ```js
@@ -162,8 +162,8 @@ You have previously created an [empty React project](../a-dapp-react/README.md) 
             );
             ```
 
-        -   **Create state variable for balance data**  
-            Insert the code below.
+        -   **为余额数据创建状态变量**  
+            插入下面的代码。
 
             <!-- prettier-ignore -->
             ```js
@@ -176,17 +176,17 @@ You have previously created an [empty React project](../a-dapp-react/README.md) 
             });
             ```
 
-        -   **Render UI components**
+        -   **渲染 UI 组件**
 
-            Insert the return() section into App(). This will render the UI components on the browser using HTML-like syntax called JSX.
+            将 return() 部分插入 App() 中。这将使用名为 JSX 的类 HTML 语法在浏览器上渲染 UI 组件。
 
-            There is no need to understand the details of the code below. Just note that:
+            不需要了解下面代码的细节。请注意：
 
-            -   `textField` component is used to create text boxes used by the `tokenAddrA`, `tokenAddrB`, `uniswapRouterAddress`, and `uniswapFactoryAddress` state variables created earlier.
-            -   `card` component is used to display a block of data from the `balance` state variable.
-            -   `button` component will be used to call certain functions when clicked.
+            -   `textField` 组件用于创建由之前创建的 `tokenAddrA`、`tokenAddrB`、`uniswapRouterAddress` 和 `uniswapFactoryAddress` 状态变量使用的文本框。
+            -   `card` 组件用于显示来自 `balance` 状态变量的数据块。
+            -   `button` 组件将在点击时用于调用某些函数。
 
-            Insert the code below.
+            插入下面的代码。
             <!-- prettier-ignore -->
             ```js
             return (
@@ -303,62 +303,62 @@ You have previously created an [empty React project](../a-dapp-react/README.md) 
             );
             ```
 
-### Step 3 - Run the DApp
+### 步骤 3 - 运行 DApp
 
-1.  **Start React server**
+1.  **启动 React 服务器**
 
-    Start the React server using the following command.
+    使用以下命令启动 React 服务器。
 
     ```bash
     npm run dev
     ```
 
-2.  **Open the browser at [http://localhost:5173](http://localhost:5173)**
+2.  **在 [http://localhost:5173](http://localhost:5173) 打开浏览器**
 
-    It should look like this in the browser:
+    在浏览器中应该看起来像这样：
 
     ![dapp-mockup](./img/dapp-mockup.png)
 
-    -   **First section: Contract Configuration**
+    -   **第一部分：合约配置**
 
-        This section allows the user to enter the Uniswap router and factory contract addresses.
+        此部分允许用户输入 Uniswap 路由器和工厂合约地址。
 
-        -   The user can enter the Uniswap router address in the "Uniswap Router Address" text box.
+        -   用户可以在"Uniswap Router Address"文本框中输入 Uniswap 路由器地址。
 
-        -   The user can enter the Uniswap factory address in the "Uniswap Factory Address" text box.
+        -   用户可以在"Uniswap Factory Address"文本框中输入 Uniswap 工厂地址。
 
-    -   **Second section: Liquidity Pool**
+    -   **第二部分：流动性池**
 
-        This section is essentially a dashboard for displaying the user's token balances and current pool reserves.
+        此部分本质上是一个用于显示用户代币余额和当前池储备的仪表板。
 
-        -   It shows the token addresses for the two reserve tokens in the liquidity pool at the top represented by two text boxes.
+        -   它在顶部用两个文本框显示流动性池中两种储备代币的代币地址。
 
-        -   Below that, it shows the balance of tokens owned by the user ("Token Balance").
+        -   在它下面，它显示用户拥有的代币余额（"Token Balance"）。
 
-        -   Next to that, it shows the reserves of the two tokens in the liquidity pool ("Pool Reserves").
+        -   在它旁边，它显示流动性池中两种代币的储备（"Pool Reserves"）。
 
-        -   Each time the "CHECK" button is clicked, it will refresh the token balances and pool reserves. The logic to do that needs to be implemented.
+        -   每次点击"CHECK"按钮时，它将刷新代币余额和池储备。实现该逻辑需要做。
 
-    -   **Third section: Token Swap**
+    -   **第三部分：代币交换**
 
-        This section allows the user to swap between the two tokens in the liquidity pool.
+        此部分允许用户在流动性池中交换两种代币。
 
-        -   The user must first decide whether they want to use "TokenA" or "TokenB" to swap by entering the amount in the respective text box.
+        -   用户必须首先决定是想用"TokenA"还是"TokenB"来交换，方法是在相应的文本框中输入金额。
 
-        -   Then the user can click on the "BUY" or "SELL" button to perform the swap.
+        -   然后用户可以点击"BUY"或"SELL"按钮来执行交换。
 
-        -   The logic to do the swap needs to be implemented.
+        -   实现该逻辑需要做交换。
 
-        -   **For example**
+        -   **例如**
 
-            If the user wants to pay with TokenA to receive 100 TokenB, then the user is "Buying 100 TokenB". To do that, the user will enter "100" in the "TokenB Amount" text box and click on the "BUY" button next to it.
+            如果用户想用 TokenA 支付以接收 100 TokenB，那么用户是"买入 100 TokenB"。为此，用户将在"TokenB Amount"文本框中输入"100"并点击旁边的"BUY"按钮。
 
-            If the user wants to pay 500 TokenA to receive TokenB, then the user is "Selling 500 TokenA". To do that, the user will enter "500" in the "TokenA Amount" text box and click on the "SELL" button next to it.
+            如果用户想支付 500 TokenA 以接收 TokenB，那么用户是"卖出 500 TokenA"。为此，用户将在"TokenA Amount"文本框中输入"500"并点击旁边的"SELL"按钮。
 
-3.  **Stop React server**
+3.  **停止 React 服务器**
 
-    Go back to terminal and press `Ctrl + C` to stop the server.
+    返回终端并按 `Ctrl + C` 停止服务器。
 
-4.  **Task completed ✅**
+4.  **任务完成 ✅**
 
-    You have successfully created a mock-up of the DApp with hardcoded data and are ready to extend the DApp to integrate with Metamask and the local Hardhat node in the next steps.
+    您已成功创建了带有硬编码数据的 DApp 模型，准备好在下一次骤中扩展 DApp 以集成 Metamask 和本地 Hardhat 节点。

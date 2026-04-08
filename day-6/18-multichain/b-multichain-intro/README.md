@@ -1,67 +1,65 @@
-# MultiChain - Part 2
+# 多链 - 第 2 部分
 
-## 3. Introduction to MultiChain
+## 3. MultiChain 简介
 
-MultiChain is an open-source, private, permissioned blockchain platform derived from a fork of the Bitcoin Core codebase.
-Because of this shared foundation, many concepts and mechanisms in MultiChain are directly inherited from Bitcoin.
+MultiChain 是一个开源的、私有的、需授权的区块链平台，源自比特币核心代码库的分叉。
+由于这种共享基础，MultiChain 中的许多概念和机制直接从比特币继承。
 
-Throughout this course, the Bitcoin protocol will therefore be used as a reference point when explaining MultiChain’s core architecture and operations.
-When we refer to Bitcoin, we are referring to the aspects of the Bitcoin protocol that are also common to MultiChain.
-When we refer to MultiChain, we are focusing on its extensions and features that go beyond the original Bitcoin design.
+因此，在本课程中，比特币协议将作为解释 MultiChain 核心架构和操作的参考点。
+当我们提到比特币时，我们指的是比特币协议中与 MultiChain 共通的方面。
+当我们提到 MultiChain 时，我们专注于其超越原始比特币设计的扩展和功能。
 
-The reason MultiChain is chosen for this class is that it is designed to work out of the box, requiring no deep technical expertise to set up or operate.
-With its roots in both private and public blockchain architectures, MultiChain provides an excellent hands-on learning platform for exploring the practical aspects of blockchain operations — including network configuration, permission management, and transaction handling.
+选择 MultiChain 作为本课程的原因是，它设计为开箱即用，无需深厚的技术专业知识即可设置或操作。
+MultiChain 兼具私有和公有区块链架构的特性，为探索区块链操作的实践方面提供了优秀的动手学习平台——包括网络配置、权限管理和交易处理。
 
-### Key Characteristics of MultiChain
+### MultiChain 的关键特性
 
-- **Private and Permissioned**  
-  MultiChain networks are private because new nodes cannot join without explicit authorization.  
-  They are permissioned because granular access control extends beyond network participation — permissions can govern who may **connect**, **mine**, **send transactions**, or **issue assets**.
+- **私有和需授权**  
+  MultiChain 网络是私有的，因为新节点需要明确授权才能加入。
+  它们是需授权的，因为细粒度的访问控制超越了网络参与——权限可以控制谁可以**连接**、**挖矿**、**发送交易**或**发行资产**。
 
-- **Non–Turing Complete**  
-  Unlike Ethereum, MultiChain does not support Turing-complete smart contracts.  
-  Its transaction logic is intentionally limited to a defined instruction set, ensuring simplicity, determinism, and predictability.
+- **非图灵完备**  
+  与以太坊不同，MultiChain 不支持图灵完备的智能合约。
+  其交易逻辑有意限制为定义的指令集，确保简单性、确定性和可预测性。
 
-- **Consensus without Mining**  
-  MultiChain does not rely on Proof-of-Work (PoW) mining for consensus.  
-  Instead, it uses a **round-robin consensus protocol**, functionally similar to **Practical Byzantine Fault Tolerance (PBFT)**.  
-  This design eliminates the need for cryptocurrency incentives and enables fast, low-cost transaction confirmation within trusted networks.
+- **无需挖矿的共识**  
+  MultiChain 不依赖工作量证明（PoW）挖矿来达成共识。
+  相反，它使用**轮询共识协议**，功能上类似于**实用拜占庭容错（PBFT）**。
+  这种设计消除了对加密货币激励的需求，并在可信网络内实现快速、低成本的交易确认。
 
-### Installing MultiChain
+### 安装 MultiChain
 
-To install MultiChain, you can download the appropriate package for your operating system from the official MultiChain website: [https://www.multichain.com/download-community/](https://www.multichain.com/download-community/). 
+要安装 MultiChain，您可以从官方 MultiChain 网站为您的操作系统下载适当的软件包：[https://www.multichain.com/download-community/](https://www.multichain.com/download-community/)。
 
-There are 3 main files that you will be using in MultiChain:
-
+在 MultiChain 中您将使用 3 个主要文件：
 
 -   **multichain-util:**
 
-    -   This utility tool is used for creating new blockchains.
-    -   It provides functionality to create and manage a new blockchain network.
-    -   After the initial setup and creation of the blockchain, this file is seldom used, except in exceptional scenarios like cloning a blockchain node or performing non-standard administrative tasks.
+    -   此工具用于创建新区块链。
+    -   它提供创建和管理新区块链网络的功能。
+    -   在区块链的初始设置和创建之后，此文件很少使用，除非在特殊情况下，如克隆区块链节点或执行非标准管理任务。
 
 -   **multichaind**:
 
-    -   This is the main file that runs the Multichain service.
-    -   When starting a Multichain node or connecting to another Multichain node, this file will be used.
-    -   It handles the actual execution and management of the Multichain blockchain network.
-    -   This file is responsible for validating and storing transactions, maintaining the blockchain ledger, and participating in the consensus mechanism.
+    -   这是运行 Multichain 服务的主文件。
+    -   在启动 Multichain 节点或连接到另一个 Multichain 节点时，将使用此文件。
+    -   此文件负责验证和存储交易、维护区块链账本，并参与共识机制。
 
 -   **multichain-cli**:
 
-    -   This command-line tool is used to control and send commands to the Multichain service.
-    -   It provides an interactive interface for managing and interacting with the Multichain blockchain network.
-    -   The majority of your time when working with Multichain will be spent using this command-line tool.
-    -   With `multichain-cli`, you can perform various actions such as creating assets, issuing assets, granting permissions, publishing streams, and more.
+    -   此命令行工具用于向 Multichain 服务发送命令和控制它。
+    -   提供用于管理和交互 Multichain 区块链网络的交互式界面。
+    -   在使用 Multichain 时，您的大部分时间将使用此命令行工具。
+    -   使用 `multichain-cli`，您可以执行各种操作，如创建资产、发行资产、授予权限、发布流等。
 
 ---
 
-### Setting up a Private Blockchain
+### 设置私有区块链
 
-When building a blockchain network, a **seed node** is the first node to be configured.  
-It contains the initial configuration that defines how the blockchain will operate — including **network parameters**, **consensus rules**, and **permission structures**.
+在构建区块链网络时，**种子节点**是首先配置的节点。
+它包含定义区块链运行方式的初始配置——包括**网络参数**、**共识规则**和**权限结构**。
 
-The following diagram gives a conceptual understanding on the process before we start the lab practice.
+在开始实验实践之前，以下图表给出了该过程的概念理解。
 
 ```mermaid
 sequenceDiagram
@@ -111,60 +109,59 @@ sequenceDiagram
 
 ```
 
-Assuming Node1 is the seednode and Node2 is the new node that is connecting to the seednode.
+假设 Node1 是种子节点，Node2 是连接到种子节点的新节点。
 
-1. **Configure Seed Node:**
+1.  **配置种子节点：**
 
-    - Node1 configures itself as the seed node, which is the initial node in the network.
-    - This step involves setting up the necessary configurations for running the seed node.
+    -   Node1 将自己配置为种子节点，这是网络中的初始节点。
+    -   此步骤涉及设置运行种子节点所需的配置。
 
-        A new hidden directory called '.multichain' will be created in your home directory in this step.
+        在此步骤中，您的主目录下将创建一个名为 '.multichain' 的隐藏目录。
 
-        Within this directory, you will find another directory that is named after the name of the chain you have created. This is called the `data` directory.
+        在此目录中，您将找到另一个以您创建的链名称命名的目录。这称为 `data` 目录。
 
-        For example, if the name of your blockchain is called **chain1** then you will find `chain1` directory inside `~/.multichain` directory.
+        例如，如果您的区块链名称为 **chain1**，那么您将在 `~/.multichain` 目录中找到 `chain1` 目录。
 
         ![Multichain Directory Structure](./img/directories.png)
 
-        Within the data directories, you will also be able to find 2 configuration files – called the blockchain parameters file and the runtime configuration file.
+        在数据目录中，您还可以找到 2 个配置文件——称为区块链参数文件和运行时配置文件。
 
-        -   **blockchain parameters file (params.dat)** contains mainly the settings for controlling the MultiChain’s protocol. It is important to note that this file must be configured before you start running the multichain service because once the protocol is started you may not be able to change some of the parameters later on.
+        -   **区块链参数文件 (params.dat)** 主要包含用于控制 MultiChain 协议设置。请注意，此文件必须在您开始运行 multichain 服务之前配置，因为一旦协议启动，您可能无法更改某些参数。
 
-        -   **runtime configuration file (multichain.conf)** contains the configuration that is applied only to individual nodes as opposed to the protocol settings from the blockchain parameters file.
+        -   **运行时配置文件 (multichain.conf)** 包含仅应用于各个节点的配置，而不是区块链参数文件中的协议设置。
 
+2.  **启动种子节点：**
 
-2. **Startup Seed Node:**
+    -   Node1 开始作为种子节点运行。
+    -   种子节点负责接受来自其他节点的连接并促进网络的启动过程。
 
-    - Node1 starts running as the seed node.
-    - The seed node is responsible for accepting connections from other nodes and facilitating the network's bootstrap process.
+3.  **请求权限：**
 
-3. **Request Permission:**
+    -   Node2 想要连接到区块链网络并请求权限。
+    -   此步骤表示 Node2 加入网络的意图。
 
-    - Node2 wants to connect to the blockchain network and requests permission to do so.
-    - This step indicates Node2's intention to join the network.
+4.  **授予 `connect` 权限：**
 
-4. **Grant `connect` Permission:**
+    -   Node1 授予 Node2 连接到区块链网络的权限。
+    -   此步骤允许 Node2 成为网络的一部分并与其他节点交互。
 
-    - Node1 grants permission to Node2 to connect to the blockchain network.
-    - This step allows Node2 to become a part of the network and interact with other nodes.
+5.  **完成连接：**
 
-5. **Complete Connection:**
+    -   Node2 在收到权限后完成连接过程。
+    -   此时，Node2 已完全连接到区块链网络，可以参与交易和共享数据。
 
-    - Node2 completes the connection process after receiving permission.
-    - At this point, Node2 is fully connected to the blockchain network and can participate in transactions and share data.
-
-After this, repeat step 3 to step 5 for each new node (Node N) that wants to join the network.
+之后，对每个想要加入网络的新节点（节点 N）重复步骤 3 到 5。
 
 ---
 
-## 🛠️ Lab Practice: Setup a private blockchain network
+## 🛠️ 实验实践：设置私有区块链网络
 
-Normally, setting up a private blockchain network requires several participants working together to create and manage the network.
-For learning purposes, we’ll simplify this by simulating multiple participants on a single machine using Docker containers.
+通常，设置私有区块链网络需要多个参与者共同努力创建和管理网络。
+为了学习目的，我们将通过使用 Docker 容器在单台机器上模拟多个参与者来简化此过程。
 
-Each node will run in its own Docker container, where the MultiChain software is installed and configured separately.
+每个节点将在自己的 Docker 容器中运行，其中 MultiChain 软件已单独安装和配置。
 
-In this lab, you’ll learn how to set up a private MultiChain network with three nodes — **mc1**, **mc2**, and **mc3** — all running on the same system.
+在本实验中，您将学习如何设置具有三个节点的私有 MultiChain 网络——**mc1**、**mc2** 和 **mc3**——都在同一系统上运行。
 
 ```mermaid
 graph LR
@@ -175,20 +172,20 @@ graph LR
     end
 ```
 
-### a) Setup the Network
+### a) 设置网络
 
-1.  **Build the image**
+1.  **构建镜像**
 
-    This is only required once for the image to built for your architecture. The process mirrors the instructions on MultiChain's [website](https://www.multichain.com/download-community/).
+    这仅需要为您的架构构建一次镜像。该过程与 MultiChain [网站](https://www.multichain.com/download-community/)上的说明一致。
 
     ```bash
     cd ~/courses/FIN556/day-6/18-multichain
     . ./build.sh
     ```
 
-2.  **Start the containers**
+2.  **启动容器**
 
-    Run the **start.sh** script to start up the 3 containers.
+    运行 **start.sh** 脚本以启动 3 个容器。
 
     ```bash
     . ./start.sh
@@ -200,7 +197,7 @@ graph LR
      #  ✔ Container mc3 Started
     ```
 
-    The containers will be running in the background, use the following command to verify:
+    容器将在后台运行，使用以下命令进行验证：
 
     ```bash
     docker ps
@@ -211,77 +208,77 @@ graph LR
      # 240acdf56265   multichain:2.3.3   "sleep infinity"   About a minute ago   Up About a minute             mc1
     ```
 
-    At the end of this lab, you can stop and remove the containers by running:
+    在本实验结束时，您可以通过运行以下命令停止并移除容器：
 
     ```bash
     . ./stop.sh
     ```
 
-3.  **Connect to each container**
+3.  **连接到每个容器**
 
-    You can run the scripts **mc1.sh**, **mc2.sh** and **mc3.sh** to connect to each of the 3 containers.
+    您可以运行脚本 **mc1.sh**、**mc2.sh** 和 **mc3.sh** 来连接到 3 个容器中的每一个。
 
-    You will need to open up 3 terminal windows/tabs to connect to each of the containers.
+    您需要打开 3 个终端窗口/标签页来连接到每个容器。
 
-    The instructions below explains how to open up multiple terminal windows side-by-side but you can choose to open up individual terminal windows as you prefer.
+    下面的说明解释了如何并排打开多个终端窗口，但您也可以根据自己的喜好单独打开终端窗口。
 
-    -   **Connect to mc1**
+    -   **连接到 mc1**
 
-        Connect to the first container called **mc1**. This will be the seednode for the blockchain network.
+        连接到名为 **mc1** 的第一个容器。这将是区块链网络的种子节点。
 
         ```bash
         . ./mc1.sh
         ```
 
-    -   **Connect to mc2**
+    -   **连接到 mc2**
 
-        We will open up a parallel terminal so that you can control the second container called **mc2** side-by-side with **mc1**.
+        我们将打开一个并行终端，以便您可以与 **mc1** 并排控制第二个名为 **mc2** 的容器。
 
-        -   For Windows Terminal:
+        -   对于 Windows Terminal：
 
-            -   press the dropdown arrow next to the plus(+) icon.
-            -   Hold down the **ALT** key and click on the Ubuntu terminal which you are using for this course.
+            -   按下加号(+)图标旁边的下拉箭头。
+            -   按住 **ALT** 键并点击您用于本课程的 Ubuntu 终端。
 
-        -   For macOS Terminal:
-            -   From the menu bar, select **Shell > New Tab** or press **Command + T**.
+        -   对于 macOS 终端：
+            -   从菜单栏中选择 **Shell > New Tab** 或按 **Command + T**。
 
-        In the new terminal, connect to the second container called **mc2**. This will be the validator node for the blockchain network.
+        在新终端中，连接到名为 **mc2** 的第二个容器。这将是区块链网络的验证节点。
 
         ```bash
         cd ~/courses/FIN556/day-6/18-multichain
         . ./mc2.sh
         ```
 
-    -   **Connect to mc3**
+    -   **连接到 mc3**
 
-        Repeat the same steps as above to open up another parallel terminal and connect to the third container called **mc3**.
+        重复上述相同步骤，打开另一个并行终端并连接到第三个名为 **mc3** 的容器。
 
         ```bash
         cd ~/courses/FIN556/day-6/18-multichain
         . ./mc3.sh
         ```
 
-    The final setup should look something like this:
+    最终设置应如下所示：
 
     ![multi-terminals](./img/terminals-startup.png)
 
 ---
 
-### b) Configure Seed Node (Node1)
+### b) 配置种子节点 (Node1)
 
-In this section, we will set up the seed node for the blockchain network inside the **mc1** container.
+在本节中，我们将在 **mc1** 容器内为区块链网络设置种子节点。
 
-1. **Create the blockchain**
+1.  **创建区块链**
 
-    In the terminal connected to the **mc1** container, run the following command to create a new blockchain called **chain1**.
+    在连接到 **mc1** 容器的终端中，运行以下命令创建一个名为 **chain1** 的新区块链。
 
     ```bash
     multichain-util create chain1
     ```
 
-    This will create a new directory called **chain1** inside the **/root/.multichain/** directory.
+    这将在 **/root/.multichain/** 目录中创建一个名为 **chain1** 的新目录。
 
-    Verify that the hidden `.multichain` directory is created.
+    验证隐藏的 `.multichain` 目录已创建。
 
     ```bash
     ls -al
@@ -289,25 +286,25 @@ In this section, we will set up the seed node for the blockchain network inside 
 
     ![dir](./img/lab2-1.png)
 
-2. **Go to your data directory**
+2.  **进入数据目录**
 
-    Change your current working directory to the newly created data directory for the blockchain called **chain1**.
+    将您当前的工作目录更改为为名为 **chain1** 的区块链新创建的数据目录。
 
     ```bash
     cd ~/.multichain/chain1
     ```
 
-3. **Edit the blockchain parameters file (params.dat)**
+3.  **编辑区块链参数文件 (params.dat)**
 
-    Confirm that the `params.dat` file exists in your current directory.
+    确认 `params.dat` 文件存在于当前目录中。
 
-    Open the `params.dat` file with the `nano` text editor.
+    使用 `nano` 文本编辑器打开 `params.dat` 文件。
 
     ```bash
     nano params.dat
     ```
 
-    Scroll down and edit the following parameters:
+    向下滚动并编辑以下参数：
 
     ```bash
     admin-consensus-admin = 0.6
@@ -317,27 +314,27 @@ In this section, we will set up the seed node for the blockchain network inside 
 
     ![nano](./img/nano.png)
 
-    CTRL-X to exit the editor and save the file.
+    按 CTRL-X 退出编辑器并保存文件。
 
-4. **Start the seed node**
+4.  **启动种子节点**
 
-    a) Start multichain service
+    a) 启动 multichain 服务
 
     ```sh
     multichaind chain1
     ```
 
-    b) Wait for the status `Node ready` to appear.
+    b) 等待状态 `Node ready` 出现。
 
-    **IMPORTANT:** At this point, take note of the IP address (**For example, the screen below shows IP as 172.18.0.2**) of the **mc1** container because you will need it later to connect other nodes to this seed node. In a real world, this would be the public IP address or domain name of the server hosting the seed node.
+    **重要：** 此时，请记下 **mc1** 容器的 IP 地址（例如下面的屏幕显示 IP 为 172.18.0.2），因为稍后您需要它来连接其他节点到这个种子节点。在现实世界中，这将是托管种子节点的服务器的公网 IP 地址或域名。
 
-5. **Check the blockchain status**
+5.  **检查区块链状态**
 
-    Because the `multichaind` process is running in the foreground, you will need to suspend it temporarily in order to enter commands in the terminal.
+    因为 `multichaind` 进程正在前台运行，您需要暂时挂起它以便在终端中输入命令。
 
-    a) Enter `CTRL-Z` to suspend the process. If you accidentally entered `CTRL-C` and terminated the process instead, you can restart the process with `multichaind chain1`.
+    a) 输入 `CTRL-Z` 挂起进程。如果您不小心输入了 `CTRL-C` 并终止了进程，可以使用 `multichaind chain1` 重新启动进程。
 
-    b) `CTRL-Z` will suspend the process and return you to the terminal prompt. In order to continue running the process in the background, enter the following command:
+    b) `CTRL-Z` 将挂起进程并返回到终端提示符。要继续在后台运行进程，请输入以下命令：
 
     ```sh
     bg
@@ -345,57 +342,57 @@ In this section, we will set up the seed node for the blockchain network inside 
 
     ![bg](./img/bg.png)
 
-    c) To confirm that the service is running at the background, enter the following command:
+    c) 要确认服务正在后台运行，请输入以下命令：
 
     ```sh
     ps -aux | grep multichaind
     ```
 
-    This command will show you the process ID (PID) of the multichaind service as shown in the sample screenshot below.
+    此命令将向您显示 multichaind 服务的进程 ID (PID)，如下面的示例屏幕截图所示。
 
     ![ps](./img/ps-grep-mc.png)
 
-    Now, you can connect to the multichain service using the **multichain-cli** command line tool.
+    现在，您可以使用 **multichain-cli** 命令行工具连接到 multichain 服务。
 
-    d) Connect to the service using **multichain-cli**.
+    d) 使用 **multichain-cli** 连接到服务。
 
     ```sh
     multichain-cli chain1
     ```
 
-    e) Enter the following command (within the CLI) to get the blockchain information.
+    e) 输入以下命令（在 CLI 内）获取区块链信息。
 
     ```sh
     > getinfo
     ```
 
-    If the service is running successfully, you will be able to see the blockchain information as shown in the sample screenshot below.
+    如果服务成功运行，您将能够看到如下面的示例屏幕截图所示的区块链信息。
 
     ![cli](./img/lab2-4.png)
 
-    f) Done.
+    f) 完成。
 
-### c) Connect Node2 to the Seed Node
+### c) 将 Node2 连接到种子节点
 
-In this section, we will connect the second node (**mc2**) to the seed node (**mc1**).
+在本节中，我们将第二个节点（**mc2**）连接到种子节点（**mc1**）。
 
-1. **mc2 connect to seed node**
+1.  **mc2 连接到种子节点**
 
-    In the terminal connected to the **mc2** container, run the following command.
-    In actual use, the seed node address and port would be communicated to you by the administrator of the seed node.
+    在连接到 **mc2** 容器的终端中，运行以下命令。
+    在实际使用中，种子节点管理员会向您传达种子节点地址和端口。
 
     ```bash
     multichaind chain1@<seed-node-ip-address>:<network-port>
 
-     # Example:
-     # <seed-node-ip-address> = 172.18.0.2 (from previous step when seed node was started)
-     # <network-port> = 2020 (from previous step as configured in params.dat)
+     # 示例：
+     # <seed-node-ip-address> = 172.18.0.2 (从之前启动种子节点时的步骤)
+     # <network-port> = 2020 (从之前在 params.dat 中配置的步骤)
      #
      # multichaind chain1@172.18.0.2:2020
 
     ```
 
-    The seed node will not allow the connection yet because the permission has not been granted. It will show a message similar to the one below.
+    种子节点此时尚不允许连接，因为权限尚未授予。它将显示类似于以下的消息。
 
     ```bash
      # MultiChain 2.3.3 Daemon (Community Edition, latest protocol 20013)
@@ -408,76 +405,76 @@ In this section, we will connect the second node (**mc2**) to the seed node (**m
      # multichain-cli chain1 grant 19Sd3zhRBRi32SNVtcwdCGQi2fnhV2nQ4ZwyRH connect,send,    receive
     ```
 
-    This is not an error message. It is simply informing you that the connection request has been received but permission to connect has not been granted yet.
+    这不是错误消息。它只是通知您连接请求已收到，但连接权限尚未授予。
 
-    You need to provide the address shown in the message to the administrator of the seed node so that they can grant you permission to connect. For example, in the message above, the address is `19Sd3zhRBRi32SNVtcwdCGQi2fnhV2nQ4ZwyRH`.
+    您需要将消息中显示的地址提供给种子节点管理员，以便他们授予您连接权限。例如，在上面的消息中，地址是 `19Sd3zhRBRi32SNVtcwdCGQi2fnhV2nQ4ZwyRH`。
 
     ![mc2-1](./img/mc2-1.png)
 
-2. **Grant `connect` permission to mc2**
+2.  **授予 mc2 `connect` 权限**
 
-    Switch back to the terminal connected to the **mc1** container (the seed node).
+    切换回连接到 **mc1** 容器的终端（种子节点）。
 
-    In actual use, you would have received a request to grant permission from the new node (mc2) externally with mc2's address.
+    在实际使用中，您将收到来自新节点（mc2）的外部请求授予权限，并附带 mc2 的地址。
 
-    a) You should already be running the **multichain-cli** command line tool since the previous step.
+    a) 您应该已经在运行 **multichain-cli** 命令行工具，因为这是上一步。
 
-    If you are connected, you should see the prompt as:
+    如果已连接，您应该看到如下提示：
 
     ```sh
     chain1:
     ```
 
-    b) Enter the following command (within the CLI) to grant `connect` permission to the address shown in the previous step.
+    b) 输入以下命令（在 CLI 内）授予上一步显示的地址 `connect` 权限。
 
     ```sh
     > grant <mc2-address> connect,send,receive
 
-     # Example:
-     # <mc2-address> = 19Sd3zhRBRi32SNVtcwdCGQi2fnhV2nQ4ZwyRH (from previous step)
+     # 示例：
+     # <mc2-address> = 19Sd3zhRBRi32SNVtcwdCGQi2fnhV2nQ4ZwyRH (从上一步)
      #
      # grant 19Sd3zhRBRi32SNVtcwdCGQi2fnhV2nQ4ZwyRH connect,send,receive
     ```
 
-    You should see a transaction ID being returned as shown in the sample screenshot below.
+    您应该看到返回一个交易 ID，如下面的示例屏幕截图所示。
 
-3. **mc2 reconnect to seed node**
+3.  **mc2 重新连接到种子节点**
 
-    Switch back to the terminal connected to the **mc2** container.
+    切换回连接到 **mc2** 容器的终端。
 
-    a) In actual use, you will be notified by the administrator of the seed node that your permission to connect has been granted. You can now reconnect to the seed node.
+    a) 在实际使用中，种子节点管理员将通知您已授予连接权限。现在您可以重新连接到种子节点。
 
     ```bash
     multichaind chain1@<seed-node-ip-address>:<network-port>
 
-     # Example:
-     # <seed-node-ip-address> = 172.18.0.2 (from previous step when seed node was started)
-     # <network-port> = 2020 (from previous step as configured in params.dat)
+     # 示例：
+     # <seed-node-ip-address> = 172.18.0.2 (从之前启动种子节点时的步骤)
+     # <network-port> = 2020 (从之前在 params.dat 中配置的步骤)
      # multichaind chain1@172.18.0.2:2020
     ```
 
-    b) This time, the connection should be successful and shows `Node ready.` at the end of the output.
+    b) 这次，连接应该成功，并在输出末尾显示 `Node ready。`
 
     ![grant](./img/mc2-2.png)
 
-4. **Run multichain-cli**
+4.  **运行 multichain-cli**
 
-    Similar to the previous section in **Configure Seed Node (Node1)**, you will need to suspend the `multichaind` process temporarily in order to enter commands in the terminal.
+    与上一节**配置种子节点 (Node1)**类似，您需要暂时挂起 `multichaind` 进程以便在终端中输入命令。
 
-    a) Enter `CTRL-Z` to suspend the process.
-    b) Type the following command to continue running the process in the background:
+    a) 输入 `CTRL-Z` 挂起进程。
+    b) 输入以下命令以继续在后台运行进程：
 
     ```sh
     bg
     ```
 
-    c) Run the **multichain-cli** command line tool to connect to the multichain service.
+    c) 运行 **multichain-cli** 命令行工具连接到 multichain 服务。
 
     ```sh
     multichain-cli chain1
     ```
 
-    d) Enter the following command to check your connected peers.
+    d) 输入以下命令检查您连接的节点。
 
     ```sh
     > getpeerinfo
@@ -485,16 +482,15 @@ In this section, we will connect the second node (**mc2**) to the seed node (**m
 
     ![peerinfo](./img/mc2-3.png)
 
-    If the connection is successful, you should be able to see the peer information of the seed node as shown in the sample screenshot above.
+    如果连接成功，您应该能够看到如上面的示例屏幕截图所示的种子节点信息。
 
-### d) Repeat for Node3
+### d) 对 Node3 重复
 
-Repeat the same steps as in the previous section to connect the third node (**mc3**) to the seed node (**mc1**).
+重复上一节的相同步骤，将第三个节点（**mc3**）连接到种子节点（**mc1**）。
 
 ![mc3-1](./img/mc3-1.png)
 
-Run multichain-cli in **mc3** to verify the connection. And run getpeerinfo to see the connected peers.
+在 **mc3** 中运行 multichain-cli 以验证连接。并运行 getpeerinfo 查看连接的节点。
 
-**getpeerinfo** in **mc3** should show both **mc1** and **mc2** as connected peers.
-
+**mc3** 中的 **getpeerinfo** 应显示 **mc1** 和 **mc2** 都作为连接的节点。
 

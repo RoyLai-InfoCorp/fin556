@@ -1,22 +1,22 @@
-# MultiChain Command-Line Tool
+# MultiChain 命令行工具
 
-## 1. Running `multichain-cli`
+## 1. 运行 `multichain-cli`
 
-There are 2 ways that we can run the multichain command-line tool: interactive mode and command-line mode.
+运行 multichain 命令行工具有两种方式：交互模式和命令行模式。
 
--   In the previous lab, you have already seen how to run the multichain command-line tool in **interactive mode**. In the interactive mode, multichain-cli is launched as an app with a console where you can type in commands and see the output while staying in the console. This is useful for quick testing and experimentation.
+-   在之前的实验中，您已经了解了如何以**交互模式**运行 multichain 命令行工具。在交互模式下，multichain-cli 作为应用程序启动，带有控制台，您可以在其中输入命令并查看输出，同时保持在控制台中。这对于快速测试和实验很有用。
 
     ```sh
     multichain-cli chain1
     ```
 
--   The other way is to run multichain-cli in **command-line mode**. In this mode, you can pass in the commands and parameters as arguments to the multichain-cli app. This is useful when you want to run multichain-cli as part of a script or a program.
+-   另一种方式是以**命令行模式**运行 multichain-cli。在此模式下，您可以将命令和参数作为参数传递给 multichain-cli 应用程序。当您想将 multichain-cli 作为脚本或程序的一部分运行时，这很有用。
 
     ```sh
     multichain-cli chain1 getinfo
     ```
 
--   When you run the multichain command-line tool without any arguments, you will the list of arguments that it can accept to manage how you want to run multichain.
+-   当您不带任何参数运行 multichain 命令行工具时，您将看到它可以接受的参数列表，以管理您想要运行 multichain 的方式。
 
     ```sh
     multichain-cli
@@ -24,53 +24,53 @@ There are 2 ways that we can run the multichain command-line tool: interactive m
 
 ---
 
-## 2. Passing Complex Arguments into RPC API
+## 2. 将复杂参数传递给 RPC API
 
-One of the important aspect to take note of when using the command line tool is the passing in and retrieving of complex parameters.
+使用命令行工具时需要注意的一个重要方面是复杂参数的传入和检索。
 
-It is not always the case whereby you pass in a simple string as parameter. Sometime you may need to pass in an object that it made up of a group of parameters.
+并不总是简单地将字符串作为参数传入。有时您可能需要传入一个由一组参数组成的对象。
 
-### Passing in JSON string
+### 传入 JSON 字符串
 
-Let us consider the following example.
+让我们考虑以下示例。
 
 ```
 issue {replace-with-address} '{"name":"asset1","open":true}'
 ```
 
-The above command `issue` is passing in 2 arguments that corresponds to the following.
+上述命令 `issue` 传入 2 个参数，对应以下内容：
 
--   The first argument is a string representing the address of the node for issuing the asset to.
+-   第一个参数是一个字符串，表示向其发行资产的节点地址。
 
--   The second argument is a special type of string called JSON string. A JSON string is a string representation of an object. In this case, the object is made up of 2 parameters, the `name` and the `open` parameter.
+-   第二个参数是一种称为 JSON 字符串的特殊类型字符串。JSON 字符串是对象的字符串表示。在这种情况下，该对象由 2 个参数组成，即 `name` 和 `open` 参数。
 
-### JSON string as result
+### JSON 字符串作为结果
 
-You will notice that when you receive the output from MultiChain, the output is in the form of quotes and parenthesis.
+您会注意到，当您从 MultiChain 收到输出时，输出采用引号和括号的形式。
 
-Let us refer to the sample output from lab-2 below.
+让我们参考下面实验-2 的示例输出。
 
 ![Sample Output](./img/lab2-4.png)
 
-The getinfo command returns the result in the form of JSON string. In this case it is an object containing the current state of the blockchain.
+getinfo 命令以 JSON 字符串形式返回结果。在这种情况下，它是一个包含区块链当前状态的对象。
 
 ---
 
-## 3. JSON String
+## 3. JSON 字符串
 
-JSON stands for Javascript Object Notation. Because different programming languages have varying ways of representing objects, but they typically share a common way of representing strings, JSON is commonly used as a standard format for representing objects as strings
+JSON 代表 JavaScript 对象表示法。因为不同的编程语言表示对象的方式各不相同，但它们通常共享一种共同的表示字符串的方式，JSON 通常用作将对象表示为字符串的标准格式。
 
-There are 2 types of JSON strings: JSON object and JSON array.
+JSON 字符串有两种类型：JSON 对象和 JSON 数组。
 
-### JSON Object
+### JSON 对象
 
--   In a JSON object, each item is referred to as a "key-value pair" (they are also referred to as fields, attributes or properties).
--   The key represents the name or identifier of the item, while the value represents the actual content or data associated with that key.
--   The key-value pairs are enclosed within curly braces **{ ... }** and separated by comma (,).
--   The "key" is always represented as string.
--   The "value" can be a string in double quotes, or a number, or true or false or null, or an object or an array. These structures can be nested.
+-   在 JSON 对象中，每个项目称为"键值对"（也称为字段、属性或特性）。
+-   键表示项目的名称或标识符，而值表示与该键关联的实际内容或数据。
+-   键值对用大括号 **{ ... }** 包围，并用逗号 (,) 分隔。
+-   "键"始终表示为字符串。
+-   "值"可以是双引号中的字符串，或数字，或 true 或 false 或 null，或对象或数组。这些结构可以嵌套。
 
-For example, the following json object contains 4 key-value pairs: name, age, car, married.
+例如，以下 json 对象包含 4 个键值对：name、age、car、married。
 
 ```json
 {
@@ -81,159 +81,159 @@ For example, the following json object contains 4 key-value pairs: name, age, ca
 }
 ```
 
--   The "name" attribute contains a string "John". Strings are enclosed within ".." (double quotes).
--   The "age" attribute contains a number 30. Numeric values are not enclosed within ".." (double quotes).
--   The "car" attribute contains a null value. Null value is represented by the word "null" without ".." (double quotes).
--   The "married" attribute contains a boolean value true. Boolean values are either true or false without ".." (double quotes).
+-   "name" 属性包含字符串 "John"。字符串用 ".."（双引号）包围。
+-   "age" 属性包含数字 30。数值不用 ".."（双引号）包围。
+-   "car" 属性包含 null 值。null 值用词 "null" 表示，不用 ".."（双引号）包围。
+-   "married" 属性包含布尔值 true。布尔值是 true 或 false，不用 ".."（双引号）包围。
 
--   When JSON object is passed as a parameter in the console, it must be enclosed within single quotes **'...'** to prevent the shell from interpreting the curly braces as a shell command.
+-   当 JSON 对象作为参数在控制台中传入时，它必须用单引号 **'...'** 包围，以防止 shell 将大括号解释为 shell 命令。
 
-Therefore, the final JSON string to be passed into the MultiChain RPC API looks like this
+因此，传入 MultiChain RPC API 的最终 JSON 字符串如下所示
 
 ```sh
 '{ "name":"John", "age":30, "car":null, "married":true }'
 ```
 
-### JSON Array
+### JSON 数组
 
--   In a JSON array, each item is referred to as an "element".
--   The elements are enclosed within square brackets **[...]** and separated by comma (,).
--   The elements can be a string in double quotes, or a number, or true or false or null, or an object or an array. These structures can be nested.
+-   在 JSON 数组中，每个项目称为"元素"。
+-   元素用方括号 **[...]** 包围，并用逗号 (,) 分隔。
+-   元素可以是双引号中的字符串，或数字，或 true 或 false 或 null，或对象或数组。这些结构可以嵌套。
 
-For example, the following json array contains 3 elements: "Ford", "BMW", "Fiat" representing the make of the cars.
+例如，以下 json 数组包含 3 个元素："Ford"、"BMW"、"Fiat"，表示汽车的制造商。
 
 ```json
 ["Ford", "BMW", "Fiat"]
 ```
 
-To pass in a JSON array as a parameter in the console, it must be enclosed within single quotes **'...'** to prevent the shell from interpreting the square brackets as a shell command.
+要在控制台中传入 JSON 数组作为参数，必须用单引号 **'...'** 包围，以防止 shell 将方括号解释为 shell 命令。
 
-Therefore, the final JSON string to be passed into the MultiChain RPC API looks like this
+因此，传入 MultiChain RPC API 的最终 JSON 字符串如下所示
 
 ```sh
 '["Ford", "BMW", "Fiat"]'
 ```
 
-### Complex Examples
+### 复杂示例
 
-In the following example, the JSON object contains a JSON array.
+在以下示例中，JSON 对象包含一个 JSON 数组。
 
 ```sh
 '{"name": "John", "age": 30, "cars": ["Ford", "BMW", "Fiat"]}'
 ```
 
-In the following example, a JSON object is nested within another JSON object.
+在以下示例中，一个 JSON 对象嵌套在另一个 JSON 对象中。
 
 ```sh
 '{"name": "John", "age": 30, "cars": null, "address": { "street": "Main", "city": "New York"}}'
 ```
 
-In the following example, a json array can contain multiple JSON objects or json arrays.
+在以下示例中，json 数组可以包含多个 JSON 对象或 json 数组。
 
 ```sh
 '[{"name": "John","age": 30},{"name": "Smith","age": 50},{"name": "Jane","age": 20}]'
 ```
 
-### IMPORTANT
+### 重要
 
-Do not confuse the use of punctuation marks in JSON string.
+不要混淆 JSON 字符串中标点符号的使用。
 
-" " (double quotes) is used to enclose strings.
-' ' (single quotes) is used to enclose JSON string as a whole.
-{ } (curly braces) is used to enclose JSON object.
-[ ] (square brackets) is used to enclose JSON array.
-`` (backtick) is NOT used in JSON string.
+" "（双引号）用于包围字符串。
+' '（单引号）用于将 JSON 字符串作为一个整体包围。
+{ }（大括号）用于包围 JSON 对象。
+[ ]（方括号）用于包围 JSON 数组。
+``（反引号）不能在 JSON 字符串中使用。
 
 ---
 
-## 4. Basic MultiChain Commands
+## 4. 基本 MultiChain 命令
 
-### a. `getinfo` command
+### a. `getinfo` 命令
 
-The `getinfo` command returns an object containing various state info regarding the node's blockchain.
+`getinfo` 命令返回一个包含有关节点区块链各种状态信息的对象。
 
-**Syntax**
+**语法**
 
 ```sh
 getinfo
 ```
 
-The result of calling getinfo is a JSON object with the following fields:
+调用 getinfo 的结果是一个具有以下字段的 JSON 对象：
 
 ```json
 {
-  "version": xxxxx,                 (numeric) the server version
-  "protocolversion": xxxxx,         (numeric) the protocol version
-  "chainname": "xxxx",              (string) multichain network name
-  "description": "xxxx",            (string) network desctription
-  "protocol": "xxxx",               (string) protocol - multichain or bitcoin
-  "port": xxxx,                     (numeric) network port
-  "setupblocks": "xxxx",            (string) number of network setup blocks
-  "walletversion": xxxxx,           (numeric) the wallet version
-  "balance": xxxxxxx,               (numeric) the total native currency balance of the wallet
-  "walletdbversion": xxxxx,         (numeric) the wallet database version
-  "blocks": xxxxxx,                 (numeric) the current number of blocks processed in the server
-  "timeoffset": xxxxx,              (numeric) the time offset
-  "connections": xxxxx,             (numeric) the number of connections
-  "proxy": "host:port",             (string, optional) the proxy used by the server
-  "difficulty": xxxxxx,             (numeric) the current difficulty
-  "testnet": true|false,            (boolean) if the server is using testnet or not
-  "keypoololdest": xxxxxx,          (numeric) the timestamp (seconds since GMT epoch) of the oldest pre-generated key in the key pool
-  "keypoolsize": xxxx,              (numeric) how many new keys are pre-generated
-  "unlocked_until": ttt,            (numeric) the timestamp in seconds since epoch (midnight Jan 1 1970 GMT) that the wallet is unlocked for transfers, or 0 if the wallet is locked
-  "paytxfee": x.xxxx,               (numeric) the transaction fee set in btc/kb
-  "relayfee": x.xxxx,               (numeric) minimum relay fee for non-free transactions in btc/kb
-  "errors": "..."                   (string) any error messages
+  "version": xxxxx,                 (numeric) 服务器版本
+  "protocolversion": xxxxx,         (numeric) 协议版本
+  "chainname": "xxxx",              (string) multichain 网络名称
+  "description": "xxxx",            (string) 网络描述
+  "protocol": "xxxx",               (string) 协议 - multichain 或 bitcoin
+  "port": xxxx,                     (numeric) 网络端口
+  "setupblocks": "xxxx",            (string) 网络设置区块数
+  "walletversion": xxxxx,           (numeric) 钱包版本
+  "balance": xxxxxxx,               (numeric) 钱包的总原生货币余额
+  "walletdbversion": xxxxx,         (numeric) 钱包数据库版本
+  "blocks": xxxxxx,                 (numeric) 服务器当前处理的区块数
+  "timeoffset": xxxxx,              (numeric) 时间偏移
+  "connections": xxxxx,             (numeric) 连接数
+  "proxy": "host:port",             (string, optional) 服务器使用的代理
+  "difficulty": xxxxxx,             (numeric) 当前难度
+  "testnet": true|false,            (boolean) 服务器是否使用测试网
+  "keypoololdest": xxxxxx,          (numeric) 密钥池中最旧预生成密钥的时间戳（自 GMT 时代以来的秒数）
+  "keypoolsize": xxxx,              (numeric) 预生成的新密钥数量
+  "unlocked_until": ttt,            (numeric) 钱包解锁以进行转账的时间戳（自 1970 年 1 月 1 日 GMT 午夜以来的秒数），或 0 表示钱包已锁定
+  "paytxfee": x.xxxx,               (numeric) 以 btc/kb 设置的交易费用
+  "relayfee": x.xxxx,               (numeric) 非免费交易的最小中继费用（以 btc/kb 为单位）
+  "errors": "..."                   (string) 任何错误消息
 }
 ```
 
-Note:
+注意：
 
-    -   protocolversion : this is used for handshake
-    -   protocol: is default to multichain
-    -   port: make sure this port number is opened by the firewall for connection.
-    -   blocks: this number should be constantly changing if new blocks are mined.
-    -   connections: this number should not be 0 if you are connected to the network.
+-   protocolversion：用于握手
+-   protocol：默认为 multichain
+-   port：确保防火墙打开此端口号以进行连接。
+-   blocks：如果挖掘了新区块，此数字应不断变化。
+-   connections：如果您已连接到网络，此数字不应为 0。
 
 ---
 
-### b. `getpeerinfo` command
+### b. `getpeerinfo` 命令
 
-The `getpeerinfo` command returns data about each connected network node as a json array of objects.
+`getpeerinfo` 命令返回有关每个连接的网络节点的数据，作为对象的 json 数组。
 
-**Syntax**
+**语法**
 
 ```sh
 getpeerinfo
 ```
 
-The result should show the following:
+结果应显示以下内容：
 
 ```json
 [
   {
-    "id": n,                        (numeric) Peer index
-    "addr":"host:port",             (string) The ip address and port of the peer
-    "addrlocal":"ip:port",          (string) local address
-    "services":"xxxxxxxxxxxxxxxx",  (string) The services offered
-    "lastsend": ttt,                (numeric) The time in seconds since epoch (Jan 1 1970 GMT) of the last send
-    "lastrecv": ttt,                (numeric) The time in seconds since epoch (Jan 1 1970 GMT) of the last receive
-    "bytessent": n,                 (numeric) The total bytes sent
-    "bytesrecv": n,                 (numeric) The total bytes received
-    "conntime": ttt,                (numeric) The connection time in seconds since epoch (Jan 1 1970 GMT)
-    "pingtime": n,                  (numeric) ping time
-    "pingwait": n,                  (numeric) ping wait
-    "version": v,                   (numeric) The peer version, such as 7001
-    "subver": "/Satoshi:0.8.5/",    (string) The string version
-    "handshakelocal": n,            (string) If protocol is Multichain. Address used by local node for handshake.
-    "handshake": n,                 (string) If protocol is Multichain. Address used by remote node for handshake.
-    "inbound": true|false,          (boolean) Inbound (true) or Outbound (false)
-    "startingheight": n,            (numeric) The starting height (block) of the peer
-    "banscore": n,                  (numeric) The ban score
-    "synced_headers": n,            (numeric) The last header we have in common with this peer
-    "synced_blocks": n,             (numeric) The last block we have in common with this peer
+    "id": n,                        (numeric) 节点索引
+    "addr":"host:port",             (string) 节点的 IP 地址和端口
+    "addrlocal":"ip:port",          (string) 本地地址
+    "services":"xxxxxxxxxxxxxxxx",  (string) 提供的服务
+    "lastsend": ttt,                (numeric) 自上次发送以来的秒数（自 1970 年 1 月 1 日 GMT）
+    "lastrecv": ttt,                (numeric) 自上次接收以来的秒数（自 1970 年 1 月 1 日 GMT）
+    "bytessent": n,                 (numeric) 发送的总字节数
+    "bytesrecv": n,                 (numeric) 接收的总字节数
+    "conntime": ttt,                (numeric) 自连接以来的秒数（自 1970 年 1 月 1 日 GMT）
+    "pingtime": n,                  (numeric) ping 时间
+    "pingwait": n,                  (numeric) ping 等待
+    "version": v,                   (numeric) 节点版本，例如 7001
+    "subver": "/Satoshi:0.8.5/",    (string) 字符串版本
+    "handshakelocal": n,            (string) 如果协议是 Multichain。握手时本地节点使用的地址。
+    "handshake": n,                 (string) 如果协议是 Multichain。握手时远程节点使用的地址。
+    "inbound": true|false,          (boolean) 传入 (true) 或传出 (false)
+    "startingheight": n,            (numeric) 节点的起始高度（区块）
+    "banscore": n,                  (numeric) 禁止分数
+    "synced_headers": n,            (numeric) 我们与该节点的公共最新头
+    "synced_blocks": n,             (numeric) 我们与该节点的公共最新区块
     "inflight": [
-       n,                           (numeric) The heights of blocks we're currently asking from this peer
+       n,                           (numeric) 我们当前正在向此节点请求的区块高度
        ...
     ]
   }
@@ -242,40 +242,40 @@ The result should show the following:
 
 ```
 
-Note:
+注意：
 
--   addr : IP address and port of the peer connected to this node.
--   addrlocal : The local IP address and port of this node.
--   handshakelocal : wallet address of this node
--   Handshake: wallet address of the peer connected to this node
--   Is the number of peers returned from this list equal to the number of nodes in your group?
--   If not, then some nodes may be offline or they were not configured correctly to connect into the group. Otherwise, they may be indirectly connected to you via another node that you are connected to.
+-   addr：连接到此节点的节点的 IP 地址和端口。
+-   addrlocal：此节点的本地 IP 地址和端口。
+-   handshakelocal：此节点的钱包地址。
+-   Handshake：连接到此节点的节点的钱包地址。
+-   从此列表返回的节点数是否等于您组中的节点数？
+-   如果不是，则某些节点可能离线，或者它们的配置不正确，无法连接到组中。否则，它们可能通过您连接到的另一个节点间接连接到您。
 
 ---
 
-### c. `getaddresses` command
+### c. `getaddresses` 命令
 
-The `getaddresses` command returns a list of addresses in this node’s wallet.
+`getaddresses` 命令返回此节点钱包中的地址列表。
 
-**Syntax**
+**语法**
 
 ```sh
 getaddresses ( verbose )
 ```
 
-**Arguments**
+**参数**
 
 1. **verbose (boolean, optional, default=false)**: true|false
 
-**Examples**
+**示例**
 
-The following example returns the list of addresses in this node’s wallet.
+以下示例返回此节点钱包中的地址列表。
 
 ```sh
 getaddresses
 ```
 
-The example output shows that the current node has 2 addresses in its wallet.
+示例输出显示当前节点的钱包中有 2 个地址。
 
 ```sh
 [
@@ -284,13 +284,13 @@ The example output shows that the current node has 2 addresses in its wallet.
 ]
 ```
 
-The following example returns the list of addresses in this node’s wallet with verbose information.
+以下示例返回带有详细信息的此节点钱包中的地址列表。
 
 ```sh
 getaddresses true
 ```
 
-The example output shows the following:
+示例输出显示以下内容：
 
 ```sh
 [
@@ -316,49 +316,49 @@ The example output shows the following:
 ]
 ```
 
-In the final example, the output of the getaddresses command with verbose information shows two addresses in the node's wallet.
+在最后一个示例中，带有详细信息的 getaddresses 命令输出显示节点钱包中有两个地址。
 
--   **12S7Eg2Gz1ZSdRXqVjzjoSybBV1m9umdZz5nHL** is owned by the node **(ismine=true)**. This means this node has the private key to this address in its wallet. It has more detailed information available,eg. pubkey, including the public key and synchronization status.
--   **1bXk12QuUGXv9WXLaZwbTjfJ6UvNBJmuD9CFqc** is a watch-only **(iswatchonly=true)** address and is not owned by the node. That means this node does not have the private key to the address as this address is generated from another node. It can only shows basic information without the public key or synchronization status.
+-   **12S7Eg2Gz1ZSdRXqVjzjoSybBV1m9umdZz5nHL** 由该节点拥有（**ismine=true**）。这意味着该节点在其钱包中有此地址的私钥。它有更详细的信息可用，例如 pubkey，包括公钥和同步状态。
+-   **1bXk12QuUGXv9WXLaZwbTjfJ6UvNBJmuD9CFqc** 是一个仅观察（**iswatchonly=true**）地址，不归该节点所有。这意味着该节点没有此地址的私钥，因为此地址是从另一个节点生成的。它只能显示基本信息，没有公钥或同步状态。
 
 ---
 
-### d. `listpermissions` command
+### d. `listpermissions` 命令
 
-Returns a list of all permissions which have been explicitly granted to addresses.
+返回已明确授予地址的所有权限列表。
 
-**Syntax**
+**语法**
 
 ```sh
 listpermissions ( "permission(s)" address(es) verbose )
 ```
 
-**Arguments:**
+**参数：**
 
-1. **"permission(s)" (string, optional, default=\*)**: Permission strings, comma delimited.
-   Global: connect,send,receive,issue,mine,admin,activate,create
-   or per-asset: asset-identifier.issue,admin,activate,send,receive
-   or per-stream: stream-identifier.write,read,activate,admin
-   or per-variable: variable-identifier.write,activate,admin
-   or per-library: library-identifier.write,activate,admin
+1. **"permission(s)" (string, optional, default=\*)**: 权限字符串，用逗号分隔。
+   全局：connect,send,receive,issue,mine,admin,activate,create
+   或每个资产：asset-identifier.issue,admin,activate,send,receive
+   或每个流：stream-identifier.write,read,activate,admin
+   或每个变量：variable-identifier.write,activate,admin
+   或每个库：library-identifier.write,activate,admin
 
-2. **"address(es)" (string, optional, default=\_)**: The addresses to retrieve permissions for. "\_" for all addresses
-   or
-3. **address(es) (array, optional)**: A JSON array of addresses to return permissions for
+2. **"address(es)" (string, optional, default=\_)**: 要检索权限的地址。"\_" 表示所有地址
+   或
+3. **address(es) (array, optional)**: 要返回权限的地址的 JSON 数组
 
-4. **verbose (boolean, optional, default=false)**: If true, returns list of pending grants
+4. **verbose (boolean, optional, default=false)**: 如果为 true，返回待处理授予列表
 
-**Examples**
+**示例**
 
-a. List all permissions for all wallet addresses
+a. 列出所有钱包地址的所有权限
 
-The result should return a list of all the permissions for all wallet addresses.
+结果应返回所有钱包地址的所有权限列表。
 
 ```sh
 > listpermissions
 ```
 
-The example output shows that there are only 2 addresses on the blockchain. The address "12S7Eg2Gz1ZSdRXqVjzjoSybBV1m9umdZz5nHL" has permissions to mine, admin, connect, send and receive. The address "1bXk12QuUGXv9WXLaZwbTjfJ6UvNBJmuD9CFqc" has permissions to send and receive.
+示例输出显示区块链上只有 2 个地址。地址 "12S7Eg2Gz1ZSdRXqVjzjoSybBV1m9umdZz5nHL" 有挖矿、管理、连接、发送和接收权限。地址 "1bXk12QuUGXv9WXLaZwbTjfJ6UvNBJmuD9CFqc" 有发送和接收权限。
 
 ```sh
 [
@@ -414,15 +414,15 @@ The example output shows that there are only 2 addresses on the blockchain. The 
 ]
 ```
 
-b. List all wallet addresses with a specific permission
+b. 列出具有特定权限的所有钱包地址
 
-The result should return a list of wallet addresses with admin permission.
+结果应返回具有 admin 权限的钱包地址列表。
 
 ```sh
 > listpermissions admin
 ```
 
-The output returns an array of 1 address `12S7Eg2Gz1ZSdRXqVjzjoSybBV1m9umdZz5nHL` which is an admin on the blockchain.
+输出返回一个地址数组 `12S7Eg2Gz1ZSdRXqVjzjoSybBV1m9umdZz5nHL`，这是区块链上的管理员。
 
 ```
 [
@@ -436,15 +436,15 @@ The output returns an array of 1 address `12S7Eg2Gz1ZSdRXqVjzjoSybBV1m9umdZz5nHL
 ]
 ```
 
-c. List all permissions for a specific wallet address
+c. 列出特定钱包地址的所有权限
 
-The result should return a list of permissions for the address `1Unpjzmh9TsuRZvVKCQNpqx1eDFkaGC215fpj6`.
+结果应返回地址 `1Unpjzmh9TsuRZvVKCQNpqx1eDFkaGC215fpj6` 的权限列表。
 
 ```
 > listpermissions * 1Unpjzmh9TsuRZvVKCQNpqx1eDFkaGC215fpj6
 ```
 
-The output shows that the address contains only 2 permissions: `send` and `receive`.
+输出显示该地址仅包含 2 个权限：`send` 和 `receive`。
 
 ```
 [
@@ -467,64 +467,63 @@ The output shows that the address contains only 2 permissions: `send` and `recei
 
 ---
 
-### e. `grant` command
+### e. `grant` 命令
 
-Grant permission(s) to a given address.
+向给定地址授予权限。
 
-**Syntax**
+**语法**
 
 ```sh
 grant "address(es)" "permission(s)" ( native-amount startblock endblock "comment" "comment-to" )
 ```
 
-**Arguments:**
+**参数：**
 
-1. **"address(es)" (string, required)**: The multichain addresses to send to (comma delimited)
-2. **"permission(s)" (string, required)**: Permission strings, comma delimited.
-   Global: connect,send,receive,issue,mine,admin,activate,create
-   or per-asset: asset-identifier.issue,admin,activate,send,receive
-   or per-stream: stream-identifier.write,read,activate,admin
-   or per-variable: variable-identifier.write,activate,admin
-   or per-library: library-identifier.write,activate,admin
-3. **native-amount (numeric, optional)**: Native currency amount to send. eg 0.1. Default - 0.0
-4. **startblock (numeric, optional)**: Block to apply permissions from (inclusive). Default - 0
-5. **endblock (numeric, optional)**: Block to apply permissions to (exclusive). Default - 4294967295
-   If -1 is specified default value is used.
-6. **"comment" (string, optional)**: A comment used to store what the transaction is for.
-   This is not part of the transaction, just kept in your wallet.
-7. **"comment-to" (string, optional)**: A comment to store the name of the person or organization
-   to which you're sending the transaction. This is not part of the
-   transaction, just kept in your wallet.
+1. **"address(es)" (string, required)**: 发送到的 multichain 地址（用逗号分隔）
+2. **"permission(s)" (string, required)**: 权限字符串，用逗号分隔。
+   全局：connect,send,receive,issue,mine,admin,activate,create
+   或每个资产：asset-identifier.issue,admin,activate,send,receive
+   或每个流：stream-identifier.write,read,activate,admin
+   或每个变量：variable-identifier.write,activate,admin
+   或每个库：library-identifier.write,activate,admin
+3. **native-amount (numeric, optional)**: 发送的原生货币金额。例如 0.1。默认 - 0.0
+4. **startblock (numeric, optional)**: 应用权限的起始区块（包括）。默认 - 0
+5. **endblock (numeric, optional)**: 应用权限的结束区块（不包括）。默认 - 4294967295
+   如果指定 -1，则使用默认值。
+6. **"comment" (string, optional)**: 用于存储交易目的的注释。
+   这不是交易的一部分，仅保存在您的钱包中。
+7. **"comment-to" (string, optional)**: 用于存储您向其发送交易的人或组织名称的注释。
+   这不是交易的一部分，仅保存在您的钱包中。
 
-**Example**
+**示例**
 
-1. Grant a single permission
+1. 授予单一权限
 
-The following command grants a single permission to 12tDDPm72xRFqmQ96jJtqT4cCGwTHNVsz2A4HB.
+以下命令向 12tDDPm72xRFqmQ96jJtqT4cCGwTHNVsz2A4HB 授予单一权限。
 
 ```
 grant 12tDDPm72xRFqmQ96jJtqT4cCGwTHNVsz2A4HB connect
 ```
 
-2. Grant multiple permissions
+2. 授予多个权限
 
-The following command grants 3 permissions to 12tDDPm72xRFqmQ96jJtqT4cCGwTHNVsz2A4HB.
+以下命令向 12tDDPm72xRFqmQ96jJtqT4cCGwTHNVsz2A4HB 授予 3 个权限。
 
 ```
 grant 12tDDPm72xRFqmQ96jJtqT4cCGwTHNVsz2A4HB connect,send,receive
 ```
 
-3. Grant entity-level permissions
+3. 授予实体级权限
 
-To grant entity-level permissions, you need to specify the asset or stream name in the permission command. Asset-level permissions can have **send**, **receive**, **issue** permissions. Stream-level permissions can have **admin**, **write**, and **activate** permissions.
+要授予实体级权限，您需要在权限命令中指定资产或流名称。资产级权限可以有 **send**、**receive**、**issue** 权限。流级权限可以有 **admin**、**write** 和 **activate** 权限。
 
-The command below grant asset-level permissions to an asset called asset01.
+以下命令向名为 asset01 的资产授予资产级权限。
 
 ```sh
 grant {replace-with-address} asset01.send, asset01.receive, asset01.issue
 ```
 
-The command below grant stream-level permissions to a stream called stream01.
+以下命令向名为 stream01 的流授予流级权限。
 
 ```sh
 grant {replace-with-address} stream01.admin, stream01.write, stream01.activate
@@ -532,119 +531,118 @@ grant {replace-with-address} stream01.admin, stream01.write, stream01.activate
 
 ---
 
-## 🛠️ Lab Practice: MultiChain Command-Line Tool
+## 🛠️ 实验实践：MultiChain 命令行工具
 
-Run the following in interactive mode.
+在交互模式下运行以下内容。
 
-### a) “getinfo ” command
+### a) "getinfo" 命令
 
--   Retrieve general information about this node and the blockchain
+-   检索有关此节点和区块链的一般信息
 
--   Interactive Mode
+-   交互模式
 
     ```
     > getinfo
     ```
 
--   Output:
-    -   protocolversion : this is used for handshake
-    -   protocol: can be multichain or bitcoin
-    -   port: make sure this port number is opened by the firewall for connection.
-    -   blocks: this number should be constantly changing if new blocks are mined.
-    -   connections: this number shows the number of connections to the multichaind service.
+-   输出：
+    -   protocolversion：用于握手
+    -   protocol：可以是 multichain 或 bitcoin
+    -   port：确保防火墙打开此端口号以进行连接。
+    -   blocks：如果挖掘了新区块，此数字应不断变化。
+    -   connections：显示与 multichaind 服务的连接数。
 
 ---
 
-### b) “getpeerinfo ” command
+### b) "getpeerinfo" 命令
 
--   Return data about each connected network node
--   Interactive Mode
+-   返回有关每个连接的网络节点的数据
+-   交互模式
 
     ```
     > getpeerinfo
     ```
 
--   Output:
-    -   addr : IP address and port of the peer connected to this node.
-    -   addrlocal : The local IP address and port of this node.
-    -   handshakelocal : wallet address of this node
-    -   Handshake: wallet address of the peer connected to this node
-    -   Is the number of peers returned from this list equal to the number of nodes in your group?
-    -   If not, then some nodes may be offline or they were not configured correctly to connect into the group.
+-   输出：
+    -   addr：连接到此节点的节点的 IP 地址和端口。
+    -   addrlocal：此节点的本地 IP 地址和端口。
+    -   handshakelocal：此节点的钱包地址。
+    -   Handshake：连接到此节点的节点的钱包地址。
+    -   从此列表返回的节点数是否等于您组中的节点数？
+    -   如果不是，则某些节点可能离线，或者它们的配置不正确，无法连接到组中。
 
 ---
 
-### c) “getaddresses ” command
+### c) "getaddresses" 命令
 
--   Return the list of wallet addresses that is tracked by this node.
--   Interactive Mode
+-   返回此节点跟踪的钱包地址列表。
+-   交互模式
 
     ```
     > getaddresses true
     ```
 
--   Output:
-    -   “address”: wallet address
-    -   “ismine ”: true if this address is generated by you. False if you are listening to someone else’ address.
-    -   “iswatchonly ”: true if this address is a watch -only address that is imported using the “ importaddress ” command.
+-   输出：
+    -   "address"：钱包地址
+    -   "ismine"：如果此地址由您生成，则为 true。如果您正在监听别人的地址，则为 false。
+    -   "iswatchonly"：如果此地址是使用 "importaddress" 命令导入的仅观察地址，则为 true。
 
 ---
 
-### d) “listpermissions ” command
+### d) "listpermissions" 命令
 
--   Return the list of permissions in current wallet.
+-   返回当前钱包中的权限列表。
 
-    - **List All Permissions for All Wallet Addresses**
+    - **列出所有钱包地址的所有权限**
 
-        -   Interactive Mode
+        -   交互模式
 
             ```
             > listpermissions
             ```
 
-        -   Output:
-            The result should return a list of all the permissions for all wallet addresses.
+        -   输出：
+            结果应返回所有钱包地址的所有权限列表。
 
-    - **List All Wallet Addresses with a Specific Permission**
+    - **列出具有特定权限的所有钱包地址**
 
-        -   Interactive Mode
+        -   交互模式
 
             ```
             > listpermissions admin
             ```
 
-        -   Output:
-            The result should return a list of wallet addresses with admin permission.
+        -   输出：
+            结果应返回具有 admin 权限的钱包地址列表。
 
-    - **List All Permissions for a Specific Wallet Address**
+    - **列出特定钱包地址的所有权限**
 
-        -   Interactive Mode
+        -   交互模式
 
             ```
             > listpermissions * {replace-with-wallet-address}
             ```
 
-        -   Output:
-            The result should return a list of permissions for this wallet address.
+        -   输出：
+            结果应返回此钱包地址的权限列表。
 
 ---
 
-### e) “grant ” command
+### e) "grant" 命令
 
--   This command can only be executed by admin. The command expects 2 parameters:
+-   此命令只能由管理员执行。该命令需要 2 个参数：
 
-    -   The wallet address to grant permission to.
-    -   The permission to grant : activate, admin, connect, create, issue, mine, receive, send, receive, write
+    -   要授予权限的钱包地址。
+    -   要授予的权限：activate、admin、connect、create、issue、mine、receive、send、receive、write
 
--   Interactive Mode
+-   交互模式
 
     ```
     > grant {address} (activate | admin | connect | create | issue | mine | receive | send | receive | write)
     ```
 
--   Replace {address} with your peer’s wallet address
+-   将 {address} 替换为您的对等方的钱包地址
 
--   Output:
+-   输出：
 
-    -   Run listpermission to confirm that “activate” is granted to the wallet address.
-
+    -   运行 listpermission 确认已向钱包地址授予 "activate"。

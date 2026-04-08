@@ -1,35 +1,35 @@
-# Performing Token Swap and Add Liquidity on UniswapV2 on Testnet
+# 在测试网上执行 UniswapV2 代币交换和添加流动性
 
-⚠️ You must have completed the previous lesson on [Deploying ERC20 Tokens on Testnet](../../day-3/12-testnet/README.md) before you can continue with this lesson. Otherwise, please refer to:
+⚠️ 您必须先完成上一节[在测试网上部署 ERC20 代币](../../day-3/12-testnet/README.md) 才能继续本课程。否则，请参考：
 
--   [Deploying ERC20 Tokens on Testnet](../../day-3/12-testnet/README.md)
-    -   You need to be using the same .env file because it contains the mnemonic for your wallet as well as the Alchemy API key and URL.
-    -   You need to have test ETH balance in order to deploy the smart contracts and pay for gas fees.
+-   [在测试网上部署 ERC20 代币](../../day-3/12-testnet/README.md)
+    -   您需要使用相同的 .env 文件，因为它包含您的钱包助记词以及 Alchemy API 密钥和 URL。
+    -   您需要拥有测试 ETH 余额才能部署智能合约并支付 Gas 费用。
 
-## 🛠️ Lab Practise: Deploy and Swap Tokens on Local Hardhat Node with Scripts
+## 🛠️ 实验实践：使用脚本在本地 Hardhat 节点上部署和交换代币
 
-**NOTE:** The steps below includes deploying the UniswapV2 contracts locally. This is only required for local testing. For public testnet, you can skip the deployment of UniswapV2 contracts because they are already deployed on the testnet.
+**注意：** 以下步骤包括在本地部署 UniswapV2 合约。这仅用于本地测试。对于公共测试网，您可以跳过 UniswapV2 合约的部署，因为它们已经部署在测试网上。
 
-### Step 1. Create .env file that contains your wallet mnemonic and Alchemy API key
+### 步骤 1. 创建包含您的钱包助记词和 Alchemy API 密钥的 .env 文件
 
--   **Create .env file**
+-   **创建 .env 文件**
 
-    Copy the **.env** file from **../../day-3/12-testnet** to this folder.
+    将 **.env** 文件从 **../../day-3/12-testnet** 复制到此文件夹。
 
-### Step 2. Create a deployment library file
+### 步骤 2. 创建部署库文件
 
--   **Create scripts/deployLib.js**
+-   **创建 scripts/deployLib.js**
 
-    Create a new file called `deployLib.js` in the `scripts` folder to read and save contract addresses into a JSON file.
+    在 `scripts` 文件夹中创建一个名为 `deployLib.js` 的新文件，用于读取合约地址并将其保存到 JSON 文件中。
 
     ```javascript
     const fs = require("fs");
 
-    // Function to safely update JSON file
+    // 函数安全更新 JSON 文件
     function saveJson(filePath, updates) {
         let data = {};
 
-        // Read existing file if it exists
+        // 如果文件存在则读取现有文件
         if (fs.existsSync(filePath)) {
             try {
                 const fileContent = fs.readFileSync(filePath, "utf8");
@@ -40,10 +40,10 @@
             }
         }
 
-        // Merge updates with existing data
+        // 将更新与现有数据合并
         data = { ...data, ...updates };
 
-        // Write back to file
+        // 写回文件
         try {
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
             console.log(`✅ Updated ${filePath} successfully`);
@@ -55,9 +55,9 @@
         return data;
     }
 
-    // Function to get a specific address by key
+    // 函数按键获取特定地址
     function getAddress(filePath, key) {
-        // Check if file exists
+        // 检查文件是否存在
         if (!fs.existsSync(filePath)) {
             console.error(`File ${filePath} does not exist`);
             return null;
@@ -82,16 +82,16 @@
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     exports = { saveJson, getAddress, delay };
-    module.exports = { saveJson, getAddress, delay }; // For compatibility with both CommonJS and ES modules
+    module.exports = { saveJson, getAddress, delay }; // 兼容 CommonJS 和 ES 模块
     ```
 
-### Step 3. Create a script to deploy WETH9 contract
+### 步骤 3. 创建部署 WETH9 合约的脚本
 
--   **Create scripts/1_deployWETH9.js**
+-   **创建 scripts/1_deployWETH9.js**
 
-    Create a new file called `1_deployWETH9.js` in the `scripts` folder to deploy the WETH9 contract.
+    在 `scripts` 文件夹中创建一个名为 `1_deployWETH9.js` 的新文件来部署 WETH9 合约。
 
-    WETH9 is just a ERC20 token that is used to wrap ETH so that it can be used in UniswapV2. It is required for deploying the UniswapV2 Router contract.
+    WETH9 只是一个用于包装 ETH 的 ERC20 代币，以便在 UniswapV2 中使用。部署 UniswapV2 Router 合约需要它。
 
     ```javascript
     const { ethers } = require("hardhat");
@@ -101,11 +101,11 @@
     const filePath = path.join(__dirname, ADDRESS_FILE);
 
     async function main() {
-        // Get the first signer/account to deploy the contract
+        // 获取第一个签名者/账户来部署合约
         const signer = (await ethers.getSigners())[0];
         console.log(`Using account: ${await signer.getAddress()}`);
 
-        //Deploy WETH9 contract
+        // 部署 WETH9 合约
         const WETH9 = await ethers.getContractFactory(
             "contracts/v2-periphery/test/WETH9.sol:WETH9"
         );
@@ -117,7 +117,7 @@
 
         await delay(3000);
 
-        // Save token1 address
+        // 保存 token1 地址
         saveJson(filePath, { weth9: weth9Address });
     }
     main().catch((error) => {
@@ -126,11 +126,11 @@
     });
     ```
 
-### Step 4. Create a script to deploy your own ERC20 tokens
+### 步骤 4. 创建部署您自己的 ERC20 代币的脚本
 
--   **Create scripts/2_deployTokens.js**
+-   **创建 scripts/2_deployTokens.js**
 
-    Create a new file called `2_deployTokens.js` in the `scripts` folder to deploy your own ERC20 tokens. Note that the tokens are hardcoded to be `DemoTokenA` and `DemoTokenB` and the amounts minted are 1,000,000 ethers of tokens each.
+    在 `scripts` 文件夹中创建一个名为 `2_deployTokens.js` 的新文件来部署您自己的 ERC20 代币。请注意，代币被硬编码为 `DemoTokenA` 和 `DemoTokenB`，铸造的数量各为 1,000,000 ether。
 
     ```javascript
     const { ethers } = require("hardhat");
@@ -140,11 +140,11 @@
     const filePath = path.join(__dirname, ADDRESS_FILE);
 
     async function main() {
-        // Get the first signer/account to deploy the contract
+        // 获取第一个签名者/账户来部署合约
         const signer = (await ethers.getSigners())[0];
         console.log(`Using account: ${await signer.getAddress()}`);
 
-        // Deploy Token0
+        // 部署 Token0
         const TokenA = await ethers.getContractFactory("DemoTokenA");
         token0 = await TokenA.deploy();
         await token0.waitForDeployment();
@@ -152,10 +152,10 @@
         console.log(`Token0 deployed to: ${token0Address}`);
         await delay(3000);
 
-        // Save token0 address
+        // 保存 token0 地址
         saveJson(filePath, { token0: token0Address });
 
-        // Deploy Token1
+        // 部署 Token1
         const TokenB = await ethers.getContractFactory("DemoTokenB");
         token1 = await TokenB.deploy();
         await token1.waitForDeployment();
@@ -163,7 +163,7 @@
         console.log(`Token1 deployed to: ${token1Address}`);
         await delay(3000);
 
-        // Save token1 address
+        // 保存 token1 地址
         saveJson(filePath, { token1: token1Address });
     }
 
@@ -173,11 +173,11 @@
     });
     ```
 
-### Step 5. Create a script to deploy UniswapV2 Factory and Router contracts
+### 步骤 5. 创建部署 UniswapV2 Factory 和 Router 合约的脚本
 
--   **Create scripts/3_deployUniswap.js**
+-   **创建 scripts/3_deployUniswap.js**
 
-    Create a new file called `3_deployUniswap.js` in the `scripts` folder to deploy the UniswapV2 Factory and Router contracts.
+    在 `scripts` 文件夹中创建一个名为 `3_deployUniswap.js` 的新文件来部署 UniswapV2 Factory 和 Router 合约。
 
     ```javascript
     const { ethers } = require("hardhat");
@@ -187,11 +187,11 @@
     const filePath = path.join(__dirname, ADDRESS_FILE);
 
     async function main() {
-        // Get the first signer/account to deploy the contract
+        // 获取第一个签名者/账户来部署合约
         const signer = (await ethers.getSigners())[0];
         console.log(`Using account: ${await signer.getAddress()}`);
 
-        // Deploy UniswapV2Factory
+        // 部署 UniswapV2Factory
         const Factory = await ethers.getContractFactory("UniswapV2Factory");
         factory = await Factory.deploy(signer.address);
         await factory.waitForDeployment();
@@ -201,12 +201,12 @@
         saveJson(filePath, { factory: factoryAddress });
         await delay(3000);
 
-        // Deploy UniswapV2Router02
+        // 部署 UniswapV2Router02
         const Router = await ethers.getContractFactory("UniswapV2Router02");
         const weth9Address = getAddress(filePath, "weth9");
         router = await Router.deploy(
             factory.target,
-            weth9Address // WETH address (not used in this test)
+            weth9Address // WETH 地址（本测试中未使用）
         );
         await router.waitForDeployment();
         routerAddress = await router.getAddress();
@@ -220,9 +220,9 @@
     });
     ```
 
-### Step 6. Create a script to create a liquidity pool for the two tokens
+### 步骤 6. 创建为两种代币创建流动性池的脚本
 
--   **Create scripts/4_createPool.js**
+-   **创建 scripts/4_createPool.js**
 
     ```js
     const { ethers } = require("hardhat");
@@ -242,7 +242,7 @@
                     [address0, address1]
                 )
             ),
-            "0x215a032792ab9f4a5eb14f1f4c1daed5017b1eee4de72ddb42e06c967b16c5d4" // init code hash (from getInitHashCode.js)
+            "0x215a032792ab9f4a5eb14f1f4c1daed5017b1eee4de72ddb42e06c967b16c5d4" // 初始化代码哈希（来自 getInitHashCode.js）
         );
         return pairAddress2;
     }
@@ -250,7 +250,7 @@
     async function main() {
         const [signer] = await ethers.getSigners();
 
-        // Create Pair
+        // 创建配对
         token0 = await ethers.getContractAt("DemoTokenA", addresses.token0);
         token1 = await ethers.getContractAt("DemoTokenB", addresses.token1);
         factory = await ethers.getContractAt(
@@ -285,9 +285,9 @@
     });
     ```
 
-### Step 7. Create a script to add liquidity to the token pair
+### 步骤 7. 创建向代币对添加流动性的脚本
 
--   **Create scripts/5_addLiquidity.js**
+-   **创建 scripts/5_addLiquidity.js**
 
     ```js
     const { ethers } = require("hardhat");
@@ -299,7 +299,7 @@
         const [deployer] = await ethers.getSigners();
         console.log("Deployer address:", deployer.address);
 
-        // Get Tokens
+        // 获取代币
         const tokenA = await ethers.getContractAt(
             "DemoTokenA",
             addresses.token0
@@ -309,7 +309,7 @@
             addresses.token1
         );
 
-        // Check if Pair exists, if not return error
+        // 检查配对是否存在，如果不存在则返回错误
         const factory = await ethers.getContractAt(
             "UniswapV2Factory",
             addresses.factory
@@ -325,7 +325,7 @@
 
         console.log("Pair address:", pairAddress);
 
-        // Approve Tokens
+        // 批准代币
         const amountA = ethers.parseUnits("1000", "ether");
         const amountB = ethers.parseUnits("5000", "ether");
         let tx = await tokenA.approve(addresses.router, amountA);
@@ -333,7 +333,7 @@
         tx = await tokenB.approve(addresses.router, amountB);
         await tx.wait();
 
-        // Add Liquidity
+        // 添加流动性
         const router = await ethers.getContractAt(
             "UniswapV2Router02",
             addresses.router
@@ -353,17 +353,17 @@
         await tx.wait();
         console.log("Liquidity added.");
 
-        //Get Pair
+        // 获取配对
         const pair = await ethers.getContractAt("UniswapV2Pair", pairAddress);
 
-        //Check LP balance
+        // 检查 LP 余额
         const lpBalance = await pair.balanceOf(deployer.address);
         console.log(
             `LP Balance of ${deployer.address}:`,
             ethers.formatUnits(lpBalance, 18)
         );
 
-        //Check reserves
+        // 检查储备
         const reserves = await pair.getReserves();
         const [reserves0, reserves1] =
             (await tokenA.getAddress()) < (await tokenB.getAddress())
@@ -384,15 +384,15 @@
     });
     ```
 
-### Step 8. Deploy and fund pool on local Hardhat Node
+### 步骤 8. 在本地 Hardhat 节点上部署和为池提供资金
 
--   **start the local Hardhat Node**
+-   **启动本地 Hardhat 节点**
 
     ```bash
     hh node
     ```
 
--   **In a parallel terminal, deploy the contracts and create the pool**
+-   **在并行终端中，部署合约并创建池**
 
     ```bash
     hh run scripts/1_deployWETH9.js --network localhost
@@ -402,25 +402,24 @@
     hh run scripts/5_addLiquidity.js --network localhost
     ```
 
-### Step 9. Deploy and fund pool on Public Testnet
+### 步骤 9. 在公共测试网上部署和为池提供资金
 
-When testing on public testnets, you do not have to deploy the UniswapV2 contracts yourself because it is assumed that they would have already been deployed.
-If this case, you just need to use the deployed contract addresses in your scripts.
+在公共测试网上测试时，您不必自己部署 UniswapV2 合约，因为假设它们已经部署。在这种情况下，您只需要在脚本中使用已部署的合约地址。
 
 -   WETH9_ADDRESS: `0x7a1fd5C3185fe6261577AccEe220844Dc9026225`
 -   UNISWAPV2_FACTORY_ADDRESS: `0x342D7aeC78cd3b581eb67655B6B7Bb157328590e`
 -   UNISWAPV2_ROUTER02_ADDRESS: `0x5b491662E508c2E405500C8BF9d67E5dF780cD8e`
 
--   **Update addresses.json file**
+-   **更新 addresses.json 文件**
 
-    Replace the `weth9`, `factory` and `router` addresses in the `scripts/addresses.json` file with the above addresses.
+    将 `scripts/addresses.json` 文件中的 `weth9`、`factory` 和 `router` 地址替换为上述地址。
 
--   **Deploy your tokens**
+-   **部署您的代币**
 
     ```bash
     hh run scripts/2_deployTokens.js --network hoodi
 
-     # Sample output:
+     # 示例输出：
      #
      # Using account: 0x6976827c1fC851546a202a5159a48Cac2b0649FF
      # Token0 deployed to: 0xd46ac798612964d992dc7ebCff6B903A76C667db
@@ -429,26 +428,26 @@ If this case, you just need to use the deployed contract addresses in your scrip
      # ✅ Updated /workspace/day-4/14-testnet-uniswap/scripts/addresses.json successfully
     ```
 
--   **Create the pool**
+-   **创建池**
 
     ```bash
     hh run scripts/4_createPool.js --network hoodi
 
-     # Sample output:
+     # 示例输出：
      # Pair Address1: 0x205a8873316e4629b4d8997F7CAaA92F7A6dAC44
      # Pair address2: 0x205a8873316e4629b4d8997F7CAaA92F7A6dAC44
     ```
 
--   **Fund the pool**
+-   **为池提供资金**
 
     ```bash
     hh run scripts/5_addLiquidity.js --network hoodi
 
-     # Sample output:
+     # 示例输出：
      # Adding liquidity...
      # Deployer address: 0x6976827c1fC851546a202a5159a48Cac2b0649FF
      # Pair address: 0x205a8873316e4629b4d8997F7CAaA92F7A6dAC44
      # Liquidity added.
-     # LP Balance of 0x6976827c1fC851546a202a5159a48Cac2b0649FF: 2236.067977499789695409
+     # LP Balance of 0x6976827c1fC851546a202a5159a48Cac2B0649FF: 2236.067977499789695409
      # Reserves: 1000.0 / 5000.0
     ```

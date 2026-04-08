@@ -1,24 +1,24 @@
-# ERC20 Token Standard Basics
+# ERC20 代币标准基础
 
-In this lesson, we will learn how to implement the ERC20 token standard, which is the most widely used token standard on Ethereum. This lesson assumes familiarity with basic Solidity syntax and concepts.
+在本课程中，我们将学习如何实现 ERC20 代币标准，这是以太坊上使用最广泛的代币标准。本课程假设您熟悉 Solidity 基础语法和概念。
 
 ---
 
-## 1. Introduction to ERC20 Token Standard
+## 1. ERC20 代币标准介绍
 
-A token, in the Ethereum context, is a generic term for smart contracts representing digital assets. A native token or currency refers to the built-in cryptocurrency used for operating the blockchain, also known as protocol tokens. In Ethereum's case, this is ETH.
+在以太坊语境中，"代币"是代表数字资产的智能合约的通用术语。原生代币或货币是指用于操作区块链的内置加密货币，也称为协议代币。在以太坊的例子中，这就是 ETH。
 
-Beyond protocol tokens are tokens that are synthesized from smart contracts serving different purposes. The most common type of tokens on Ethereum is known as the ERC20 token.
+除了协议代币之外，还有由满足不同目的的智能合约合成的代币。以太坊上最常见的代币类型称为 ERC20 代币。
 
-ERC stands for Ethereum Request for Comment, which is a way of setting standards for smart contracts on Ethereum. This standard is necessary to allow smart contracts on Ethereum to interact with each other. The official specification for the ERC20 token can be found here **https://eips.ethereum.org/EIPS/eip-20**.
+ERC 代表以太坊征求意见稿，这是一种在以太坊上为智能合约设定标准的方式。这个标准对于允许以太坊上的智能合约相互交互是必要的。ERC20 代币的官方规范可以在这里找到 **https://eips.ethereum.org/EIPS/eip-20**。
 
-An ERC20 token is a template for building fungible tokens. Fungibility means all tokens within the contract always have the same value and are fully interchangeable, just like currency. This token standard gained its popularity in 2017 during the peak of the ICO era of Ethereum history and is still core to present-day contract design.
+ERC20 代币是构建同质化代币的模板。同质化意味着合约中的所有代币总是具有相同的价值并且可以完全互换，就像货币一样。这个代币标准在 2017 年以太坊 ICO 时代的高峰期获得了流行，至今仍是当代合约设计的核心。
 
-**Note:** There are many variants of ERC20 tokens with new features added to them, but all ERC20 tokens must implement the same basic specification.
+**注意：** ERC20 代币有很多变体，增加了新功能，但所有 ERC20 代币必须实现相同的基本规范。
 
-According to the specification(**https://eips.ethereum.org/EIPS/eip-20**), a standard ERC20 token contract must implement:
+根据规范（**https://eips.ethereum.org/EIPS/eip-20**），标准的 ERC20 代币合约必须实现：
 
--   6 Read-Only Functions
+-   6 个只读函数
 
     ```solidity
     function name() public view returns (string)
@@ -30,7 +30,7 @@ According to the specification(**https://eips.ethereum.org/EIPS/eip-20**), a sta
 
     ```
 
--   3 State-Changing Functions
+-   3 个状态修改函数
 
     ```solidity
 
@@ -42,7 +42,7 @@ According to the specification(**https://eips.ethereum.org/EIPS/eip-20**), a sta
 
     ```
 
--   2 Events
+-   2 个事件
 
     ```solidity
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
@@ -51,62 +51,62 @@ According to the specification(**https://eips.ethereum.org/EIPS/eip-20**), a sta
 
 ---
 
-## 2. ERC20 Constructor Function
+## 2. ERC20 构造函数
 
-The purpose of the constructor is to initialize the contract's state variables when the contract is deployed and is not defined in the ERC20 standard.
+构造函数的目的是在合约部署时初始化合约的状态变量，这不在 ERC20 标准中定义。
 
-Typically, an ERC20 token constructor will take the following parameters:
+通常，ERC20 代币构造函数会接受以下参数：
 
 ```solidity
 constructor(string memory name_, string memory symbol_, uint256 totalSupply_, address owner_)
 ```
 
-Where:
+其中：
 
--   `name_` is the name of the token
--   `symbol_` is the symbol of the token
--   `totalSupply_` is the initial total supply of the token
--   `owner_` is the address that will receive the initial total supply of the token
+-   `name_` 是代币的名称
+-   `symbol_` 是代币的符号
+-   `totalSupply_` 是代币的初始总供应量
+-   `owner_` 是接收代币初始总供应量的地址
 
-The process of creating ERC20 tokens is often referred to as "minting" tokens. In this basic implementation, we will mint the entire supply of tokens to the owner's address during contract deployment.
+创建 ERC20 代币的过程通常称为"铸造"代币。在这个基础实现中，我们将在合约部署时将全部代币供应量铸造到所有者的地址。
 
 ---
 
-## 3. Read-only functions
+## 3. 只读函数
 
-According to the specification, the contract must contain the following 6 read-only functions:
+根据规范，合约必须包含以下 6 个只读函数：
 
--   **name()** This function returns the token's name as a string.
+-   **name()** 此函数以字符串形式返回代币的名称。
 
     ```solidity
     function name() public view returns (string memory)
     ```
 
--   **symbol()** This function returns the token's symbol as a string (usually 3-4 characters long).
+-   **symbol()** 此函数以字符串形式返回代币的符号（通常为 3-4 个字符）。
 
     ```solidity
     function symbol() public view returns (string memory)
     ```
 
--   **decimals()** This function returns the number of decimal places this token's quantity can support. Since this value is conventionally 18, so we will return 18 and instead of creating a state variable to save on gas cost.
+-   **decimals()** 此函数返回此代币数量可以支持的小数位数。由于这个值惯例上是 18，所以我们将返回 18，而不是创建状态变量以节省 Gas 成本。
 
     ```solidity
     function decimals() public pure returns (uint8)
     ```
 
--   **totalSupply()** This function returns the total supply of the token in circulation as an unsigned 32-bit integer.
+-   **totalSupply()** 此函数以无符号 32 位整数形式返回流通中的代币总供应量。
 
     ```solidity
     function totalSupply() public view returns (uint256)
     ```
 
--   **balanceOf()** This function returns the balance of token held by the address `_owner` as an unsigned 32-bit integer.
+-   **balanceOf()** 此函数以无符号 32 位整数形式返回地址 `_owner` 持有的代币余额。
 
     ```solidity
     function balanceOf(address _owner) public view returns (uint256 balance)
     ```
 
--   **allowance()** This function returns the withdrawal limit that `_spender` is allowed to withdraw from `_owner` as an unsigned 32-bit integer.
+-   **allowance()** 此函数以无符号 32 位整数形式返回允许 `_spender` 从 `_owner` 提取的限额。
 
     ```solidity
     function allowance(address _owner, address _spender) public view returns (uint256 remaining)
@@ -114,27 +114,27 @@ According to the specification, the contract must contain the following 6 read-o
 
 ---
 
-## 4. State-Changing functions
+## 4. 状态修改函数
 
--   **transfer()** This function sends `_value` amount of tokens to address `_to` and returns a boolean value indicating success. **This function is called by token holder**
+-   **transfer()** 此函数将 `_value` 数量的代币发送到地址 `_to`，并返回一个表示成功的布尔值。**此函数由代币持有者调用**
 
     ```solidity
     function transfer(address _to, uint256 _value) external virtual returns (bool success)
     ```
 
--   **transferFrom()** This function withdraws `_value` amount of tokens from holder's address `_from` into spender's address `_to` based on the approved allowance.
-    **NOTE:**
-    **1. This function is used in conjunction with the approve() function.**
-    **2. This function is called by the spender, not the token holder.**
+-   **transferFrom()** 此函数根据批准的限额从持有者地址 `_from` 向花费者地址 `_to` 提取 `_value` 数量的代币。
+    **注意：**
+    **1. 此函数与 approve() 函数结合使用。**
+    **2. 此函数由花费者调用，而非代币持有者。**
 
     ```solidity
     function transferFrom(address _from, address _to, uint256 _value) external virtual returns (bool success)
     ```
 
--   **approve()** This function sets the approved allowance of `_value` for `_spender` to withdraw from the caller's account. It returns a boolean value indicating success.
-    **NOTE:**
-    **1. This function is used in conjunction with the transferFrom() function.**
-    **2. This function is called by the token holder, not the spender.**
+-   **approve()** 此函数为 `_spender` 设置从调用者账户提取 `_value` 数量的批准限额。它返回一个表示成功的布尔值。
+    **注意：**
+    **1. 此函数与 transferFrom() 函数结合使用。**
+    **2. 此函数由代币持有者调用，而非花费者。**
 
     ```solidity
     function approve(address _spender, uint256 _value) external virtual returns (bool success)
@@ -142,24 +142,24 @@ According to the specification, the contract must contain the following 6 read-o
 
 ---
 
-## 🛠️ Lab Practice: Create DemoToken
+## 🛠️ 实验实践：创建 DemoToken
 
-In this lab, we will implement a ERC20-compliant token contract from scratch called **DemoToken** with the following specifications:
+在这个实验中，我们将从头开始实现一个符合 ERC20 标准的代币合约，称为 **DemoToken**，规格如下：
 
-> -   Name: DemoToken
-> -   Symbol: DEMO
-> -   Total Supply: 1,000 DEMO (with 18 decimal places)
+> -   名称：DemoToken
+> -   符号：DEMO
+> -   总供应量：1,000 DEMO（18 位小数）
 
-1.  **Install project dependencies**
+1.  **安装项目依赖**
 
     ```bash
     cd /workspace/day-2/07-erc20-basic
     npm i
     ```
 
-2.  **Create DemoToken**
+2.  **创建 DemoToken**
 
-    Create a new file named `DemoToken.sol` in the `contracts` directory.
+    在 `contracts` 目录中创建一个名为 `DemoToken.sol` 的新文件。
 
     **contracts/DemoToken.sol**
 
@@ -178,19 +178,19 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     }
     ```
 
-    The contract contains the following state variables:
+    合约包含以下状态变量：
 
-    -   `_totalSupply`: a uint256 variable to store the total supply of the token
-    -   `_balances`: a mapping to store the balance of each address.
-    -   `_allowances`: a nested mapping to store the allowance of each address.
+    -   `_totalSupply`：一个 uint256 变量，用于存储代币的总供应量
+    -   `_balances`：一个映射，用于存储每个地址的余额
+    -   `_allowances`：一个嵌套映射，用于存储每个地址的授权额度
 
-3.  **Insert the read-only functions**
+3.  **插入只读函数**
 
-    Insert the following read-only functions into your contract:
+    将以下只读函数插入您的合约：
 
     ```solidity
 
-    // ERC20 Read-only functions
+    // ERC20 只读函数
 
     function name() public pure returns (string memory)
     {
@@ -224,13 +224,13 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
 
     ```
 
-4.  **Insert the constructor**
+4.  **插入构造函数**
 
-    Insert the constructor into your contract. It initializes the state variables when the contract is deployed and mints the total supply of tokens to the owner's address.
+    将构造函数插入您的合约。它在合约部署时初始化状态变量，并将代币总供应量铸造到所有者的地址。
 
     ```solidity
 
-    // ERC20 Constructor
+    // ERC20 构造函数
 
     constructor(uint256 totalSupply_, address owner_)
     {
@@ -239,13 +239,13 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     }
     ```
 
-5.  **Insert state-changing functions**
+5.  **插入状态修改函数**
 
--   **transfer()** This function sends `_value` amount of tokens to address `_to` and returns a boolean value indicating success. The transfer will decrement the sender's `_balance` and increment the recipient's `balance`. It will throw an error if the sender has insufficient balance.
+-   **transfer()** 此函数将 `_value` 数量的代币发送到地址 `_to`，并返回一个表示成功的布尔值。转账将减少发送者的 `_balance` 并增加接收者的 `balance`。如果发送者余额不足，它将抛出错误。
 
     ```solidity
 
-    // transfer: Send _value to _to from caller's account
+    // transfer: 从调用者账户发送 _value 到 _to
 
     function transfer(address _to, uint256 _value) external virtual returns (bool success)
     {
@@ -256,11 +256,11 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     }
     ```
 
--   **transferFrom()** This function withdraws `_value` amount of tokens from holder's address `_from` into spender's address `_to` based on the approved allowance. It will reduce the allowance for withdrawal by `_value` and throw an error if the allowance is insufficient.
+-   **transferFrom()** 此函数根据批准的限额从持有者地址 `_from` 向花费者地址 `_to` 提取 `_value` 数量的代币。它将减少提取的限额 `_value`，如果限额不足则抛出错误。
 
     ```solidity
 
-    // transferFrom: Withdraw _value from _from to _to based on approved allowance
+    // transferFrom: 基于批准的限额从 _from 提取 _value 到 _to
 
     function transferFrom(address _from, address _to, uint256 _value) external virtual returns (bool success)
     {
@@ -273,11 +273,11 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     }
     ```
 
--   **approve()** This function sets the approved allowance of `_value` for `_spender` to withdraw from the caller's account. It returns a boolean value indicating success. The approve function will overwrite any existing allowance with the new value.
+-   **approve()** 此函数为 `_spender` 设置从调用者账户提取 `_value` 数量的批准限额。它返回一个表示成功的布尔值。approve 函数将用新值覆盖任何现有的授权额度。
 
     ```solidity
 
-    // approve: Set allowance for _spender to withdraw from caller's account
+    // approve: 为 _spender 设置从调用者账户提取的限额
 
     function approve(address _spender, uint256 _value) external virtual returns (bool success)
     {
@@ -286,17 +286,17 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     }
     ```
 
-6.  **Compile the contract**
+6.  **编译合约**
 
-    Compile the contract using Hardhat:
+    使用 Hardhat 编译合约：
 
     ```bash
     hh compile
     ```
 
-7.  **Create test file**
+7.  **创建测试文件**
 
-    Create a new file named `testDemoToken.js` in the `test` directory.
+    在 `test` 目录中创建一个名为 `testDemoToken.js` 的新文件。
 
     **test/testDemoToken.js**
 
@@ -316,9 +316,9 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     });
     ```
 
-8.  **Add a test for name()**
+8.  **添加 name() 的测试**
 
-    We start by adding a test that checks if the name() function returns the correct token name, ie. `DEMO`.
+    我们首先添加一个测试，检查 name() 函数是否返回正确的代币名称，即 `DEMO`。
 
     ```js
     it("Should call name() and get DEMO", async () => {
@@ -327,9 +327,9 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     });
     ```
 
-9.  **Add a test for balanceOf()**
+9.  **添加 balanceOf() 的测试**
 
-    Next, we add a test that checks if the balanceOf() function returns the correct balance for the owner's address.
+    接下来，我们添加一个测试，检查 balanceOf() 函数是否返回所有者地址的正确余额。
 
     ```js
     it("Should call balanceOf() and get 1000 DEMO", async () => {
@@ -338,15 +338,15 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     });
     ```
 
-10. **Run the tests**
+10. **运行测试**
 
-    Run the tests using Hardhat:
+    使用 Hardhat 运行测试：
 
     ```bash
     hh test
     ```
 
-    You should see the following output:
+    您应该看到以下输出：
 
     ```
       Test ERC20
@@ -357,19 +357,19 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
 
 ---
 
-## 5. ERC20 Token Transfer Mechanics
+## 5. ERC20 代币转账机制
 
--   **Token Balances and Supply**
+-   **代币余额和供应量**
 
-    The ERC20 token maintains an internal table keeping track of each address's token balance.
+    ERC20 代币维护一个内部表，跟踪每个地址的代币余额。
 
     ```solidity
     mapping(address => uint256) private _balances;
     ```
 
-    **Example Usage:**
+    **示例用法：**
 
-    The balance is updated within constructor during contract deployment.
+    余额在合约部署期间的构造函数中更新。
 
     ```js
     constructor(string memory name_, string memory symbol_, uint256 totalSupply_, address owner_)
@@ -381,30 +381,30 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
 
     ![ERC20 Balances](./img/balances.png)
 
--   **Token Transfer Method 1: Direct Transfer**
+-   **代币转账方法 1：直接转账**
 
-    The `transfer` function allows a token holder to send tokens directly to another address:
+    `transfer` 函数允许代币持有者直接将代币发送到另一个地址：
 
     ```solidity
     await token.connect(sender).transfer(recipient.address, amount);
     ```
 
-    This basically involves increasing the recipient's balance and decreasing the sender's balance.
+    这主要涉及增加接收者的余额和减少发送者的余额。
 
-    **Example Usage:**
+    **示例用法：**
 
     ```js
-    // Alice transfers 10 tokens to Bob
+    // Alice 转移 10 个代币给 Bob
     await token.connect(alice).transfer(bob.address, 10);
     ```
 
     ![ERC20 Transfer](./img/transfer.png)
 
-    This method is straightforward but is not recommended as best practice for transferring tokens in many scenarios due to security and usability concerns.
+    这种方法很简单，但由于安全和可用性问题，在许多情况下不推荐作为转账代币的最佳实践。
 
--   **Token Transfer Method 2: Delegated Transfer**
+-   **代币转账方法 2：授权转账**
 
-    For this method, the contract maintains a separate allowance table keeping track of how much a spender is allowed to withdraw from a token holder's account.
+    对于这种方法，合约维护一个单独的授权表，跟踪花费者被允许从代币持有者账户提取的金额。
 
     ```solidity
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -412,46 +412,45 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
 
     ![ERC20 Allowance](./img/allowances.png)
 
-    The `approve` and `transferFrom` functions enable a third party to transfer tokens on behalf of the token holder:
+    `approve` 和 `transferFrom` 函数使第三方能够代表代币持有者转账代币：
 
-    1.  The token holder approves a spender to withdraw up to a certain amount:
+    1.  代币持有者批准花费者最多提取一定金额：
 
         ```solidity
         await token.connect(holder).approve(spender.address, amount);
         ```
 
-    2.  The approved spender can then transfer tokens from the holder to another address:
+    2.  批准的花费者然后可以从持有者向另一个地址转账代币：
 
         ```solidity
         await token.connect(spender).transferFrom(holder.address, recipient.address, amount);
         ```
 
-    **Example Usage:**
+    **示例用法：**
 
     ```js
-    // Alice approves Bob to spend 100 tokens
+    // Alice 批准 Bob 花费 100 个代币
     await token.connect(alice).approve(bob.address, 100);
 
-    // Bob withdraws 50 tokens from Alice
+    // Bob 从 Alice 提取 50 个代币
     await token.connect(bob).transferFrom(alice.address, bob.address, 50);
     ```
 
     ![ERC20 Delegated Transfer](./img/transferFrom.png)
 
-    This is the preferred method for transferring tokens. It is more secure and allows for payment for services, subscriptions, and other use cases.
+    这是转账代币的首选方法。它更安全，允许支付服务、订阅和其他用例。
 
-    For example, to subscribe to a service, a user makes 2 calls:
-
-    1.  Approve the service contract to withdraw tokens from their account.
-    2.  Call the service contract and let the contract call `transferFrom` to withdraw tokens atomically. Contract will provide the service if the transfer is successful.
+    例如，为了订阅服务，用户进行 2 次调用：
+    1.  批准服务合约从他们的账户提取代币。
+    2.  调用服务合约，让合约调用 `transferFrom` 原子化地提取代币。如果转账成功，合约将提供服务。
 
 ---
 
-## 🛠️ Lab Practice: Token Transfer
+## 🛠️ 实验实践：代币转账
 
-1. **Add test for transfer()**
+1. **添加 transfer() 的测试**
 
-    Start by creating a test for transfer() of DEMO token.
+    首先为 DEMO 代币的 transfer() 创建一个测试。
 
     ```js
     it("Should transfer 1 DEMO from accounts[0] to accounts[1]", async () => {
@@ -467,7 +466,7 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     });
     ```
 
-    Run the test.
+    运行测试。
 
     ```bash
     hh test
@@ -479,9 +478,9 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
      #   3 passing (XXms)
     ```
 
-2. **Add test for approve() and transferFrom()**
+2. **添加 approve() 和 transferFrom() 的测试**
 
-    Next, create a test for approve() and transferFrom() of DEMO token.
+    接下来，为 DEMO 代币的 approve() 和 transferFrom() 创建一个测试。
 
     ```js
     it("Should approve and transferFrom 1 DEMO from accounts[0] to accounts[1]", async () => {
@@ -502,7 +501,7 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
     });
     ```
 
-    Run the test.
+    运行测试。
 
     ```bash
     hh test
@@ -514,9 +513,9 @@ In this lab, we will implement a ERC20-compliant token contract from scratch cal
         #   4 passing (XXms)
     ```
 
-## Quiz
+## 测验
 
-The following code snippet will result in the error "Error: VM Exception while processing transaction: reverted with reason string 'Insufficient allowance'". Why?
+以下代码片段将导致错误"Error: VM Exception while processing transaction: reverted with reason string 'Insufficient allowance'"。为什么？
 
 ```js
 let response = await erc20.approve(accounts[1].address, 1);
@@ -529,45 +528,45 @@ receipt = await response.wait();
 
 ---
 
-## 6. ERC20 Events
+## 6. ERC20 事件
 
-According to the ERC20 specification, the contract must emit the following two events:
+根据 ERC20 规范，合约必须发出以下两个事件：
 
 ```solidity
 event Transfer(address indexed _from, address indexed _to, uint256 _value);
 event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 ```
 
-These events are emitted in the following functions:
+这些事件在以下函数中发出：
 
--   **Transfer Event**: This event is emitted in the `transfer` and `transferFrom` functions when tokens are transferred from one address to another.
+-   **Transfer 事件**：当代币从一个地址转移到另一个地址时，此事件在 `transfer` 和 `transferFrom` 函数中发出。
 
     ```solidity
     emit Transfer(msg.sender, _to, _value); // in transfer function
     emit Transfer(_from, _to, _value); // in transferFrom function
     ```
 
--   **Approval Event**: This event is emitted in the `approve` function when a token holder approves a spender to withdraw tokens from their account.
+-   **Approval 事件**：当代币持有者批准花费者从他们的账户提取代币时，此事件在 `approve` 函数中发出。
 
     ```solidity
     emit Approval(msg.sender, _spender, _value); // in approve function
     ```
 
-### Importance of Events
+### 事件的重要性
 
-Events are important for several reasons:
+事件很重要的原因有几个：
 
-1.  **Logging**: Events provide a transparent way to track token transfers and approvals on the blockchain. This is crucial for auditing and verifying transactions.
-2.  **Off-chain Applications**: Events can be monitored by off-chain applications (like wallets, explorers, and dApps) to update user interfaces and provide real-time feedback to users.
-3.  **Gas Efficiency**: Emitting events is more gas-efficient than storing data on-chain, making it a cost-effective way to log important actions.
+1.  **日志记录**：事件提供了一种透明的方式来跟踪区块链上的代币转账和授权。这对于审计和验证交易至关重要。
+2.  **链下应用**：链下应用（如钱包、浏览器和 dApps）可以监控事件以更新用户界面并为用户提供实时反馈。
+3.  ** Gas 效率**：发出事件比在链上存储数据更具 Gas 效率，使其成为记录重要操作的经济有效的方式。
 
 ---
 
-## 🛠️ Lab Practice: ERC20 Events
+## 🛠️ 实验实践：ERC20 事件
 
-1. **Insert Event Declarations**
+1. **插入事件声明**
 
-    Insert the following events in your `ERC20.sol` contract.
+    在您的 `ERC20.sol` 合约中插入以下事件。
 
     ```solidity
         contract ERC20 {
@@ -577,7 +576,7 @@ Events are important for several reasons:
             mapping(address=>uint256) _balances;
             mapping(address=>mapping(address=>uint256)) _allowance;
 
-            // ERC20 Events
+            // ERC20 事件
             event Transfer(address indexed from, address indexed to, uint256 value);
             event Approval(address indexed owner, address indexed spender, uint256 value);
 
@@ -586,9 +585,9 @@ Events are important for several reasons:
 
     ```
 
-2. **Emit Events in Functions**
+2. **在函数中发出事件**
 
-    Emit the `Transfer` event in the `transfer` and `transferFrom` functions, and the `Approval` event in the `approve` function.
+    在 `transfer` 和 `transferFrom` 函数中发出 `Transfer` 事件，在 `approve` 函数中发出 `Approval` 事件。
 
     ```solidity
         function transfer(address _to, uint256 _value) external virtual returns (bool success)
@@ -597,7 +596,7 @@ Events are important for several reasons:
             _balances[msg.sender] -= _value;
             _balances[_to] += _value;
 
-            // Emit Transfer event
+            // 发出 Transfer 事件
             emit Transfer(msg.sender, _to, _value);
 
             return true;
@@ -611,7 +610,7 @@ Events are important for several reasons:
             _balances[_to] += _value;
             _allowance[_from][msg.sender] -= _value;
 
-            // Emit Transfer event
+            // 发出 Transfer 事件
             emit Transfer(_from, _to, _value);
 
             return true;
@@ -619,9 +618,9 @@ Events are important for several reasons:
 
         function approve(address _spender, uint256 _value) external virtual returns (bool success)
         {
-            _allowance[msg.sender][_spender] = _value;
+            _allowances[msg.sender][_spender] = _value;
 
-            // Emit Approval event
+            // 发出 Approval 事件
             emit Approval(msg.sender, _spender, _value);
 
             return true;
@@ -629,8 +628,8 @@ Events are important for several reasons:
 
     ```
 
-3. **Create tests for Events**
-   Create test for `Transfer` event. The result from emitted event can be extracted from the receipt as shown in the code below.
+3. **为事件创建测试**
+   创建 `Transfer` 事件的测试。发出事件的结果可以从收据中提取，如下所示。
 
     ```js
     it("Should transfer 1 DEMO and receive Transfer event", async () => {
@@ -638,7 +637,7 @@ Events are important for several reasons:
         const response = await erc20.transfer(accounts[1].address, 1);
         const receipt = await response.wait();
 
-        // Parse all logs
+        // 解析所有日志
 
         const transferLog = receipt.logs.find(
             (x) => x.fragment.name === "Transfer"
@@ -660,38 +659,38 @@ Events are important for several reasons:
             (x) => x.fragment.name === "Approval"
         );
         const args = approvalLog.args.toObject();
-        expect(args.owner).to.equal(accounts[0].address);
+        expect(args.owner).to.equal(accounts0].address);
         expect(args.spender).to.equal(accounts[1].address);
         expect(args.value).to.equal(1n);
     });
     ```
 
-    Run the tests.
+    运行测试。
 
     ```bash
     hh test
     ```
 
-## 7. OpenZeppelin Smart Contract Library
+## 7. OpenZeppelin 智能合约库
 
-You have created your own ERC20 smart contract from scratch for learning purposes but in practise it suffers from 2 main issues:
+您已经从头开始创建了自己的 ERC20 智能合约用于学习，但在实践中它存在 2 个主要问题：
 
-1. It was hardcoded with a fixed name and symbol which is not flexible.
-2. There are no reuseable code which means you have to write the same code again and again for every new token you want to create.
+1.  它的名称和符号是硬编码的，不够灵活。
+2.  没有可重用的代码，这意味着您必须为您想创建的每个新代币重复编写相同的代码。
 
-To solve these issues, we generally use the Openzeppelin library as a basis for our smart contract development. OpenZeppelin provides most of the standard ERC smart contracts (including ERC20) that are implemented based on industry best practises which makes it safer to use and adopt. In this lesson, we will replace our ERC20 token using the OpenZeppelin libraries.
+为了解决这些问题，我们通常使用 OpenZeppelin 库作为智能合约开发的基础。OpenZeppelin 提供了大多数标准 ERC 智能合约（包括 ERC20），这些合约基于行业最佳实践实现，使其更安全、更易于采用。在本课程中，我们将使用 OpenZeppelin 库替换我们的 ERC20 代币。
 
-## 🛠️ Lab Practice: OpenZeppelin Smart Contract Library
+## 🛠️ 实验实践：OpenZeppelin 智能合约库
 
-1.  **Install OpenZeppelin package**
+1.  **安装 OpenZeppelin 包**
 
     ```bash
     npm i @openzeppelin/contracts@5.4.0
     ```
 
-2.  **Replace DemoToken contract with OpenZeppelin ERC20 contract**
+2.  **用 OpenZeppelin ERC20 合约替换 DemoToken 合约**
 
-    Replace `contracts/DemoToken.sol` with the following code:
+    用以下代码替换 `contracts/DemoToken.sol`：
 
     ```solidity
     // SPDX-License-Identifier: MIT
@@ -709,9 +708,9 @@ To solve these issues, we generally use the Openzeppelin library as a basis for 
     }
     ```
 
-3.  **Test the contract**
+3.  **测试合约**
 
-    If done correctly, you should be able to run the same tests without any errors:
+    如果操作正确，您应该能够运行相同的测试而不会出现任何错误：
 
     ```bash
     hh test

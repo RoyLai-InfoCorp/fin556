@@ -1,37 +1,37 @@
-# DEFI(Uniswap V2) - Part 2
+# DEFI（Uniswap V2）- 第二部分
 
-## How Uniswap V2 Pricing Works
+## Uniswap V2 定价如何运作
 
-### Spot Price
+### 现货价格
 
-In a Uniswap v2 pool, the spot price comes from the reserve ratio.
+在 Uniswap v2 池中，现货价格来自储备比率。
 
-Given tokens $token_0$ and $token_1$ in a liquidity pool, denote:
+给定流动性池中的代币 $token_0$ 和 $token_1$，设：
 
--   $x$ as the reserve of $token_0$
--   $y$ as the reserve of $token_1$
+-   $x$ 为 $token_0$ 的储备
+-   $y$ 为 $token_1$ 的储备
 
-Then:
+那么：
 
--   Price of $token_0$ ($P_0$) in $token_1$ is:
+-   $token_0$ 的价格（$P_0$）以 $token_1$ 表示：
 
     $P_0$ = $\dfrac{y}{x}$
 
--   Price of $token_1$ ($P_1$) in $token_0$ is:
+-   $token_1$ 的价格（$P_1$）以 $token_0$ 表示：
 
     $P_1$ = $\dfrac{x}{y}$
 
-⚠️ The spot price is only a reference — the moment you trade, reserves change, so the execution price will differ (slippage + fee).
+⚠️ 现货价格只是一个参考——一旦您交易，储备就会改变，因此执行价格会有所不同（滑点 + 费用）。
 
 ---
 
-### Trading (Execution) Price
+### 交易（执行）价格
 
-Let's derive tha actual trading price step by step:
+让我们逐步推导实际交易价格：
 
-1.  **From the constant-product rule**
+1.  **来自常数乘积规则**
 
-    The constant product formula states that:
+    常数乘积公式指出：
 
     <center>
 
@@ -39,7 +39,7 @@ Let's derive tha actual trading price step by step:
 
     </center>
 
-    If we pay $\Delta{x}$ of $token_0$ to get $\Delta{y}$ of $token_1$, the new reserves will be:
+    如果我们支付 $\Delta{x}$ 的 $token_0$ 来获得 $\Delta{y}$ 的 $token_1$，新的储备将是：
 
      <center>
 
@@ -47,25 +47,25 @@ Let's derive tha actual trading price step by step:
 
      </center>
 
-    where:
+    其中：
 
-    -   $x$ = reserve of input token
-    -   $y$ = reserve of ouput token
-    -   $k$ = constant product invariant
-    -   $\Delta{x}$ = amount of input token
-    -   $\Delta{y}$ = amount of output token
+    -   $x$ = 输入代币的储备
+    -   $y$ = 输出代币的储备
+    -   $k$ = 常数乘积不变量
+    -   $\Delta{x}$ = 输入代币的数量
+    -   $\Delta{y}$ = 输出代币的数量
 
-2.  **Include the trading fee**
+2.  **包含交易费用**
 
-    Uniswap v2 charges a 0.3% fee on the input amount($\Delta{x}$). This means only 99.7% of $\Delta{x}$ is effectively added to the pool:
+    Uniswap v2 对输入金额（$\Delta{x}$）收取 0.3% 的费用。这意味着只有 99.7% 的 $\Delta{x}$ 有效地添加到池中：
 
     <center>
 
-    $r = 1 - trading fee = 1 - 0.003 = 0.997$
+    $r = 1 - 交易费用 = 1 - 0.003 = 0.997$
 
     </center>
 
-    So the real equation is:
+    所以真正的方程是：
 
     <center>
 
@@ -73,9 +73,9 @@ Let's derive tha actual trading price step by step:
 
     </center>
 
-3.  **Rearrange to find trade outcomes**
+3.  **重新排列以找出交易结果**
 
-    -   from _(1)_ and _(2)_:
+    -   从 _(1)_ 和 _(2)_：
 
     <center>
 
@@ -83,9 +83,9 @@ Let's derive tha actual trading price step by step:
 
     </center>
 
-    -   **Buy formula (getAmountIn)**
+    -   **买入公式（getAmountIn）**
 
-        Find amount of input token ($\Delta{x}$) when given exact amount of output token ($\Delta{y}$)
+        当给定精确的输出代币数量（$\Delta{y}$）时，找出输入代币的数量（$\Delta{x}$）
 
             <center>
 
@@ -93,9 +93,9 @@ Let's derive tha actual trading price step by step:
 
             </center>
 
-    -   **Sell formula (getAmountOut)**
+    -   **卖出公式（getAmountOut）**
 
-        Find amount of output token ($\Delta{y}$) when given exact amount of input token ($\Delta{x}$)
+        当给定精确的输入代币数量（$\Delta{x}$）时，找出输出代币的数量（$\Delta{y}$）
 
             <center>
 
@@ -105,56 +105,56 @@ Let's derive tha actual trading price step by step:
 
 ---
 
-### Example - Buy 100 token0 with token1
+### 示例 - 用 token1 买入 100 个 token0
 
-Consider the following (assuming token amounts are denominated in ether, 1 \* $10^{18}$):
+考虑以下情况（假设代币金额以以太坊计价，1 * $10^{18}$）：
 
--   Initial reserve of $token_0$ = 1000
--   Initial reserve of $token_1$ = 5000
--   A trader wants to buy 100 $token_0$
+-   $token_0$ 的初始储备 = 1000
+-   $token_1$ 的初始储备 = 5000
+-   交易者想买入 100 $token_0$
 
-How many $token_1$ is needed to pay?
+需要支付多少 $token_1$？
 
-Since trader knows the exact amount of output token ($\Delta{y}$ = 100), we use the buy formula to find the required input amount ($\Delta{x}$).
+由于交易者知道精确的输出代币数量（$\Delta{y}$ = 100），我们使用买入公式找出所需的输入金额（$\Delta{x}$）。
 
-Using the buy formula, where x = 5000, y = 1000, $\Delta{y}$ = 100, r = 0.997:
+使用买入公式，其中 x = 5000，y = 1000，$\Delta{y}$ = 100，r = 0.997：
 
 $\Delta{x} = \dfrac{x \cdot \Delta{y}}{r (y - \Delta{y})}$ = $\dfrac{5000 \cdot 100}{0.997 (1000 - 100)} \approx 557.23$
 
-Therefore, we need to pay approximately 557.23 token1 to buy 100 token0.
+因此，我们需要支付约 557.23 个 token1 来购买 100 个 token0。
 
 ---
 
-### Fee Impact: Why 𝑘 Grows After Each Trade
+### 费用影响：为什么每次交易后 k 都会增长
 
-When a trade happens, the trading fee (0.3% of the input amount) is added to the pool, which increases the total reserves.
+当交易发生时，交易费用（输入金额的 0.3%）被添加到池中，这增加了总储备。
 
-**Before(1):**
+**之前(1)：**
 
 $(x + r\Delta{x})(y - \Delta{y}) = k$
 
-**After(2):**
+**之后(2)：**
 
 $k' = (x + \Delta{x})(y - \Delta{y})$
 
-**Difference(growth):**
+**差异（增长）：**
 
 $\Delta{k}=k' - k$
 $= (x + \Delta{x})(y - \Delta{y})$ - $(x + r\Delta{x})(y - \Delta{y})$  
 $= (\Delta{x}-r\Delta{x})(y - \Delta{y})$  
 $= (1 - r)\Delta{x}(y - \Delta{y})$
 
-Since $\Delta{x}$ > 0, therefore $\Delta{k}$ > 0, and 𝑘 grows after each trade.
+由于 $\Delta{x}$ > 0，因此 $\Delta{k}$ > 0，并且 k 在每次交易后都会增长。
 
 ---
 
-## 🛠️ Lab Practise: Making a Uniswap trade
+## 🛠️ 实验实践：执行 Uniswap 交易
 
-In this lab, we will demonstrate how to perform a token swap on a Uniswap V2 AMM using hardhat from a test script.
+在本实验中，我们将演示如何使用 hardhat 从测试脚本在 Uniswap V2 AMM 上执行代币交换。
 
-### Create test/testSwapTokens.js
+### 创建 test/testSwapTokens.js
 
-Create the file `testSwapTokens.js` in the `test` directory with an empty test suite:
+在 `test` 目录中创建包含空测试套件的文件 `testSwapTokens.js`：
 
 ```js
 const { expect } = require("chai");
@@ -166,54 +166,54 @@ describe("Test Swap Tokens", function () {
 });
 ```
 
-For the subsequent stages involving the beforeEach setup and test cases, ensure to place the code inside the describe block.
+对于涉及 beforeEach 设置和测试用例的后续阶段，确保将代码放在 describe 块内。
 
-### Insert the beforeEach setup into the describe block
+### 在 describe 块中插入 beforeEach 设置
 
-The beforeEach function will setup up the testing environment before each test:
+beforeEach 函数将在每个测试之前设置测试环境：
 
--   Deploy UniswapV2Factory
--   Deploy UniswapV2Router02
--   Deploy two demo ERC20 tokens (DemoTokenA and DemoTokenB)
--   Create a liquidity pool for the two tokens and add liquidity
+-   部署 UniswapV2Factory
+-   部署 UniswapV2Router02
+-   部署两个演示 ERC20 代币（DemoTokenA 和 DemoTokenB）
+-   为两种代币创建流动性池并添加流动性
 
 <!-- prettier-ignore -->
 ```js
     beforeEach(async function () {
         [signer] = await ethers.getSigners();
 
-        // Deploy UniswapV2Factory
+        // 部署 UniswapV2Factory
         const Factory = await ethers.getContractFactory("UniswapV2Factory");
         factory = await Factory.deploy(signer.address);
 
-        // Deploy UniswapV2Router02
+        // 部署 UniswapV2Router02
         const Router = await ethers.getContractFactory("UniswapV2Router02");
         router = await Router.deploy(
             factory.target,
-            "0x0000000000000000000000000000000000000000" // WETH address (not used in this test)
+            "0x0000000000000000000000000000000000000000" // WETH 地址（本测试中未使用）
         );
 
-        // Deploy Token0
+        // 部署 Token0
         const Token0 = await ethers.getContractFactory("DemoTokenA");
         token0 = await Token0.deploy();
 
-        // Deploy Token1
+        // 部署 Token1
         const Token1 = await ethers.getContractFactory("DemoTokenB");
         token1 = await Token1.deploy();
 
-        // Deploy Pair
+        // 部署配对
         await factory.createPair(
             await token0.getAddress(),
             await token1.getAddress()
         );
 
-        // Approve tokens to router
+        // 批准代币给路由器
         const amount0 = ethers.parseEther("1000");
         const amount1 = ethers.parseEther("5000");
         await token0.approve(await router.getAddress(), amount0);
         await token1.approve(await router.getAddress(), amount1);
 
-        // Add liquidity
+        // 添加流动性
         const block = await ethers.provider.getBlock("latest");
         const deadline = block.timestamp + 1000;
         await router.addLiquidity(
@@ -229,9 +229,9 @@ The beforeEach function will setup up the testing environment before each test:
     });
 ```
 
-### Test: Sell exact input of ERC20 tokens for ERC20 tokens
+### 测试：用精确输入的 ERC20 代币交换 ERC20 代币
 
-Add the following test case inside the describe block.
+在 describe 块中添加以下测试用例。
 
 <!-- prettier-ignore -->
 ```js
@@ -241,15 +241,15 @@ Add the following test case inside the describe block.
     });
 ```
 
-In the subsequent steps below, make sure to place the code inside this test case.
+在下面的后续步骤中，确保将代码放在此测试用例内。
 
--   **Step 1: Get the Pair Contract**
+-   **步骤 1：获取配对合约**
 
-    To trade between two tokens, you need to find the Uniswap V2 Pair contract that holds the liquidity pool for those tokens. You can do this by calling the `getPair(token0, token1)` function on the Uniswap V2 Factory contract and use it to create a contract instance.
+    要在两种代币之间交易，您需要找到持有这些代币流动性池的 Uniswap V2 配对合约。您可以通过在 Uniswap V2 Factory 合约上调用 `getPair(token0, token1)` 函数来做到这一点，并使用它创建合约实例。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Step 1: Get the pair contract
+        // 步骤 1：获取配对合约
         // -----------------------------------------------------------------
 
         const pairAddress = await factory.getPair(
@@ -259,15 +259,15 @@ In the subsequent steps below, make sure to place the code inside this test case
         const pair = await ethers.getContractAt("UniswapV2Pair", pairAddress);
     ```
 
--   **Step 2: Get Initial Pool Reserves**
+-   **步骤 2：获取初始池储备**
 
-    From the pair contract, you can now fetch the current reserves of both tokens in the pool using the `getReserves()` function. This will return the reserves in the order of token0 and token1 based on their addresses.
+    从配对合约，您现在可以使用 `getReserves()` 函数获取池中两种代币的当前储备。这将根据它们的地址按 token0 和 token1 的顺序返回储备。
 
-    **Important**: The order of reserves returned by `getReserves()` corresponds to the order of token addresses. That is why we need to map them correctly by comparing the address values.
+    **重要**：`getReserves()` 返回的储备顺序对应于代币地址的顺序。这就是为什么我们需要通过比较地址值来正确映射它们。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Step 2: Get Initial Pool Reserves
+        // 步骤 2：获取初始池储备
         // -----------------------------------------------------------------
         const reserves = await pair.getReserves();
         const [reserve0, reserve1] =
@@ -276,53 +276,53 @@ In the subsequent steps below, make sure to place the code inside this test case
                 : [reserves._reserve1, reserves._reserve0];
     ```
 
-    We can also find the current balance of token0 and token1 at this point, so it can be compared later after the swap.
+    我们还可以在此时找出 token0 和 token1 的当前余额，以便以后交换后进行比较。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Check initial balances for comparison later
+        // 检查初始余额以供以后比较
         const initialBalanceToken0 = await token0.balanceOf(signer.address);
         const initialBalanceToken1 = await token1.balanceOf(signer.address);
 
     ```
 
--   **Step 3: Decide the swap function to use**
+-   **步骤 3：决定使用哪个交换函数**
 
-    There are 6 swap functions in the UniswapV2Router02 contract (Refer to the file **contracts/v2-periphery/UniswapV2Router02.sol**).
+    UniswapV2Router02 合约有 6 个交换函数（参见文件 **contracts/v2-periphery/UniswapV2Router02.sol**）。
 
-    In order to choose the right one, we need to know whether we are **selling exact input** amount tokens or **buying exact output** amount of tokens.
+    为了选择正确的函数，我们需要知道我们是**卖出精确输入**数量的代币还是**买入精确输出**数量的代币。
 
-    -   **Exact-In (You sell a known amount)**
+    -   **精确输入（您知道要卖出的数量）**
 
-        Choose one of the following functions below by providing the exact amount of input tokens you want to swap (amountIn).
+        通过提供您想要交换的精确输入代币数量（amountIn），选择下面其中一个函数。
 
-        Calculate the expected output amount (amountOutMin) using sell formula $\Delta{y} = \frac{yr\Delta{x}}{x + r\Delta{x}}$.
+        使用卖出公式 $\Delta{y} = \frac{yr\Delta{x}}{x + r\Delta{x}}$ 计算预期的输出数量（amountOutMin）。
 
-        | Name                                                                | Description                 |
+        | 名称                                                              | 描述                 |
         | ------------------------------------------------------------------- | --------------------------- |
-        | `swapExactTokensForTokens(amountIn,amountOutMin,path,to,deadline)`  | Give ERC-20, receive ERC-20 |
-        | `swapExactETHForTokens(amountOutMin,path,to,deadline)`              | Give ETH, receive ERC-20    |
-        | `swapExactTokensForETH(amountIn, amountOutMin, path, to, deadline)` | Give ERC-20, receive ETH    |
+        | `swapExactTokensForTokens(amountIn,amountOutMin,path,to,deadline)`  | 给出 ERC-20，接收 ERC-20 |
+        | `swapExactETHForTokens(amountOutMin,path,to,deadline)`              | 给出 ETH，接收 ERC-20    |
+        | `swapExactTokensForETH(amountIn, amountOutMin, path, to, deadline)` | 给出 ERC-20，接收 ETH    |
 
-    -   **Exact-Out (You buy a known amount)**
+    -   **精确输出（您知道要接收的数量）**
 
-        Choose one of the following functions below by providing the exact amount of output tokens you want to receive (amountOut).
+        通过提供您想要接收的精确输出代币数量（amountOut），选择下面其中一个函数。
 
-        Calculate the required input amount (amountInMax) using buy formula $\Delta{x} = \frac{x \Delta{y}}{r (y - \Delta{y})}$.
+        使用买入公式 $\Delta{x} = \frac{x \Delta{y}}{r (y - \Delta{y})}$ 计算所需的输入金额（amountInMax）。
 
-        | Name                                                                | Description                 |
+        | 名称                                                                | 描述                 |
         | ------------------------------------------------------------------- | --------------------------- |
-        | `swapTokensForExactTokens(amountOut,amountInMax,path,to,deadline)`  | Give ERC-20, receive ERC-20 |
-        | `swapETHForExactTokens(amountOut, path, to, deadline)`              | Give ETH, receive ERC-20    |
-        | `swapTokensForExactETH(amountOut, amountInMax, path, to, deadline)` | Give ERC-20, receive ETH    |
+        | `swapTokensForExactTokens(amountOut,amountInMax,path,to,deadline)`  | 给出 ERC-20，接收 ERC-20 |
+        | `swapETHForExactTokens(amountOut, path, to, deadline)`              | 给出 ETH，接收 ERC-20    |
+        | `swapTokensForExactETH(amountOut, amountInMax, path, to, deadline)` | 给出 ERC-20，接收 ETH    |
 
-    For this test, since we are buying an exact amount of token0 with token1, we will use the `swapTokensForExactTokens` function.
+    对于此测试，由于我们用 token1 买入精确数量的 token0，我们将使用 `swapTokensForExactTokens` 函数。
 
--   **Step 4: Prepare Swap Parameters**
+-   **步骤 4：准备交换参数**
 
-    The `swapExactTokensForTokens` swap function requires 5 arguments so we will assemble them one by one.
+    `swapExactTokensForTokens` 交换函数需要 5 个参数，因此我们将逐一组装它们。
 
-    **Note:** The functions are generally similar and straight forward but differ in whether you are providing **amountOutMin** or **amountInMax** and find them using the corresponding formula. You need to adjust accordingly if you choose a different function. Refer to **contracts/v2-periphery/UniswapV2Router02.sol** understand the function signature.
+    **注意：** 函数通常相似且直接，但不同之处在于您是提供 **amountOutMin** 还是 **amountInMax**，并使用相应的公式找出它们。如果您选择不同的函数，需要相应调整。参见 **contracts/v2-periphery/UniswapV2Router02.sol** 了解函数签名。
 
     **contracts/v2-periphery/UniswapV2Router02.sol**
 
@@ -336,44 +336,44 @@ In the subsequent steps below, make sure to place the code inside this test case
             )
     ```
 
-    1.  `amountOut`: The exact amount of output tokens to buy (token0 in this case)
-    2.  `amountInMax`: The maximum amount (to protect against **slippage** explained below) of input tokens to pay (token1 in this case)
+    1.  `amountOut`：要买入的精确输出代币数量（在本例中为 token0）
+    2.  `amountInMax`：最大输入代币数量（以防止下面解释的**滑点**）（在本例中为 token1）
 
-    3.  `path`: An array of token addresses representing the swap path. Always starts with the token going in and ends with the token coming out (from token1 to token0 in this case)
-    4.  `to`: The recipient address of the output tokens (your address)
-    5.  `deadline`: This is to specify when the transaction should expire. In a real-world scenario, you would want to set this to a reasonable value (e.g., 10 minutes from the current time).
+    3.  `path`：表示交换路径的代币地址数组。始终以输入的代币开始，以输出的代币结束（在本例中从 token1 到 token0）
+    4.  `to`：输出代币的接收者地址（您的地址）
+    5.  `deadline`：这指定交易何时过期。在现实世界中，您会将其设置为合理的值（例如，从当前时间起 10 分钟）。
 
-    #### a) Define `amountOut`
+    #### a) 定义 `amountOut`
 
-    We want to buy exactly 100 ether of token0 so we will set `amountOut` to 100 ether.
+    我们要买入正好 100 ether 的 token0，因此我们将 `amountOut` 设置为 100 ether。
 
     <!-- prettier-ignore -->
     ```javascript
-        // argument 1: amountOut (amount of token0 to buy)
+        // 参数 1：amountOut（要买入的 token0 数量）
         const amountOut = ethers.parseEther("100");
 
     ```
 
-    #### b) Define `amountInMax` (with slippage tolerance)
+    #### b) 定义 `amountInMax`（带滑点容忍度）
 
-    **What is Slippage?**
+    **什么是滑点？**
 
-    In this course we’ve shown that 𝑘 (the pool’s product) changes on every trade—it usually grows a little because fees stay in the pool. Quotes you see in a UI are based on the current reserves at the moment of quoting. But your transaction isn’t mined instantly. If other trades land before yours, the reserves (and thus the price) move. When your tx finally executes, you can receive fewer tokens than quoted. That shortfall is **slippage**. That is the reason why when calling the swap functions, we specify `amountOutMin` or `amountInMax` as the tolerance for slippage.
+    在本课程中，我们已经表明 k（池的乘积）在每次交易时都会变化——由于费用留在池中，它通常会增长一点。您 UI 中看到的报价基于报价时刻的当前储备。但您的交易不会立即被挖掘。如果其他交易在您之前成交，储备（从而价格）会变动。当您的交易最终执行时，您收到的代币可能比报价少。这个差额就是**滑点**。这就是为什么在调用交换函数时，我们指定 `amountOutMin` 或 `amountInMax` 作为滑点的容忍度。
 
-    In this case, we want to find `amountInMax` (maximum amount of token1 to pay).
+    在这种情况下，我们想找出 `amountInMax`（要支付的最大 token1 数量）。
 
-    To find `amountInMax`, since we know the exact output amount of token0 to buy, we will use that to find the expected input amount of token1 to pay:
+    要找出 `amountInMax`，由于我们知道要买入的 token0 的精确输出数量，我们将用它来找出要支付的 token1 的预期输入数量：
 
     $\Delta{x} = \frac{x \Delta{y}}{r (y - \Delta{y})}$
 
     <!-- prettier-ignore -->
     ```javascript
-        // argument 2: amountInMax (maximum amount of token1 to pay)
+        // 参数 2：amountInMax（要支付的最大 token1 数量）
 
-        // Calculate expected amount in using buy formula with 0.3% fee
+        // 使用 0.3% 费用计算预期输入金额
 
-        const reserveIn = reserve1; // token1 is input token
-        const reserveOut = reserve0; // token0 is output token
+        const reserveIn = reserve1; // token1 是输入代币
+        const reserveOut = reserve0; // token0 是输出代币
         const expectedAmountIn =
             (reserveIn * amountOut * 1000n) /
                 ((reserveOut - amountOut) * 997n) +
@@ -381,11 +381,11 @@ In the subsequent steps below, make sure to place the code inside this test case
 
     ```
 
-    For testing purposes, we will confirm that our offchain calculation is correct by comparing it with the onchain contract function `getAmountOut()` from the UniswapV2Router02 contract.
+    出于测试目的，我们将通过将链下计算与 UniswapV2Router02 合约的链上函数 `getAmountOut()` 进行比较来验证我们的链下计算是否正确。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Check offchain calculation against onchain function.
+        // 检查链下计算与链上函数是否一致。
         const contractAmountIn = await router.getAmountIn(
             amountOut,
             reserveIn,
@@ -394,64 +394,64 @@ In the subsequent steps below, make sure to place the code inside this test case
         expect(contractAmountIn).to.equal(expectedAmountIn);
     ```
 
-    Now, we can set the maximum amount out with an upper bound of 5% slippage tolerance.
+    现在，我们可以设置最大数量，上限为 5% 的滑点容忍度。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Set maximum amount in with 5% slippage tolerance
+        // 设置最大数量，5% 滑点容忍度
 
         const amountInMax = (expectedAmountIn * 105n) / 100n;
     ```
 
-    #### c) Define `path`
+    #### c) 定义 `path`
 
-    The `path` is an array of token addresses representing the swap path. It always starts with the token going in and ends with the token coming out. In this case, we are starting from token1 and ending with token0.
+    `path` 是表示交换路径的代币地址数组。它始终以输入的代币开始，以输出的代币结束。在这种情况下，我们从 token1 开始，到 token0 结束。
 
     <!-- prettier-ignore -->
     ```javascript
-        // argument 3: path (starts from input token1 to output token0)
+        // 参数 3：path（从输入代币 token1 到输出代币 token0）
         const path = [await token1.getAddress(), await token0.getAddress()];
     ```
 
-    #### d) Define `to`
+    #### d) 定义 `to`
 
-    The `to` parameter is the recipient address of the output tokens. In this case, we will set it to our own address.
+    `to` 参数是输出代币的接收者地址。在这种情况下，我们将设置为我们自己的地址。
 
     <!-- prettier-ignore -->
     ```javascript
-        // argument 4: to (recipient address)
+        // 参数 4：to（接收者地址）
         const to = signer.address;
     ```
 
-    #### e) Define `deadline`
+    #### e) 定义 `deadline`
 
-    The `deadline` parameter is to specify when the transaction should expire. In a real-world scenario, you would want to set this to a reasonable value (e.g., 10 minutes from the current time).
+    `deadline` 参数是指定交易何时过期的参数。在现实世界中，您会将其设置为合理的值（例如，从当前时间起 10 分钟）。
 
     <!-- prettier-ignore -->
     ```javascript
-        // argument 5: deadline (set later)
+        // 参数 5：deadline（稍后设置）
         const block = await ethers.provider.getBlock("latest");
         const deadline = block.timestamp + 600;
     ```
 
--   **Step 4: Approve Uniswap Router to Spend Input Tokens**
+-   **步骤 4：批准 Uniswap 路由器花费输入代币**
 
-    Before performing the swap, we need to approve the router contract to spend our token0.
+    在执行交换之前，我们需要批准路由器合约花费我们的 token0。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Step 4: Approve Uniswap Router to Spend Input Tokens
+        // 步骤 4：批准 Uniswap 路由器花费输入代币
         // -----------------------------------------------------------------
         await token1.approve(await router.getAddress(), amountInMax);
     ```
 
--   **Step 5: Execute the Swap**
+-   **步骤 5：执行交换**
 
-    Now that we have all the parameters ready, we can call the `swapTokensForExactTokens` function on the router contract to perform the swap.
+    现在我们准备好了所有参数，我们可以调用路由器合约上的 `swapTokensForExactTokens` 函数来执行交换。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Step 5: Execute the Swap
+        // 步骤 5：执行交换
         // -----------------------------------------------------------------
         await router.swapTokensForExactTokens(
             amountOut,
@@ -462,11 +462,11 @@ In the subsequent steps below, make sure to place the code inside this test case
         );
     ```
 
-    We will also verify the final balances of token0 and token1 to ensure the swap was successful.
+    我们还将验证 token0 和 token1 的最终余额以确保交换成功。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Check final balances
+        // 检查最终余额
         const finalBalanceToken0 = await token0.balanceOf(signer.address);
         const finalBalanceToken1 = await token1.balanceOf(signer.address);
 
@@ -485,9 +485,9 @@ In the subsequent steps below, make sure to place the code inside this test case
         );     
     ```
 
-### Run the tests
+### 运行测试
 
-Run the test using Hardhat.
+使用 Hardhat 运行测试。
 
 ```bash
 hh test test/testSwapTokens.js
@@ -498,12 +498,12 @@ hh test test/testSwapTokens.js
 #     ✔ Should buy exact 100 * 10^18 of ERC20 tokens for ERC20 tokens
 ```
 
-The result shows that we successfully bought exactly 100 token0 by paying approximately 557.23 token1 which matches the result from [Example - Buy 100 token0 with token1](#example---buy-100-token0-with-token1).
+结果表明，我们成功通过支付约 557.23 个 token1 购买了正好 100 个 token0，这与 [示例 - 用 token1 买入 100 个 token0](#example---buy-100-token0-with-token1) 的结果匹配。
 
-### Task completed ✅
+### 任务完成 ✅
 
-In this lab, you have learned how to buy an exact input of ERC20 tokens for ERC20 tokens using Uniswap V2 with hardhat.
+在本实验中，您学习了如何使用 Uniswap V2 和 hardhat 用 ERC20 代币买入精确输入数量的 ERC20 代币。
 
-## Quiz: Sell token1 for exact 100 ether of token0
+## 测验：用 token1 卖出精确 100 ether 的 token0
 
-Implement a new test case inside the describe block to sell an exact amount of token0 with token1.
+在 describe 块内实现一个新的测试用例，用 token1 卖出精确数量的 token0。

@@ -1,46 +1,46 @@
-# Quick Start with Solidity
+# Solidity 快速入门
 
-This lesson will walk you through the essential steps to get started with writing, compiling, testing, and deploying smart contracts using Solidity and Hardhat.
+本课程将带您了解使用 Solidity 和 Hardhat 编写、编译、测试和部署智能合约的基本步骤。
 
-## 1. Typical Smart Contract Development Workflow
+## 1. 典型的智能合约开发工作流程
 
-Smart contract development is different from traditional software because **deployed code cannot be changed**. Once it’s on the blockchain, it’s permanent. This means careful testing and staged deployment are critical.
+智能合约开发与传统软件不同，因为**部署的代码无法更改**。一旦在区块链上，就是永久的。这意味着仔细测试和分阶段部署至关重要。
 
-A typical workflow looks like this:
+典型的工作流程如下：
 
-### Step 1: Write the Contract
+### 步骤 1：编写合约
 
--   Write Solidity code in the `contracts/` directory.
--   Use good practices: comments, clear naming, and modularity.
+-   在 `contracts/` 目录中编写 Solidity 代码。
+-   使用良好实践：注释、清晰的命名和模块化。
 
-### Step 2: Compile
+### 步骤 2：编译
 
--   Run `npx hardhat compile`.
--   Verify the **bytecode** and **ABI** outputs in the `artifacts/` folder.
--   Fix any compiler warnings before moving on.
+-   运行 `npx hardhat compile`。
+-   验证 `artifacts/` 文件夹中的**字节码**和 **ABI** 输出。
+-   在继续之前修复任何编译器警告。
 
-### Step 3: Local Testing
+### 步骤 3：本地测试
 
--   Write automated tests in the `test/` directory (using Mocha + Chai).
--   Run `npx hardhat test` to check that contract logic behaves as expected.
--   Use the **Hardhat console** to experiment interactively.
+-   在 `test/` 目录中编写自动化测试（使用 Mocha + Chai）。
+-   运行 `npx hardhat test` 检查合约逻辑是否符合预期。
+-   使用 **Hardhat 控制台** 进行交互式实验。
 
-### Step 4: Deployment Script (Local/Standalone Network)
+### 步骤 4：部署脚本（本地/独立网络）
 
--   Write deployment scripts in the `scripts/` directory.
--   Run them against the **Hardhat Network (standalone)** to simulate deployment.
--   Example:
+-   在 `scripts/` 目录中编写部署脚本。
+-   针对 **Hardhat Network（独立）** 运行它们以模拟部署。
+-   示例：
     ```bash
     npx hardhat run scripts/deploy.js --network localhost
     ```
 
-In the following sections we will cover each of these steps in more detail.
+在以下部分，我们将更详细地介绍每个步骤。
 
 ---
 
-## 2. Writing a Simple Contract
+## 2. 编写一个简单的合约
 
-Let's start with a simple but complete example that demonstrates the essential components of a Solidity smart contract:
+让我们从一个简单但完整的示例开始，展示 Solidity 智能合约的基本组件：
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -63,52 +63,52 @@ contract Counter {
 }
 ```
 
-Let's break down this simple counter contract line by line:
+让我们逐行分解这个简单的计数器合约：
 
--   **1. License Identifier**
+-   **1. 许可证标识符**
 
     ```solidity
     // SPDX-License-Identifier: MIT
     ```
 
-    -   **Purpose**: Specifies the software license for the code
-    -   **Why it matters**: Required by the compiler to avoid warnings
-    -   **MIT License**: A permissive open-source license commonly used
+    -   **目的**：指定代码的软件许可证
+    -   **为什么重要**：编译器需要它以避免警告
+    -   **MIT 许可证**：常用的宽松开源许可证
 
--   **2. Pragma Directive**
+-   **2. Pragma 指令**
 
     ```solidity
     pragma solidity ^0.8.20;
     ```
 
-    -   **Purpose**: Tells the compiler which version of Solidity to use
-    -   **^0.8.20**: Compatible with version 0.8.20 and newer versions within 0.8.x
-    -   **Why important**: Different versions have different features and security improvements
+    -   **目的**：告诉编译器使用哪个版本的 Solidity
+    -   **^0.8.20**：与版本 0.8.20 及 0.8.x 内更新的版本兼容
+    -   **为什么重要**：不同版本具有不同的功能和安全性改进
 
--   **Why 0.8.20 in this course**: Although not the latest version, we use 0.8.20 for practical reasons: it's easier to find online materials and documentation for established versions, and it's the same version used by OpenZeppelin's ERC20 implementation, making it a proven industry standard
+-   **为什么本课程使用 0.8.20**：虽然不是最新版本，我们使用 0.8.20 是出于实际原因：更容易找到已建立版本的在线材料和文档，而且它与 OpenZeppelin 的 ERC20 实现使用的版本相同，使其成为经过验证的行业标准
 
--   **3. Contract Declaration**
+-   **3. 合约声明**
 
     ```solidity
     contract Counter {
     ```
 
-    -   **Purpose**: Defines a new smart contract (similar to a class in other languages)
-    -   **Counter**: The name of our contract
-    -   **Scope**: Everything between the braces `{}` belongs to this contract
+    -   **目的**：定义一个新的智能合约（类似于其他语言中的类）
+    -   **Counter**：我们合约的名称
+    -   **作用域**：大括号 `{}` 之间的所有内容都属于这个合约
 
--   **4. State Variable**
+-   **4. 状态变量**
 
     ```solidity
     uint256 public count;
     ```
 
-    -   **uint256**: An unsigned integer (no negative numbers) that can hold values from 0 to 2^256-1
-    -   **public**: Creates an automatic getter function so anyone can read this value
-    -   **count**: The variable name that stores our counter value
-    -   **Storage**: This data is permanently stored on the blockchain
+    -   **uint256**：一个无符号整数（不能为负），可以容纳从 0 到 2^256-1 的值
+    -   **public**：创建一个自动的 getter 函数，任何人都可以读取此值
+    -   **count**：存储我们计数器值的变量名
+    -   **存储**：此数据永久存储在区块链上
 
--   **5. Constructor**
+-   **5. 构造函数**
 
     ```solidity
     constructor(uint256 initial) {
@@ -116,11 +116,11 @@ Let's break down this simple counter contract line by line:
     }
     ```
 
-    -   **Purpose**: Special function that runs only once when the contract is deployed
-    -   **Parameters**: Takes an `initial` value to set the starting count
-    -   **Initialization**: Sets our `count` variable to the provided initial value
+    -   **目的**：只在合约部署时运行一次的特殊函数
+    -   **参数**：接受一个 `initial` 值来设置起始计数
+    -   **初始化**：将我们的 `count` 变量设置为提供的初始值
 
--   **6. State-Changing Function**
+-   **6. 状态修改函数**
 
     ```solidity
     function increment() public {
@@ -128,12 +128,12 @@ Let's break down this simple counter contract line by line:
     }
     ```
 
-    -   **function**: Keyword to declare a function
-    -   **increment**: Function name
-    -   **public**: Anyone can call this function
-    -   **Effect**: Increases the count by 1 (costs gas because it modifies blockchain state)
+    -   **function**：声明函数的关键字
+    -   **increment**：函数名
+    -   **public**：任何人都可以调用此函数
+    -   **效果**：将计数增加 1（消耗 Gas，因为它修改了区块链状态）
 
--   **7. View Function**
+-   **7. View 函数**
 
     ```solidity
     function get() public view returns (uint256) {
@@ -141,33 +141,33 @@ Let's break down this simple counter contract line by line:
     }
     ```
 
-    -   **view**: This function only reads data, doesn't modify state
-    -   **returns (uint256)**: Specifies that this function returns an unsigned integer
-    -   **Free to call**: Reading data doesn't cost gas when called externally
-    -   **Note**: The `public count` already creates a getter, so this function is redundant but shown for learning
+    -   **view**：此函数只读取数据，不修改状态
+    -   **returns (uint256)**：指定此函数返回一个无符号整数
+    -   **免费调用**：读取数据在外部调用时不消耗 Gas
+    -   **注意**：`public count` 已经创建了一个 getter，所以这个函数是多余的，但为了学习目的展示
 
 ---
 
-## 🛠️ Lab Practice: Basic Contract
+## 🛠️ 实验实践：基础合约
 
--   **Install project dependencies**
+-   **安装项目依赖**
 
     ```bash
     cd /workspace/day-1/04-quick-start
     npm i
     ```
 
--   **Create a `contracts` directory**
+-   **创建 `contracts` 目录**
 
-    This directory will be used to store all contract files.
+    此目录用于存储所有合约文件。
 
     ```bash
     mkdir contracts
     ```
 
--   **Create a new Solidity file**
+-   **创建新的 Solidity 文件**
 
-    Create a file named `Counter.sol` in the `contracts` directory.
+    在 `contracts` 目录中创建一个名为 `Counter.sol` 的文件。
 
     ```solidity
     // SPDX-License-Identifier: MIT
@@ -192,30 +192,30 @@ Let's break down this simple counter contract line by line:
 
 ---
 
-## 3. Compiling the Contract
+## 3. 编译合约
 
-Think of compilation like translating a book from English to another language. Your computer can't read Solidity directly - it needs the code translated into machine language.
+可以把编译想象成把一本书从英语翻译成另一种语言。您的计算机无法直接读取 Solidity——它需要将代码翻译成机器语言。
 
-**Why compile?**
+**为什么需要编译？**
 
-When you write Solidity code, you're writing for humans to understand. But the blockchain computer (called the EVM) only speaks in numbers and machine code. Compilation is the translation process.
+当您编写 Solidity 代码时，您是为人类编写的。但区块链计算机（称为 EVM）只懂数字和机器代码。编译就是翻译过程。
 
-**What do you get after compilation?**
+**编译后会得到什么？**
 
-The compiler gives you two important things:
+编译器为您提供两个重要的东西：
 
-1. **Bytecode** - The translated version of your contract that the blockchain can run
-2. **ABI** - A description that tells other programs what your contract can do
+1. **字节码** - 合约的翻译版本，区块链可以运行
+2. **ABI** - 描述其他程序您的合约能做什么
 
-**Understanding the ABI (Application Binary Interface)**
+**理解 ABI（应用程序二进制接口）**
 
-The ABI is a description of your contract's interface. It tells other programs:
+ABI 是合约接口的描述。它告诉其他程序：
 
--   What functions your contract has
--   What parameters each function needs
--   What each function returns
+-   合约有哪些函数
+-   每个函数需要什么参数
+-   每个函数返回什么
 
-Here's what an ABI looks like for our Counter contract:
+这是我们 Counter 合约的 ABI 样子：
 
 ```json
 [
@@ -245,26 +245,26 @@ Here's what an ABI looks like for our Counter contract:
 ]
 ```
 
-**Reading the ABI:**
+**读取 ABI：**
 
--   **constructor**: Requires one `uint256` parameter called `initial` to create the contract
--   **count**: A function that returns a `uint256`, doesn't modify state (`view`)
--   **increment**: A function with no inputs or outputs, modifies contract state
--   **get**: A function that returns a `uint256` without modifying state (`view`)
+-   **constructor**：需要一个名为 `initial` 的 `uint256` 参数来创建合约
+-   **count**：一个返回 `uint256` 的函数，不修改状态（`view`）
+-   **increment**：一个没有输入或输出的函数，修改合约状态
+-   **get**：一个返回 `uint256` 而不修改状态的函数（`view`）
 
-**Why the ABI matters:**
+**为什么 ABI 重要：**
 
-The ABI enables external programs to interact with your contract. Without it, applications wouldn't know which functions exist or how to call them properly.
+ABI 使外部程序能够与您的合约交互。没有它，应用程序就不会知道存在哪些函数或如何正确调用它们。
 
 ---
 
-## 🛠️ Lab Practice: Contract Compilation
+## 🛠️ 实验实践：合约编译
 
-**Understanding the compilation process**: Learn how to compile Solidity contracts and examine the outputs.
+**理解编译过程**：学习如何编译 Solidity 合约并检查输出。
 
--   **Verify Compiler Version**
+-   **验证编译器版本**
 
-    Open `hardhat.config.js` and ensure it specifies the same version as your contract pragma: 0.8.20.
+    打开 `hardhat.config.js`，确保它指定的版本与您的合约 pragma 相同：0.8.20。
 
     ```js
     require("@nomicfoundation/hardhat-toolbox");
@@ -276,17 +276,17 @@ The ABI enables external programs to interact with your contract. Without it, ap
     };
     ```
 
--   **Compile the contract**
+-   **编译合约**
 
     ```bash
     hh compile
      # Compiled 1 Solidity file successfully (evm target: paris).
     ```
 
--   **Examine compilation outputs**
+-   **检查编译输出**
 
     ```bash
-     # View the artifacts directory structure
+     # 查看 artifacts 目录结构
      ls -la artifacts/contracts/Counter.sol/
 
      # drwxr-xr-x 2 vscode vscode 4096 Sep 26 08:19 .
@@ -295,7 +295,7 @@ The ABI enables external programs to interact with your contract. Without it, ap
      # -rw-r--r-- 1 vscode vscode 3000 Sep 26 08:19 Counter.json
 
 
-     # View the compiled bytecode and ABI
+     # 查看编译后的字节码和 ABI
      cat artifacts/contracts/Counter.sol/Counter.json
 
      # {
@@ -322,65 +322,65 @@ The ABI enables external programs to interact with your contract. Without it, ap
 
     ```
 
-### Quiz
+### 测验
 
-Compare the number of functions in Counter.sol vs Counter.json. Why are they different?
-
----
-
-## 4. Deploying a Contract
-
-Once your contract compiles and passes tests, the next step is deployment. Deployment means broadcasting your contract’s bytecode to a blockchain network so that it becomes a live smart contract with an address.
-
-### Key Concepts
-
--   **Deployment Script**  
-    Deployment is performed through a script that requests the blockchain to create a new contract. The script specifies:
-
-    -   The contract’s bytecode (from compilation).
-    -   The Application Binary Interface (ABI).
-    -   Any constructor arguments.
-    -   The account that pays the gas fees.
-
--   **Contract Address**  
-    Every deployed contract has a unique address on the blockchain. This address is used to interact with the contract once it is live.
-
--   **Transaction Cost**  
-    Deploying a contract is a transaction, so it consumes gas. On local networks like Hardhat, gas is free because accounts are pre-funded. On public networks, deployment costs real ETH.
-
--   **Deployment Targets**
-    -   **Local Development Network**: Fast, safe, and free. Used for iteration.
-    -   **Public Testnet**: Mimics mainnet conditions without real risk.
-    -   **Mainnet**: The live Ethereum network where real value is at stake.
+比较 Counter.sol 与 Counter.json 中的函数数量。为什么它们不同？
 
 ---
 
-## 🛠️ Lab Practice: Deploying the Contract
+## 4. 部署合约
 
-Now let’s put theory into practice by deploying the `Counter` contract to a local Hardhat Network.
+一旦您的合约编译通过并通过测试，下一步就是部署。部署意味着将您合约的字节码广播到区块链网络，使其成为一个具有地址的实时智能合约。
 
-_NOTE: We will not cover testnet deployment in this quick start but will explore it in later modules. For now, just know that deploying to a public testnet involves similar steps but requires configuring network settings and using a wallet with testnet ETH._
+### 关键概念
 
-1. **Start the Hardhat Node**
+-   **部署脚本**  
+    部署是通过请求区块链创建一个新合约的脚本执行的。脚本指定：
+
+    -   合约的字节码（来自编译）。
+    -   应用程序二进制接口（ABI）。
+    -   任何构造函数参数。
+    -   支付 Gas 费用的账户。
+
+-   **合约地址**  
+    每个部署的合约在区块链上都有一个唯一的地址。此地址用于在合约上线后与其交互。
+
+-   **交易成本**  
+    部署合约是一笔交易，因此消耗 Gas。在 Hardhat 这样的本地网络上，Gas 是免费的，因为账户已经预充值。在公共网络上，部署需要真实的 ETH。
+
+-   **部署目标**
+    -   **本地开发网络**：快速、安全且免费。用于迭代。
+    -   **公共测试网**：模拟主网条件而无真实风险。
+    -   **主网**：实时以太坊网络，真实价值处于风险中。
+
+---
+
+## 🛠️ 实验实践：部署合约
+
+现在让我们通过将 `Counter` 合约部署到本地 Hardhat Network 来实践理论。
+
+_注意：我们不会在本快速入门中介绍测试网部署，但稍后的模块会探索它。现在，您只需要知道部署到公共测试网涉及类似步骤，但需要配置网络设置和使用测试网 ETH 的钱包。_
+
+1. **启动 Hardhat 节点**
 
     ```bash
     hh node
     ```
 
-2. **Open a new terminal window**
+2. **打开一个新的终端窗口**
 
-    Keep the node running in the first terminal and run subsequent commands in the new terminal.
+    在第一个终端中保持节点运行，在新终端中运行后续命令。
 
-3. **Create a `scripts` directory**
+3. **创建 `scripts` 目录**
 
     ```bash
     cd /workspace/day-1/04-quick-start
     mkdir scripts
     ```
 
-4. **Write the deployment script**
+4. **编写部署脚本**
 
-    Create `scripts/deploy.js` with the following content:
+    创建 `scripts/deploy.js`，内容如下：
 
     ```javascript
     const { ethers } = require("hardhat");
@@ -398,70 +398,70 @@ _NOTE: We will not cover testnet deployment in this quick start but will explore
     });
     ```
 
-5. **Run the deployment script**
+5. **运行部署脚本**
 
-    The the following command in the new terminal:
+    在新终端中运行以下命令：
 
     ```bash
 
     hh run scripts/deploy.js --network localhost
 
-     # output:
+     # 输出：
      # Counter deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
     ```
 
-    Take note of the address printed in the output. This is where your contract is deployed on the local Hardhat Network.
+    请记下输出中打印的地址。这是您的合约在本地 Hardhat Network 上部署的位置。
 
 ---
 
-## 5. Interacting with the Deployed Contract
+## 5. 与已部署合约交互
 
-Deploying a contract gives it a permanent presence on the blockchain, but to use it you need to interact with it. Before you can start calling functions or reading state, there are a few basic pieces of information you must have.
+部署合约使其在区块链上具有永久存在，但要使用它，您需要与它交互。在开始调用函数或读取状态之前，您必须掌握一些基本信息。
 
-### Basic Requirements
+### 基本要求
 
-1. **Contract Address**
+1. **合约地址**
 
-    - Every deployed contract has a unique address on the blockchain.
-    - This is the "location" where your contract lives, similar to a URL for a website.
-    - Without the address, you cannot reach the contract.
+    -   每个部署的合约在区块链上都有一个唯一的地址。
+    -   这是您的合约所在的"位置"，类似于网站的 URL。
+    -   没有地址，您无法访问合约。
 
-2. **ABI (Application Binary Interface)**
+2. **ABI（应用程序二进制接口）**
 
-    - The ABI describes the functions, parameters, and events of the contract.
-    - Think of it as the contract’s menu: it tells you what you can call and how.
-    - The ABI is generated when you compile the contract (in the `artifacts` folder).
+    -   ABI 描述了合约的函数、参数和事件。
+    -   把它想象成合约的菜单：它告诉您可以调用什么以及如何调用。
+    -   ABI 在编译合约时生成（在 `artifacts` 文件夹中）。
 
-3. **Network**
+3. **网络**
 
-    - You must know which blockchain network the contract is deployed on (local Hardhat, Sepolia testnet, or mainnet).
-    - A contract address is only valid on the network where it was deployed.
-    - Interacting with the wrong network will result in "contract not found" errors.
+    -   您必须知道合约部署在哪个区块链网络（本地 Hardhat、Sepolia 测试网或主网）。
+    -   合约地址仅在部署的网络上有效。
+    -   与错误的网络交互将导致"合约未找到"错误。
 
-4. **Account (Signer)**
-    - To read from the contract, only a provider is needed.
-    - To write (send transactions), you need a signer — an account with the private key to authorize the transaction and pay gas fees.
-    - On local Hardhat, accounts are pre-funded. On testnet/mainnet, you need real ETH or test ETH.
+4. **账户（签名者）**
+    -   从合约读取只需要一个提供者。
+    -   写入（发送交易）需要签名者——一个拥有私钥来授权交易并支付 Gas 费用的账户。
+    -   在本地 Hardhat 上，账户已预充值。在测试网/主网，您需要真实的 ETH 或测试网 ETH。
 
 ---
 
-## 🛠️ Lab Practice: Contract Interaction with Hardhat Console
+## 🛠️ 实验实践：使用 Hardhat Console 与合约交互
 
-We will now interact with the `Counter` contract that was deployed in the previous lab.
+现在我们将与上一个实验中部署的 `Counter` 合约进行交互。
 
-1. **Open Hardhat Console**
+1. **打开 Hardhat Console**
 
-    Make sure your Hardhat node is still running, then open a new terminal:
+    确保您的 Hardhat 节点仍在运行，然后打开一个新终端：
 
     ```bash
     hh console --network localhost
     ```
 
-    This gives you an interactive environment connected to the local blockchain.
+    这为您提供了一个连接到本地区块链的交互式环境。
 
-2. **Attach to the Deployed Contract**
+2. **附加到已部署的合约**
 
-    Replace the address below with the actual address printed during deployment:
+    将下面的地址替换为部署时打印的实际地址：
 
     ```javascript
     > const { ethers } = require("hardhat");
@@ -471,25 +471,25 @@ We will now interact with the `Counter` contract that was deployed in the previo
     );
     ```
 
-    Now `counter` represents the deployed contract instance.
+    现在 `counter` 代表已部署的合约实例。
 
-3. **Read the Current Count**
+3. **读取当前计数**
 
     ```javascript
     await counter.count();
 
-    //output:
+    //输出：
     // 42n
     ```
 
-    Expected result: the number you set in the constructor (e.g., `42`).
+    预期结果：您在构造函数中设置的数字（例如 `42`）。
 
-4. **Increment the Count**
+4. **增加计数**
 
     ```javascript
     tx = await counter.increment();
 
-    //output:
+    //输出：
     //ContractTransactionResponse {
     //  ...
     //  hash: '0xa6da0147e111360546d66...',
@@ -505,11 +505,11 @@ We will now interact with the `Counter` contract that was deployed in the previo
     //}
     ```
 
-    This sends a transaction. Wait for confirmation.
+    这会发送一笔交易。等待确认。
 
     ```javascript
     await tx.wait();
-    //output:
+    //输出：
     //ContractTransactionReceipt {
     //  ...
     //  transactionHash: '0xa6da0147e111360546d66...',
@@ -519,21 +519,21 @@ We will now interact with the `Counter` contract that was deployed in the previo
     //  }
     ```
 
-5. **Verify the New Count**
+5. **验证新计数**
 
     ```javascript
     await counter.count();
     // 43n
     ```
 
-    Expected result: the previous value plus one.
+    预期结果：之前的值加一。
 
-## 🛠️ Lab Practice: Contract Interaction with JavaScript
+## 🛠️ 实验实践：使用 JavaScript 与合约交互
 
-While the Hardhat console is useful for quick experimentation, in real projects you will typically interact with contracts through JavaScript scripts. Let’s write a simple script to read and update the `Counter` contract.
+虽然 Hardhat 控制台对快速实验很有用，但在实际项目中，您通常通过 JavaScript 脚本与合约交互。让我们编写一个简单的脚本来读取和更新 `Counter` 合约。
 
-1. **Create the Script File**
-   Inside the `scripts` directory, create a file named `interact.js`:
+1. **创建脚本文件**
+   在 `scripts` 目录中，创建一个名为 `interact.js` 的文件：
 
     ```javascript
     const { ethers } = require("hardhat");
@@ -565,39 +565,39 @@ While the Hardhat console is useful for quick experimentation, in real projects 
     });
     ```
 
-2. **Run the Script**
-   Make sure your Hardhat node is running in one terminal and run the following command in another terminal:
+2. **运行脚本**
+   确保您的 Hardhat 节点在一个终端中运行，在另一个终端中运行以下命令：
 
     ```bash
     hh run scripts/interact.js --network localhost
 
-     ## output:
+     ## 输出：
      # Current count: 44
      # Updated count: 45
     ```
 
 ---
 
-## 6. Testing a Contract
+## 6. 测试合约
 
-So far, you have deployed a contract and interacted with it manually through the console and JavaScript scripts. This works, but it’s already becoming clear how **cumbersome** the process is:
+到目前为止，您已经部署了一个合约并通过控制台和 JavaScript 脚本手动与它交互。这可以工作，但已经变得清楚**繁琐**的程度：
 
--   You need to start a local node.
--   Run a deployment script.
--   Copy and paste the contract address.
--   Manually call functions and check results.
+-   您需要启动一个本地节点。
+-   运行部署脚本。
+-   复制并粘贴合约地址。
+-   手动调用函数并检查结果。
 
-For a simple counter, this is still manageable. But for more complex contracts, repeating these steps quickly becomes **time-consuming and error-prone**.
+对于一个简单的计数器，这仍然可以管理。但对于更复杂的合约，重复这些步骤很快就会变得**耗时且容易出错**。
 
-This is exactly why automated testing is essential. By writing test scripts, you can:
+这正是自动化测试至关重要的原因。通过编写测试脚本，您可以：
 
--   Automatically deploy fresh contract instances for each test.
--   Run multiple checks in seconds.
--   Ensure your contract behaves consistently every time.
+-   为每个测试自动部署新的合约实例。
+-   在几秒内运行多个检查。
+-   确保您的合约每次都表现一致。
 
-Hardhat provides a testing framework that creates temporary blockchain environments for each test, eliminating manual verification and ensuring reproducible results. Tests automatically deploy fresh contract instances and use assertions to verify expected behavior.
+Hardhat 提供了一个测试框架，为每个测试创建临时的区块链环境，消除了手动验证并确保可重现的结果。测试自动部署新的合约实例，并使用断言来验证预期行为。
 
-Let's examine the structure of a proper test script, similar to how we analyzed contract anatomy:
+让我们检查一个 proper 测试脚本的结构，类似于我们分析合约结构的方式：
 
 ```javascript
 const { expect } = require("chai");
@@ -620,41 +620,41 @@ describe("Counter", function () {
 });
 ```
 
-**Understanding each component:**
+**理解每个组件：**
 
--   **1. Import Statements**
+-   **1. 导入语句**
 
     ```javascript
     const { expect } = require("chai");
     const { ethers } = require("hardhat");
     ```
 
-    -   **chai**: Assertion library for making test expectations
-    -   **ethers**: Library for interacting with Ethereum contracts
-    -   **hardhat**: Development environment providing testing utilities
+    -   **chai**：用于进行测试期望的断言库
+    -   **ethers**：用于与以太坊合约交互的库
+    -   **hardhat**：提供测试工具的开发环境
 
--   **2. Test Suite Declaration**
+-   **2. 测试套件声明**
 
     ```javascript
     describe("Counter", function () {
     ```
 
-    -   **describe()**: Groups related tests together
-    -   **"Counter"**: Descriptive name for the test suite
-    -   **Function scope**: Contains all tests for this contract
+    -   **describe()**：将相关测试分组
+    -   **"Counter"**：测试套件的描述性名称
+    -   **函数作用域**：包含此合约的所有测试
 
--   **3. Test Variables**
+-   **3. 测试变量**
 
     ```javascript
     let counter;
     let owner;
     ```
 
-    -   **Shared variables**: Available to all tests in the suite
-    -   **let declaration**: Allows reassignment in setup functions
-    -   **Scope**: Accessible within the describe block
+    -   **共享变量**：对套件中的所有测试可用
+    -   **let 声明**：允许在设置函数中重新赋值
+    -   **作用域**：在 describe 块内可访问
 
--   **4. Setup Hook**
+-   **4. 设置钩子**
 
     ```javascript
     beforeEach(async function () {
@@ -665,12 +665,12 @@ describe("Counter", function () {
     });
     ```
 
-    -   **beforeEach()**: Runs before each individual test
-    -   **Fresh instance**: Creates new contract for every test
-    -   **Test isolation**: Ensures tests don't affect each other
-    -   **Clean state**: Each test starts with known initial conditions
+    -   **beforeEach()**：在每个单独测试之前运行
+    -   **新实例**：为每个测试创建新合约
+    -   **测试隔离**：确保测试不会相互影响
+    -   **干净状态**：每个测试从已知的初始条件开始
 
--   **5. Individual Tests**
+-   **5. 单独测试**
 
     ```javascript
     it("Should set the initial count correctly", async function () {
@@ -678,36 +678,36 @@ describe("Counter", function () {
     });
     ```
 
-    -   **it()**: Defines a single test case
-    -   **Descriptive name**: Explains what the test verifies
-    -   **expect()**: Makes assertions about expected behavior
-    -   **Async/await**: Handles blockchain interactions properly
+    -   **it()**：定义一个单独的测试用例
+    -   **描述性名称**：解释测试验证的内容
+    -   **expect()**：对预期行为进行断言
+    -   **Async/await**：正确处理区块链交互
 
 ---
 
-## 🛠️ Lab Practice: Testing the Contract
+## 🛠️ 实验实践：测试合约
 
-NOTE: This lab does not require starting a Hardhat node. If you have one running, you can stop it.
+注意：此实验不需要启动 Hardhat 节点。如果有一个正在运行，您可以停止它。
 
--   **Create a `test` directory**
+-   **创建 `test` 目录**
 
-    This directory will be used to store the test scripts
+    此目录用于存储测试脚本
 
     ```bash
     mkdir test
     ```
 
--   **Install `chai` package**
+-   **安装 `chai` 包**
 
-    This package will be used for contract testing.
+    此包将用于合约测试。
 
     ```bash
     npm i -D chai
     ```
 
--   **Create the Test File**
+-   **创建测试文件**
 
-    Create `test/test-counter.js`:
+    创建 `test/test-counter.js`：
 
     ```javascript
     const { expect } = require("chai");
@@ -732,12 +732,12 @@ NOTE: This lab does not require starting a Hardhat node. If you have one running
     });
     ```
 
--   **Run the Tests**
+-   **运行测试**
 
     ```bash
     hh test test/test-counter.js
 
-     # output:
+     # 输出：
      # Counter
      #   ✓ Should set the initial count correctly (123ms)
      #   ✓ Should increment the count by 1 (72ms)
@@ -745,4 +745,4 @@ NOTE: This lab does not require starting a Hardhat node. If you have one running
      # 2 passing (303ms)
     ```
 
--   **Task completed ✅**
+-   **任务完成 ✅**

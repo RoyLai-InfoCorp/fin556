@@ -1,27 +1,27 @@
-## 🛠️ Lab Practise: IPFS
+## 🛠️ 实验实践：IPFS
 
-IPFS (InterPlanetary File System) is a peer-to-peer distributed file system that seeks to connect all computing devices with the same system of files. In other words, IPFS is a decentralized storage and sharing solution that allows users to host and access content in a distributed manner without relying on a central server. Why IPFS matters in blockchain is because it is an important component in the decentralized web (Web3) ecosystem handling off-chain data storage and sharing.
+IPFS（星际文件系统）是一个点对点的分布式文件系统，旨在将所有计算设备与相同的文件系统连接起来。换句话说，IPFS是一种去中心化的存储和共享解决方案，允许用户以分布式方式托管和访问内容，而不依赖于中央服务器。IPFS在区块链中很重要的原因是，它是去中心化网络（Web3）生态系统中处理链下数据存储和共享的重要组成部分。
 
-For example, in NFT applications, the actual digital assets (images, videos, music, etc.) are typically stored off-chain using IPFS while the metadata and ownership information are stored on-chain. This is because storing large files directly on the blockchain is inefficient and costly.
+例如，在NFT应用中，实际的数字资产（图像、视频、音乐等）通常使用IPFS存储在链下，而元数据和所有权信息存储在链上。这是因为直接在区块链上存储大文件效率低下且成本高昂。
 
-In the case of DApps, IPFS can be used to host the frontend code (HTML, CSS, JavaScript) of the application, allowing users to access the DApp without relying on a centralized web server.
+在DApp的情况下，IPFS可用于托管应用程序的前端代码（HTML、CSS、JavaScript），允许用户无需依赖集中式Web服务器即可访问DApp。
 
-In this part of the lab, you will learn how to install and run an IPFS node locally, and then we will explore how to deploy a DApp to IPFS in the next lab practise.
+在本实验的这一部分中，您将学习如何在本地安装和运行IPFS节点，然后我们将在下一个实验实践中探索如何将DApp部署到IPFS。
 
-### Step 1: Install and run IPFS
+### 步骤 1：安装和运行 IPFS
 
-📌 You need to run this step in **Windows Terminal or terminal for Linux/Mac, not from devcontainer in Visual Studio Code**
+📌 您需要此步骤在 **Windows Terminal 或 Linux/Mac 的终端中运行，而不是从 Visual Studio Code 的 devcontainer 中运行**
 
--   Open your terminal (WSL for windows and terminal for Linux/Mac).
+-   打开您的终端（Windows 使用 WSL，Linux/Mac 使用终端）。
 
--   Download the latest IPFS version (replace `v0.18.1` with the latest version if different):
+-   下载最新的 IPFS 版本（如果不同，请将 `v0.18.1` 替换为最新版本）：
 
     ```bash
     cd /tmp
     wget https://dist.ipfs.tech/kubo/v0.38.1/kubo_v0.38.1_linux-amd64.tar.gz
     ```
 
--   Extract the downloaded file and install IPFS:
+-   解压下载的文件并安装 IPFS：
 
     ```bash
     tar -xvzf kubo_v0.38.1_linux-amd64.tar.gz
@@ -29,9 +29,9 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
     sudo ./install.sh
     ```
 
-    You will be prompted for your password to authorize the installation.
+    系统将提示您输入密码以授权安装。
 
--   Verify the installation:
+-   验证安装：
 
     ```bash
     ipfs --version
@@ -39,7 +39,7 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
      # ipfs version 0.38.1
     ```
 
--   Initialize IPFS:
+-   初始化 IPFS：
 
     ```bash
     ipfs init
@@ -49,16 +49,16 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
      # initializing IPFS node at /home/vscode/.ipfs
     ```
 
--   Configure ports:
+-   配置端口：
 
-    Because the default ports used by IPFS are 5001 and 8080 which are often used by other applications, we will change them to 5501 and 48080 respectively.
+    由于 IPFS 使用的默认端口 5001 和 8080 经常被其他应用程序占用，我们将它们分别更改为 5501 和 48080。
 
     ```bash
     ipfs config Addresses.API /ip4/0.0.0.0/tcp/5501
     ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/48080
     ```
 
--   Start the IPFS daemon:
+-   启动 IPFS 守护进程：
 
     ```bash
     ipfs daemon
@@ -69,21 +69,21 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
         # Daemon is ready
     ```
 
--   Open Windows browser and navigate to `http://127.0.0.1:5501/webui` to access the IPFS WebUI.
+-   打开 Windows 浏览器并导航到 `http://127.0.0.1:5501/webui` 以访问 IPFS WebUI。
 
     ![IPFS WebUI](./img/ipfs.png)
 
-### Step 2: Add and retrieve files from IPFS
+### 步骤 2：从 IPFS 添加和检索文件
 
--   **Go to /tmp directory**
+-   **转到 /tmp 目录**
 
     ```bash
     cd /tmp
     ```
 
--   **Add a file to IPFS**
+-   **向 IPFS 添加文件**
 
-    Create a sample text file and add it to IPFS.
+    创建一个示例文本文件并将其添加到 IPFS。
 
     ```bash
     echo "this is a test" > demo.txt
@@ -92,11 +92,11 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
         # added QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR demo.txt
     ```
 
-    Take note of the hash (CID) returned by the command (e.g., `QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR`).
+    请记下命令返回的哈希值（CID）（例如 `QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR`）。
 
--   **Retrieve the file via IPFS CLI**
+-   **通过 IPFS CLI 检索文件**
 
-    Use the CID to retrieve the file from IPFS.
+    使用 CID 从 IPFS 检索文件。
 
     ```bash
     ipfs cat QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR
@@ -104,11 +104,11 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
         # Hello, IPFS!
     ```
 
--   **Retrieve files via IPFS local gateway**
+-   **通过 IPFS 本地网关检索文件**
 
-    You can also access the file via the local IPFS gateway using a web browser.
+    您也可以使用 Web 浏览器通过本地 IPFS 网关访问文件。
 
-    Open your browser and navigate to the following URL, replacing `<CID>` with the actual CID from the previous step.
+    打开浏览器并导航到以下 URL，将 `<CID>` 替换为上一步中的实际 CID。
 
     ```bash
     http://localhost:48080/ipfs/<CID>
@@ -117,11 +117,11 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
         # http://localhost:48080/ipfs/QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR
     ```
 
--   **Retrieve files via IPFS public gateway**
+-   **通过 IPFS 公共网关检索文件**
 
-    You can also access the file via a public IPFS gateway using a web browser.
+    您也可以使用 Web 浏览器通过公共 IPFS 网关访问文件。
 
-    Open your browser and navigate to the following URL, replacing `<CID>` with the actual CID from the previous step.
+    打开浏览器并导航到以下 URL，将 `<CID>` 替换为上一步中的实际 CID。
 
     ```bash
     https://dweb.link/ipfs/<CID>
@@ -130,10 +130,10 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
         # https://dweb.link/ipfs/QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR
     ```
 
-    📌 NOTE: If the instruction
-    The instructions may not work if your IPFS node is not connected to the IPFS network or if the content is not being hosted by any other peers. Usually this process is automatic but sometimes it may take a while for the content to propagate through the network. To access your local IPFS content via a public IPFS gateway, you need to connect your IPFS node to the IPFS network and announce that you are hosting the content. You can do this by connecting to a well-known IPFS peer and providing the content.
+    📌 注意：如果说明
+    如果您的 IPFS 节点未连接到 IPFS 网络，或者没有任何其他对等方托管内容，这些说明可能无法正常工作。通常此过程是自动的，但有时内容通过网络传播可能需要一些时间。要通过公共 IPFS 网关访问您的本地 IPFS 内容，您需要将 IPFS 节点连接到 IPFS 网络并宣布您正在托管该内容。您可以通过连接到知名的 IPFS 对等方并提供内容来做到这一点。
 
-    -   Find a well-known IPFS peer
+    -   找到知名的 IPFS 对等方
 
         ```bash
         ipfs swarm peers
@@ -145,17 +145,17 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
             # ...
         ```
 
-    -   Connect to the peer and provide the content
-        Run the command `ipfs swarm connect` using any one of the peer addresses obtained from the previous step
+    -   连接到对等方并提供内容
+        运行命令 `ipfs swarm connect`，使用从上一步获得的任何对等方地址
         ipfs swarm connect /ip4/<peer-ip>/tcp/<peer-port>/p2p/<peer-id>
-        For example:
+        例如：
 
         ```bash
          # ipfs swarm connect /ip4/103.169.127.232/udp/4001/quic-v1/p2p/12D3KooWBdF3g6vSJFRPoZQo7BNnkNzaWb59gpyaVzsgtNTVeu8H
         ```
 
-    -   Announce that you are hosting the content
-        Use the command `ipfs routing provide <CID>` to announce that you are hosting the content with the given CID. For example:
+    -   宣布您正在托管内容
+        使用命令 `ipfs routing provide <CID>` 宣布您正在托管具有给定 CID 的内容。例如：
 
         ```bash
          # ipfs routing provide QmYi7wrRFKVCcTB56A6Pep2j31Q5mHfmmu21RzHXu25RVR
@@ -163,41 +163,41 @@ In this part of the lab, you will learn how to install and run an IPFS node loca
 
 ---
 
-## 🛠️ Lab Practise: Deploy DApp to IPFS
+## 🛠️ 实验实践：将 DApp 部署到 IPFS
 
-You have successfully built a DApp for swapping tokens using a Uniswap DEX protocol and now you want to share it with the world.
-In this lab practise, you will learn how to deploy and host your DApp without needing a public web server.
+您已成功构建了一个使用 Uniswap DEX 协议进行代币交换的 DApp，现在您想与全世界分享。
+在本实验实践中，您将学习如何在不需要公共 Web 服务器的情况下部署和托管您的 DApp。
 
-The way to achieve this is to convert your DApp into a static file and host it on a file server for download. You can even send the compressed static file to your friends by email or messaging apps barring any security restrictions. The point is that the DApp can run entirely on browser without a web server backend. The reason this works is because the DApp interacts with the blockchain node directly with your Metamask wallet as the signer and does not need any server-side code.
+实现这一目标的方法是将您的 DApp 转换为静态文件并托管在文件服务器上供下载。您甚至可以通过电子邮件或消息应用程序发送压缩的静态文件（前提是没有安全限制）。关键是 DApp 完全可以仅在浏览器中运行，无需 Web 服务器后端。之所以可以这样工作，是因为 DApp 直接与区块链节点交互，以您的 Metamask 钱包作为签名器，不需要任何服务器端代码。
 
-📌 The project directory is structured such that the Dapp directory (fin556-dapp) is within the project directory (16-dapp-deployment).
-Since both fin556-dapp and 16-dapp-deployment have their own package.json files, you need to make sure you are in the correct directory when installing dependencies or running scripts.
+📌 项目目录的结构使得 Dapp 目录（fin556-dapp）在项目目录（16-dapp-deployment）内。
+由于 fin556-dapp 和 16-dapp-deployment 都有自己的 package.json 文件，您需要在安装依赖或运行脚本时确保在正确的目录中。
 
-### Step 1: Build the DApp for deployment
+### 步骤 1：为部署构建 DApp
 
-📌 Run the following from **from devcontainer in Visual Studio Code**
+📌 **从 Visual Studio Code 的 devcontainer 中运行以下步骤**
 
--   **Copy DApp from previous lab**
+-   **从之前的实验复制 DApp**
 
-    Copy the React directory in the sample directory of previous lab.
+    将之前实验的示例目录中的 React 目录复制过来。
 
     ```bash
     cd /workspace/day-5/16-ipfs/
     cp -rp /workspace/day-4/15-dapp/sample/fin556-dapp .
     ```
 
--   **Go to the DApp directory and install dependencies**
+-   **进入 DApp 目录并安装依赖**
 
     ```bash
     cd fin556-dapp
     npm i
     ```
 
--   **Configure vite.config.js**
+-   **配置 vite.config.js**
 
-    When you deploy your DApp to IPFS, the site won’t load correctly unless all file paths are relative (not starting with /). To fix this, you need to set a base path in vite.config.js.
+    当您将 DApp 部署到 IPFS 时，除非所有文件路径都是相对的（不以 / 开头），否则站点将无法正确加载。为此，您需要在 vite.config.js 中设置基础路径。
 
-    Open `vite.config.js` and modify it as follows:
+    打开 `vite.config.js` 并按如下方式进行修改：
 
     ```js
     import { defineConfig } from "vite";
@@ -210,9 +210,9 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
     });
     ```
 
--   **Build the Production Bundle**
+-   **构建生产包**
 
-    Make sure you are in your DApp
+    确保您在 DApp 目录中
 
     ```bash
     npm run build
@@ -222,7 +222,7 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
 
      # vite v7.1.11 building for production...
      # ✓ 1051 modules transformed.
-     # dist/index.html                  0.35 kB │ gzip:   0.25 kB
+     # dist/index.html                  0.35 kB │ gzip: 0.25 kB
      # dist/assets/index-CMmGqaf8.js  642.94 kB │ gzip: 216.67 kB
      #
      # (!) Some chunks are larger than 500 kB after minification. Consider:
@@ -232,15 +232,15 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
      # ✓ built in 3.79s
     ```
 
-    This will create a `dist` directory in the `fin556-dapp` folder containing just a file `index.html` and an `assets` folder.
+    这将在 `fin556-dapp` 文件夹中创建一个 `dist` 目录，其中仅包含一个文件 `index.html` 和一个 `assets` 文件夹。
 
-### Step 2. Deploy DApp to IPFS
+### 步骤 2. 将 DApp 部署到 IPFS
 
-📌 You need to run this step in **Windows Terminal or terminal for Linux/Mac, not from devcontainer in Visual Studio Code**
+📌 您需要此步骤在 **Windows Terminal 或 Linux/Mac 的终端中运行，而不是从 Visual Studio Code 的 devcontainer 中运行**
 
--   **Start the IPFS daemon**
+-   **启动 IPFS 守护进程**
 
-    If you have started the IPFS daemon in the previous lab practise, you can stop it using `Ctrl+C` and restart it again to make sure it is running properly.
+    如果您在之前的实验实践中已经启动了 IPFS 守护进程，可以使用 `Ctrl+C` 停止它，然后重新启动以确保它正常运行。
 
     ```bash
     ipfs daemon
@@ -251,9 +251,9 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
         # Daemon is ready
     ```
 
--   **Add your DApp to IPFS**
+-   **将您的 DApp 添加到 IPFS**
 
-    Make sure you are in the DApp directory
+    确保您在 DApp 目录中
 
     ```bash
     cd ~/course/FIN556/day-5/16-ipfs/fin556-dapp
@@ -268,12 +268,12 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
 
     ```
 
-    Take note of the last hash output by the command (e.g. QmeBXKDYaPwZ2o9bNonp7FTvnYyeby2JBUYcDPURztC9qo in the sample output).
-    That is the content identifier (CID) for your DApp on IPFS.
+    请记下命令输出的最后一个哈希值（例如示例输出中的 QmeBXKDYaPwZ2o9bNonp7FTvnYyeby2JBUYcDPURztC9qo）。
+    这是您的 DApp 在 IPFS 上的内容标识符（CID）。
 
--   **Access your DApp via Local IPFS Gateway**
+-   **通过本地 IPFS 网关访问您的 DApp**
 
-    Open your browser and navigate to the following URL, replacing `<CID>` with the actual CID from the previous step.
+    打开浏览器并导航到以下 URL，将 `<CID>` 替换为上一步中的实际 CID。
 
     ```bash
     http://127.0.0.1:48080/ipfs/<CID>
@@ -282,9 +282,9 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
      # http://127.0.0.1:48080/ipfs/QmeBXKDYaPwZ2o9bNonp7FTvnYyeby2JBUYcDPURztC9qo
     ```
 
--   **Access your DApp via Public IPFS Gateway**
+-   **通过公共 IPFS 网关访问您的 DApp**
 
-    Advertise your DApp to the world by accessing it via a public IPFS gateway.
+    通过公共 IPFS 网关访问您的 DApp，向全世界宣传。
 
     ```bash
     ipfs routing provide <CID>
@@ -293,7 +293,7 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
      # ipfs routing provide QmeBXKDYaPwZ2o9bNonp7FTvnYyeby2JBUYcDPURztC9qo
     ```
 
-    Open your browser and navigate to the following URL, replacing `<CID>` with the actual CID from the previous step.
+    打开浏览器并导航到以下 URL，将 `<CID>` 替换为上一步中的实际 CID。
 
     ```bash
     https://dweb.link/ipfs/<CID>
@@ -302,9 +302,9 @@ Since both fin556-dapp and 16-dapp-deployment have their own package.json files,
      # https://dweb.link/ipfs/QmeBXKDYaPwZ2o9bNonp7FTvnYyeby2JBUYcDPURztC9qo
     ```
 
-### Step 3. Using the DApp with Local Hardhat Node
+### 步骤 3. 将 DApp 与本地 Hardhat 节点一起使用
 
-Once you reach this step, you have successfully deployed your DApp to IPFS and can access it via both local and public IPFS gateways.
-In order to use it, you will need to start up a local Hardhat blockchain node, deploy the smart contracts and connect your Metamask wallet to it.
+完成此步骤后，您已成功将 DApp 部署到 IPFS，可以通过本地和公共 IPFS 网关访问它。
+要使用它，您需要启动本地 Hardhat 区块链节点，部署智能合约，并将您的 Metamask 钱包连接到它。
 
-You can refer to the previous lab 15-dapp/d-dapp-network/README.md for detailed instructions on how to set up the local Hardhat node and deploy the smart contracts.
+您可以参考之前的实验 15-dapp/d-dapp-network/README.md，了解如何设置本地 Hardhat 节点和部署智能合约的详细说明。

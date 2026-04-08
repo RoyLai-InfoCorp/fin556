@@ -1,258 +1,258 @@
-# MultiChain - Part 1
+# 多链 - 第 1 部分
 
-**NOTE:** This lesson must run entirely from the **terminal**(ie. Windows Terminal or the macOS Terminal application), not from within a **devcontainer.**
+**注意：** 本课程必须完全从**终端**运行（即 Windows Terminal 或 macOS Terminal 应用程序），而不是从 **devcontainer** 中运行。
 
-**NOTE:** This markdown makes extensive use **Mermaid Diagrams**. Please install Visual Studio Code extension **"Markdown Preview Mermaid Support"(bierner.markdown-mermaid)** and read this file in Preview mode.
+**注意：** 本文档大量使用 **Mermaid 图表**。请安装 Visual Studio Code 扩展 **"Markdown Preview Mermaid Support"(bierner.markdown-mermaid)** 并在预览模式下阅读此文件。
 
-## Purpose
+## 目的
 
-This lesson builds upon the previous course on **Ethereum Blockchain and Solidity Programming**. Its objective is to expand your understanding of blockchain technology beyond Ethereum — to help you appreciate the **diversity of blockchain designs** and their relationship to the Bitcoin protocol, using MultiChain as the primary learning platform.
+本课程建立在之前 **以太坊区块链和 Solidity 编程**课程的基础上。其目标是扩展您对区块链技术的理解，超越以太坊——帮助您了解**区块链设计的多样性**及其与比特币协议的关系，以 MultiChain 作为主要学习平台。
 
-While blockchain technology was originally _created by techies for techies_, this lesson aims to present the underlying technical concepts in a clear and accessible way, so that even readers without a deep technical background can follow and gain meaningful insight into how blockchain systems work.
+虽然区块链技术最初是_由技术人员为技术人员创建的_，但本课程旨在以清晰易懂的方式呈现底层技术概念，使即使没有深厚技术背景的读者也能理解并获得对区块链系统工作原理的有意义见解。
 
-## 1. References
+## 1. 参考资料
 
 https://www.multichain.com/developers/
 https://github.com/MultiChain/multichain
 
 ---
 
-## 2. Blockchain Primer
+## 2. 区块链入门
 
-### a) Double Spending Problem
+### a) 双重支付问题
 
-Let’s begin by revisiting the fundamental problem that blockchains were designed to solve.
+让我们从回顾区块链设计要解决的根本问题开始。
 
 ![double-spend](./img/double-spend.png)
 
-At its core, every blockchain exists to prevent the double spending problem — the risk of the same digital asset being spent more than once.
+从根本上说，每个区块链的存在都是为了防止双重支付问题——同一数字资产被多次花费的风险。
 
-Unlike in the physical world, where money or goods cannot be duplicated, digital data can be copied and sent repeatedly. For example, you can easily send the same email to both Alice and Bob at the same time.
+与物理世界不同，货币或商品不能被复制，而数字数据可以被重复复制和发送。例如，您可以轻松地同时将同一封电子邮件发送给 Alice 和 Bob。
 
-However, this is unacceptable in a payment system. If you only have ten dollars, you must be able to send it to either Bob or Alice — but never both. Ensuring this rule is enforced without relying on a central authority is precisely the challenge that blockchain technology addresses.
+然而，这在支付系统中是不可接受的。如果您只有十美元，您必须能够将其发送给 Bob 或 Alice——但绝不能同时发送给两者。确保这一规则得到执行而不依赖中央权威正是区块链技术要解决的挑战。
 
 ![burglar](./img/burglar.png)
 
-The conventional solution to the **double spending problem** is to rely on a **trusted third party** that maintains a **centralized ledger** to record and verify all transactions. This ledger keeps track of each participant’s balance, ensuring that the same funds cannot be spent twice.
+**双重支付问题**的传统解决方案是依赖**可信第三方**，该第三方维护**集中式账本**来记录和验证所有交易。该账本追踪每个参与者的余额，确保相同资金不能被花费两次。
 
-However, this approach introduces a critical limitation — **lack of transparency**. Users cannot independently verify everyone’s balances and must therefore trust that the central authority is managing accounts honestly and accurately.
+然而，这种方法引入了一个关键限制——**缺乏透明度**。用户无法独立验证每个人的余额，因此必须相信中央权威机构诚实准确地管理账户。
 
-While such trust is often taken for granted, it comes with inherent risks: if the trusted intermediary fails, becomes insolvent, or acts dishonestly, users may lose access to their funds.
+虽然这种信任通常是理所当然的，但它存在固有风险：如果可信中介失败、破产或不诚实行事，用户可能会失去对其资金的访问权限。
 
 ![cent-dec](./img/cent-dec.png)
 
-Examples of widely recognized trusted third parties include **central banks**, **commercial banks**, **cheque clearing houses**, **PayPal**, and **WeChat Pay**. These institutions are generally deemed reliable because society assumes that if you cannot trust them, _there is no one else you can_.
-Yet, history has shown that even the most reputable entities are not immune to failure or mismanagement — reminding us that trust is not the same as certainty.
+广泛认可的可信第三方示例包括**中央银行**、**商业银行**、**支票清算所**、**PayPal** 和**微信支付**。这些机构通常被认为是可靠的，因为社会假设如果您不能信任它们，_就没有其他人可以信任了_。
+然而，历史表明，即使是最有声望的实体也不能免于失败或管理不善——提醒我们信任不等于确定性。
 
-### b) Byzantine General's Problem.
+### b) 拜占庭将军问题
 
-Ideally, we want to solve the double spending problem without relying on trust or a centralized third party. This is known as a trustless system, and it represents the primary goal of blockchain technology.
+理想情况下，我们希望在不依赖信任或中央第三方的情况下解决双重支付问题。这被称为无信任系统，它代表了区块链技术的主要目标。
 
-However, achieving a truly trustless system is not straightforward. It requires addressing a fundamental challenge in distributed computing known as the Byzantine Generals Problem (BGP) — a classic computer science problem that illustrates the difficulty of achieving consensus among distributed nodes (or participants) that may fail, miscommunicate, or act maliciously.
+然而，实现真正的无信任系统并不简单。它需要解决分布式计算中一个称为拜占庭将军问题（BGP）的基本挑战——这是一个经典的计算机科学问题，说明了在可能失败、沟通错误或恶意行为的分布式节点（或参与者）之间达成共识的困难。
 
-**ELI5:**
+**ELI5（简单解释）：**
 
--   Imagine you and your friends are playing a game where you have to attack and capture a castle. But there's a catch - you are all generals and you can only communicate with each other through messengers. Some of the generals might be traitors who want to ruin the game and give the wrong orders.
+-   想象您和您的朋友正在玩一个必须攻击和占领城堡的游戏。但有一个问题——你们都是将军，只能通过信使相互交流。一些将军可能是叛徒，想要破坏游戏并发出错误的命令。
 
     ![bgp](./img/bgp.png)
 
--   The problem is that if the generals don't agree on the same plan and some follow the traitorous generals' orders while others follow the loyal ones, the attack will fail and everyone will lose the game.
+-   问题是，如果将军们不同意同一个计划，有些人遵循叛徒将军的命令，而另一些人遵循忠诚者的命令，攻击就会失败，每个人都会输掉游戏。
 
--   So, how do you make sure that all the generals agree on a single plan, even if some of them are saying different things? This is the challenge known as the Byzantine General's Problem.
-
----
-
-### c) Distributed Consensus Problem
-
-In essence, the Byzantine Generals Problem highlights the difficulty of achieving agreement in a network where participants cannot fully trust one another.
-
-Translating this challenge into real-world distributed systems reveals an even deeper problem: when one node communicates with another, it has no inherent way to verify whether the received message is correct, altered, or even genuine — unless there is a mechanism to cross-validate it with other nodes.
-
-Moreover, in a distributed environment without a centralized clock or coordinator, it becomes impossible to know whether a missing message is simply delayed, never sent, or lost due to a network failure. This uncertainty can lead to issues such as missing, duplicated, or unverifiable messages — all of which complicate the process of maintaining a consistent and reliable state across the network.
+-   那么，您如何确保所有将军都同意一个计划，即使其中一些人在说不同的事情？这就是被称为拜占庭将军问题的挑战。
 
 ---
 
-### d) Mining
+### c) 分布式共识问题
 
-There are various approaches to solving the Byzantine Generals Problem (BGP), but most are cost-prohibitive and limited to small, low-latency networks with relatively few nodes. Each approach involves trade-offs, which will be discussed in the following sections.
+从本质上讲，拜占庭将军问题突出了在参与者无法完全信任彼此的网络中达成一致的困难。
 
-Among these, **Bitcoin** stands out as the first system to achieve a _practical_, _global-scale_ solution to **BGP** using **commodity hardware**—representing a major breakthrough in decentralized consensus.
+将这一挑战转化为现实世界的分布式系统，会揭示一个更深层次的问题：当一个节点与另一个节点通信时，它没有固有方式来验证收到的消息是否正确、被篡改甚至是真实的——除非有一种机制可以与其他节点交叉验证。
 
-The security of Bitcoin’s peer-to-peer blockchain network depends on having sufficient nodes participating in the consensus process. To incentivize participation and protect the network from attacks, Bitcoin introduces an artificial reward mechanism that grants newly created coins to nodes that successfully publish a valid block to the blockchain.
+此外，在没有中央时钟或协调者的分布式环境中，无法知道丢失的消息是仅仅延迟了、从未发送还是因网络故障而丢失。这种不确定性可能导致消息丢失、重复或无法验证等问题——所有这些都使维护整个网络一致和可靠状态的过程变得复杂。
 
-This reward mechanism gave rise to the process known as mining, through which new bitcoins are created and network security is maintained. The underlying consensus protocol enabling this is known as **proof-of-work (PoW)**.
+---
+
+### d) 挖矿
+
+有多种方法可以解决拜占庭将军问题（BGP），但大多数成本高昂，且仅限于节点相对较少的小型低延迟网络。每种方法都涉及权衡，将在以下部分讨论。
+
+在其中，**比特币**是第一个使用**商品硬件**实现 BGP 的_实用化_、_全球规模_解决方案的系统——代表了去中心化共识的重大突破。
+
+比特币点对点区块链网络的安全性取决于有足够多的节点参与共识过程。为了激励参与并保护网络免受攻击，比特币引入了一种人为奖励机制，向成功向区块链发布有效区块的节点授予新创建的币。
+
+这种奖励机制产生了称为挖矿的过程，通过这个过程创建新的比特币并维护网络安全。实现这一点的底层共识协议称为**工作量证明（PoW）**。
 
 ![miners](./img/miners.png)
 
-### e) Validation
+### e) 验证
 
-In a private blockchain, the risk of a Sybil attack is low because each node is authenticated and operated under centralized control. In such environments, the incentive to maintain and secure the network arises from the consortium’s shared business objectives rather than external economic rewards.
+在私有区块链中，女巫攻击的风险很低，因为每个节点都经过认证并在中央控制下运行。在这种环境中，维护和保护网络的动力来自联盟的共同业务目标，而不是外部经济奖励。
 
-Consequently, there is no need for an artificial incentive mechanism like mining or for creating a native cryptocurrency to reward participants. Instead of relying on the proof-of-work (PoW) consensus used in public blockchains, authenticated networks typically employ a proof-of-authority (PoA) protocol, where trusted validators are pre-approved to create and verify blocks.
+因此，不需要像挖矿这样的人为激励机制，也不需要创建原生加密货币来奖励参与者。认证网络不依赖公有区块链中使用的工作量证明（PoW）共识，而是通常采用权威证明（PoA）协议，其中可信验证者被预先批准来创建和验证区块。
 
-The term validator is not exclusive to private blockchains. For example, after the Merge, Ethereum transitioned from a PoW to a proof-of-stake (PoS) consensus model, in which validators replace miners. These validators are selected based on the amount of cryptocurrency they stake as collateral, earning rewards for honest participation and facing penalties for malicious behavior.
+验证者一词并非私有区块链独有。例如，合并之后，以太坊从 PoW 过渡到权益证明（PoS）共识模型，其中验证者取代了矿工。这些验证者根据他们作为抵押品质押的加密货币数量被选中，因诚实参与而获得奖励，并因恶意行为而面临惩罚。
 
-### f) Turing Completeness
+### f) 图灵完备性
 
-In the world of blockchain, transactions can be compared to locks and keys in the physical world. Just as we use different types of locks and keys to secure valuables, blockchain networks use scripts—mathematical expressions that act as digital locks and keys—to secure and validate transactions.
+在区块链世界中，交易可以比作物理世界中的锁和钥匙。就像我们使用不同类型的锁和钥匙来保护贵重物品一样，区块链网络使用脚本——充当数字锁和钥匙的数学表达式——来保护和验证交易。
 
 ![locks](./img/locks.png)
 
-Each blockchain transaction is implemented using a mathematical lock, created through the scripting language defined by the protocol. The sender’s script acts as the lock, specifying the conditions required to spend the transaction, while the recipient’s script acts as the key, fulfilling those conditions to unlock the funds.
+每个区块链交易都是使用数学锁实现的，通过协议定义的脚本语言创建。发送者的脚本充当锁，指定花费交易所需的条件，而接收者的脚本充当钥匙，满足这些条件来解锁资金。
 
-The **expressiveness** of this scripting language determines the blockchain’s Turing completeness—that is, whether it can represent any computation that a general-purpose computer can perform.
+这种脚本语言的**表达能力**决定了区块链的图灵完备性——即它是否能表示通用计算机可以执行的任何计算。
 
-The rationale behind supporting or limiting Turing completeness lies in the trade-off between flexibility and security.
+支持或限制图灵完备性的理由在于灵活性和安全性之间的权衡。
 
-Non–Turing complete systems like Bitcoin emphasize simplicity and safety, while Turing complete systems like Ethereum emphasize programmability and flexibility, enabling complex decentralized applications but at the cost of increased risk of bugs and vulnerabilities.
+像比特币这样的非图灵完备系统强调简单性和安全性，而像以太坊这样的图灵完备系统强调可编程性和灵活性，支持复杂的去中心化应用程序，但以增加错误和漏洞风险为代价。
 
--   **Non-Turing Complete**
+-   **非图灵完备**
 
-    If the scripting language lacks constructs such as loops or conditional branching, the blockchain is non–Turing complete—as seen in Bitcoin.
+    如果脚本语言缺乏循环或条件分支等构造，区块链就是非图灵完备的——如比特币所示。
 
     ![non-turing-complete](./img/non-turing-complete.png)
 
-    A non–Turing complete blockchain can be thought of as a global calculator. It performs limited, well-defined operations using a restricted instruction set, which minimizes the potential for error and malicious behavior. While this restricts versatility, it enhances stability and predictability. These systems are ideal for specialized, transaction-focused use cases—and their continued success, as with Bitcoin, proves their lasting relevance.
+    非图灵完备区块链可以被视为全球计算器。它使用受限指令集执行有限的、定义明确的操作，最大限度地减少了错误和恶意行为的可能性。虽然这限制了多功能性，但增强了稳定性和可预测性。这些系统是专门的、专注于交易的用例的理想选择——它们的持续成功（如比特币所示）证明了它们的持久相关性。
 
--   **Turing Complete**
+-   **图灵完备**
 
-    Conversely, a blockchain is Turing complete if its scripting language supports constructs like loops and conditionals, as in Ethereum. Ethereum is often described as a global computer, capable of executing arbitrary code through smart contracts.
+    相反，如果区块链的脚本语言支持循环和条件等构造（如以太坊），则它是图灵完备的。以太坊通常被描述为一台全球计算机，能够通过智能合约执行任意代码。
 
-    This flexibility allows developers to build complex decentralized applications, but it also increases the risk of introducing vulnerabilities or inefficiencies into the system.
+    这种灵活性允许开发者构建复杂的去中心化应用程序，但也增加了在系统中引入漏洞或低效率的风险。
 
-    Thus, while Turing complete systems enable innovation and diverse use cases, they demand greater care in design, testing, and execution.
+    因此，虽然图灵完备系统支持创新和多样化用例，但它们在设计、测试和执行方面需要更加谨慎。
 
--   **Side Note: Smart Contracts ≠ Turing Completeness**
+-   **旁注：智能合约 ≠ 图灵完备性**
 
-    Although Ethereum’s Turing completeness enables sophisticated smart contracts, Turing completeness is not a prerequisite for smart contracts.
+    尽管以太坊的图灵完备性支持复杂的智能合约，但图灵完备性并不是智能合约的先决条件。
 
-    Bitcoin, despite being non–Turing complete, has supported smart contracts since its inception. Its scripting system enables limited forms of programmability, such as multi-signature and time-locked transactions. These are still smart contracts—just simpler and more constrained in logic due to Bitcoin’s deliberately restricted scripting design.
+    比特币虽然是非图灵完备的，但自其诞生以来就支持智能合约。其脚本系统支持有限形式的可编程性，例如多签名和时间锁定交易。这些仍然是智能合约——只是由于比特币故意限制的脚本设计，逻辑更简单、更受限。
 
 ---
 
-### g) Private Blockchain vs Public Blockchain
+### g) 私有区块链 vs 公有区块链
 
-The primary distinction between private and public blockchains is not about superiority but about the specific purpose each type is designed to serve. Public blockchains are open to anyone and prioritize decentralization, but this comes at the expense of speed and efficiency. In contrast, private blockchains restrict participation to authorized entities, offering improved performance, privacy, and control—making them more suitable for enterprise and consortium-based applications.
+私有区块链和公有区块链之间的主要区别不在于优劣，而在于每种类型设计要服务的特定目的。公有区块链对任何人开放，优先考虑去中心化，但这以速度和效率为代价。相比之下，私有区块链限制授权实体参与，提供更好的性能、隐私和控制——使它们更适合企业和联盟应用。
 
--   **Understanding the Trade-Offs**
+-   **理解权衡**
 
-    As explained [previously](#d-mining), the Byzantine Generals Problem (BGP) itself is not new. What distinguishes Bitcoin—the world’s first blockchain network—in solving BGP from other systems such as Boe777 lies in the conditions under which the problem is addressed.
+    如[之前](#d-mining)所解释的，拜占庭将军问题（BGP）本身并不新鲜。比特币——世界上第一个区块链网络——在解决 BGP 方面与其他系统（如 Boe777）的区别在于解决问题的条件。
 
-    Understanding these underlying conditions is essential to grasping the design differences between private and public blockchains.
+    理解这些底层条件对于掌握私有和公有区块链之间的设计差异至关重要。
 
-    There are multiple approaches to solving the Byzantine Generals Problem, and the chosen design depends on the trade-offs made across six key dimensions: Authentication, Permission, Synchrony, Latency, Fault Tolerance, and Consistency.
+    有多种方法可以解决拜占庭将军问题，选择的设计取决于在六个关键维度上做出的权衡：认证、权限、同步、延迟、容错和一致性。
 
-    -   **Authentication**
+    -   **认证**
 
-        Authentication is an essential aspect of distributed systems to ensure the validity and trustworthiness of the participating nodes. By authenticating nodes, we can verify their true identity and prevent unauthorized access or manipulation. Consensus protocols, which are crucial for achieving agreement among distributed nodes, often rely on voting mechanisms. By ensuring that authenticated nodes participate in the voting process, we can establish a more reliable and secure consensus in the system.
+        认证是分布式系统的重要组成部分，确保参与节点的有效性和可信度。通过对节点进行认证，我们可以验证其真实身份并防止未经授权的访问或操纵。共识协议对于在分布式节点之间达成协议至关重要，通常依赖投票机制。通过确保经过认证的节点参与投票过程，我们可以在系统中建立更可靠和安全的共识。
 
         ![santa](./img/santa.png)
 
-        To illustrate this, let's consider an election scenario. On the day of the election, we all have to go to polling stations with our identity cards. Election officials validate our identity against our ID cards before allowing us to cast our vote. Now imagine what would happen if an election took place without any identity verification. How would you know who has voted, or if multiple votes are being cast by the same person? This is commonly known as a `Sybil's Attack`.
+        为了说明这一点，让我们考虑一个选举场景。在选举日，我们都必须携带身份证件前往投票站。选举官员根据我们的身份证件验证身份，然后才允许我们投票。现在想象一下，如果没有身份验证进行选举会发生什么。您如何知道谁投了票，或者同一个人是否投了多次票？这通常被称为`女巫攻击`。
 
         ![agents](./img/agents.png)
 
-        Sybil's Attack is a well-known attack in distributed systems where the attacker creates multiple fake identities (known as Sybil nodes) to gain control over the system or manipulate the results. By authenticating nodes, we can mitigate the risks associated with Sybil attacks and maintain the integrity of the system.
+        女巫攻击是分布式系统中众所周知的攻击，攻击者创建多个虚假身份（称为女巫节点）以获得对系统的控制或操纵结果。通过对节点进行认证，我们可以降低与女巫攻击相关的风险并维护系统的完整性。
 
-        In a public blockchain, there is no requirement for a login name and password. You simply download the blockchain client, connect to the internet, and run it. The protocol must be robust enough to manage consensus even without knowing the identities of participants.
+        在公有区块链中，不需要登录名和密码。您只需下载区块链客户端，连接到互联网，然后运行它。协议必须足够健壮，即使不知道参与者的身份也能管理共识。
 
-        On the other hand, a private blockchain is less complex in the sense that it requires authentication of all nodes to prevent a single party from controlling multiple fake nodes.
+        另一方面，私有区块链的复杂性较低，因为它要求对所有节点进行认证，以防止单一方控制多个虚假节点。
 
-    -   **Permission**
+    -   **权限**
 
-        Permission basically controls who has permission to join or leave the network or to perform other functions on the blockchain, such as creating transactions or participating in the consensus.
+        权限基本上控制谁有权加入或离开网络，或在区块链上执行其他功能，例如创建交易或参与共识。
 
-        A public blockchain can allow anyone to join or leave the network at any time, with no questions asked. This poses a huge challenge because you don't even know the electorate size to determine how many votes constitute a majority.
+        公有区块链可以允许任何人在任何时候加入或离开网络，无需任何询问。这带来了巨大挑战，因为您甚至不知道选民规模来确定多少票构成多数。
 
         ![anyone](./img/anyone.png)
 
-        A private blockchain is less complicated in the sense that all nodes are authenticated, and only authenticated nodes have permission to join the network. This allows you to determine the electorate size and determine the majority votes much more easily.
+        私有区块链的复杂性较低，因为所有节点都经过认证，只有经过认证的节点才有权加入网络。这使您能够更轻松地确定选民规模并确定多数票。
 
-    -   **Synchrony**
+    -   **同步**
 
         ![timer](./img/timer.png)
 
-        Synchrony refers to the ability to control communications between nodes in a synchronized manner.
+        同步是指以同步方式控制节点之间通信的能力。
 
-        In a synchronous network, the timing and order of communication are controlled. This means you can determine the duration of the voting window and a cut-off time for the votes to be included in the vote counting process.
+        在同步网络中，通信的时序和顺序是可控的。这意味着您可以确定投票窗口的持续时间和选票被纳入计票过程的截止时间。
 
-        In an asynchronous network, such as the public internet, there is no easy way to control this. Different nodes may be running under different performance or network conditions, so it's impossible to tell if a system has failed or if the system has voted based on a message that arrived later. This is particularly true when you have a large number of nodes from different geographical areas.
+        在异步网络（如公共互联网）中，无法轻松控制这一点。不同的节点可能在不同的性能或网络条件下运行，因此无法判断系统是否失败，或者系统是否基于稍后到达的消息进行了投票。当您有大量来自不同地理区域的节点时尤其如此。
 
-    -   **Latency**
+    -   **延迟**
 
-        Latency refers to the delay in time it takes for a distributed system to reach a consensus. Latency is an important consideration in many theories involving distributed systems, such as the CAP theorem.
+        延迟是指分布式系统达成共识所需的时间延迟。延迟是许多涉及分布式系统的理论（如 CAP 定理）中的重要考虑因素。
 
-        Naturally, the longer the window, the easier it is to manage consensus between multiple systems. However, if the window is short, then achieving accurate consensus will require more synchrony among the components.
+        很自然地，窗口越长，多个系统之间管理共识就越容易。然而，如果窗口很短，那么实现准确共识将需要组件之间更高的同步性。
 
-        In the case of Bitcoin, the average latency is around 10 minutes. This works for Bitcoin because the longer it takes to confirm, the more inefficiency is built into the protocol to prevent a 51% attack from happening.
+        就比特币而言，平均延迟约为 10 分钟。这对比特币有效，因为确认时间越长，协议中内置的低效率就越多，以防止 51% 攻击发生。
 
-        Compared to aircraft designs, you cannot afford to make a single mistake out of 1 billion transactions per hour (https://www.cs.indiana.edu/classes/p545/post/lec/fault-tolerance/Driscoll-Hall-Sivencrona-Xumsteg-03.pdf).
+        与飞机设计相比，您每小时 10 亿笔交易中不能出现一个错误（https://www.cs.indiana.edu/classes/p545/post/lec/fault-tolerance/Driscoll-Hall-Sivencrona-Xumsteg-03.pdf）。
 
-    -   **ELI5**
+    -   **ELI5（简单解释）**
 
-        -   Imagine you and your friends are building towers with blocks at different tables.
+        -   想象您和您的朋友在不同桌子上用积木搭建塔楼。
 
-        -   Consistency means that whenever someone adds a block to their tower, everyone else's tower has to be updated right away. So if you add a block, all your friends' towers have to show the same thing immediately.
+        -   一致性意味着每当有人向塔楼添加积木时，其他人的塔楼都必须立即更新。因此，如果您添加一块积木，所有朋友的塔楼都必须立即显示相同的内容。
 
-        -   Availability means that even if some of your friends' tables or towers are not accessible, they can still keep building on their own. So if one of your friends' tables is blocked, they can still add blocks to their tower without waiting for others.
+        -   可用性意味着即使您朋友的一些桌子或塔楼无法访问，他们仍然可以继续自己搭建。因此，如果您朋友的桌子被挡住了，他们仍然可以在不等待其他人的情况下向塔楼添加积木。
 
-        -   Partition tolerance means that even if you can't see or talk to some of your friends, you can keep building your own tower. If there's something blocking you from seeing or talking to them, you can still work independently.
+        -   分区容错意味着即使您看不到或无法与一些朋友交流，您仍然可以继续搭建自己的塔楼。如果有什么东西阻挡您看到或与他们交流，您仍然可以独立工作。
 
-        -   So basically, when it comes to building towers, you have to choose between making sure all the towers look the same right away (consistency), allowing your friends to keep building even if some of their stuff is not working (availability), or just keeping building your own tower no matter what (partition tolerance). Each choice has its pros and cons, and it depends on what's important to you and your friends.
+        -   所以基本上，当搭建塔楼时，您必须在以下之间做出选择：确保所有塔楼立即看起来相同（一致性），允许您的朋友继续搭建，即使他们的一些东西不工作（可用性），或者无论如何都继续搭建自己的塔楼（分区容错）。每种选择都有其优缺点，取决于您和您的朋友最重要的是什么。
 
--   **Public Blockchain Tradeoffs**
+-   **公有区块链的权衡**
 
-    The success of the Bitcoin protocol relies on certain trade-offs.
+    比特币协议的成功依赖于某些权衡。
 
-    -   Acceptance of a high latency of 10 minutes confirmation time.
-    -   Multiple confirmations are usually required for transaction validity.
-    -   Inability to guarantee consistency due to the risk of a 51% attack, although it is difficult to achieve.
+    -   接受 10 分钟确认时间的高延迟。
+    -   通常需要多次确认以确保交易有效性。
+    -   由于 51% 攻击的风险，无法保证一致性，尽管很难实现。
 
-    In return for these trade-offs, Bitcoin offers benefits such as:
+    作为这些权衡的回报，比特币提供以下好处：
 
-    -   Solving the Byzantine General's problem without requiring identity and permission.
-    -   Allowing nodes to span across the world on the public internet using cheap hardware.
+    -   解决拜占庭将军问题，无需身份和权限。
+    -   允许节点使用廉价硬件在公共互联网上遍布世界各地。
 
-    Bitcoin's trade-offs work because of its unique conditions and narrow use case.
+    比特币的权衡之所以有效，是因为其独特条件和狭窄用例。
 
-    -   When Bitcoin was created, it appeared faster than the inefficient global correspondent banking system (SWIFT).
+    -   当比特币创建时，它比低效的全球代理银行系统（SWIFT）更快。
 
-    -   To protect against the 51% attack, Bitcoin encourages a large number of nodes to participate by using an incentive mechanism.
+    -   为了防止 51% 攻击，比特币通过使用激励机制鼓励大量节点参与。
 
-    -   This led to the invention of the cryptocurrency Bitcoin, which rewards participating nodes.
+    -   这导致了加密货币比特币的发明，它奖励参与的节点。
 
-    -   As more people believe in the security of Bitcoin, more join the network, making it more secure and fulfilling a self-fulfilling prophecy.
+    -   随着越来越多的人相信比特币的安全性，更多人加入网络，使其更加安全，实现了自我实现的预言。
 
--   **Private Blockchain Tradeoffs**
+-   **私有区块链的权衡**
 
-    In a more sanitized business environment where nodes are authenticated and permissions are controlled, blockchain transitions from the public to the business world.
+    在节点经过认证且权限受控的更规范商业环境中，区块链从公有转向商业世界。
 
-    The trade-offs are different in the business world.
+    商业世界中的权衡是不同的。
 
-    -   The need for high latency is reduced as the number of nodes is controlled.
+    -   对高延迟的需求减少了，因为节点数量受到控制。
 
-    -   The risk of a 51% attack is reduced as the number of nodes is controlled.
+    -   51% 攻击的风险降低了，因为节点数量受到控制。
 
-    -   The need for an incentive mechanism is reduced as the number of nodes is controlled.
+    -   对激励机制的需求减少了，因为节点数量受到控制。
 
-    In return for these trade-offs, private blockchains offer benefits such as:
+    作为这些权衡的回报，私有区块链提供以下好处：
 
-    -   Identity and permission can be controlled.
+    -   可以控制身份和权限。
 
-    -   Consistency can be guaranteed.
+    -   可以保证一致性。
 
-    -   The need for an incentive mechanism is reduced.
+    -   对激励机制的需求减少了。
 
-    The trade-offs work because of the different conditions and use cases in the business world.
+    权衡之所以有效，是因为商业世界中不同的条件和用例。
 
-### h) Private Blockchain vs Traditional Database
+### h) 私有区块链 vs 传统数据库
 
-A private blockchain is like a shared notebook where multiple businesses can write entries together. This is different from a traditional database, which is usually controlled by one organization. This shared setup of private blockchain is great for businesses working together because it creates a trusted and verifiable record.
+私有区块链就像一本共享笔记本，多个企业可以一起写入条目。这与通常由一个组织控制的传统数据库不同。私有区块链的这种共享设置对于合作的企业来说非常好，因为它创建了一个可信且可验证的记录。
 
-A private blockchain also stops anyone from changing the records once they are written, which increases trust between businesses.
+私有区块链还阻止任何人在写入后更改记录，这增加了企业之间的信任。
 
-Even though regular databases can be faster than private blockchains, private blockchains have a built-in backup feature which makes them more reliable. This backup feature does not make the system more complicated. However, in traditional databases, creating similar backup systems can be complex and expensive.
+尽管传统数据库可能比私有区块链更快，但私有区块链具有内置备份功能，使它们更可靠。这种备份功能不会使系统更加复杂。然而，在传统数据库中，创建类似的备份系统可能复杂且昂贵。
 
-## 5. Conclusion
+## 5. 结论
 
-This section is a review of basic blockchain and cryptocurrency concepts. In the next chapter, we will explore the functionalities of MultiChain both as a private blockchain as well as a derivative of the Bitcoin protocol and contrasting it to the concepts learnt from earlier lessons on Ethereum.
+本节是对基本区块链和加密货币概念的回顾。在下一章中，我们将探索 MultiChain 作为私有区块链以及比特币协议衍生产品的功能，并将其与之前关于以太坊课程中学到的概念进行对比。

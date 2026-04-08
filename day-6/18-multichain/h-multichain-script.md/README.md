@@ -1,75 +1,74 @@
-# Bitcoin Script
+# 比特币脚本
 
-## 1. Spending a Transaction
+## 1. 花费交易
 
-"Spending a transaction" refers to using the funds from a previous transaction output as an input in a new transaction. In other words, it involves unlocking the locking script (known as the `scriptPubKey` by convention) associated with a specific transaction output, which then allows the funds to be used as an input for a new transaction. The unlocking script is known as the `scriptSig` by convention.
+"花费交易"指的是使用前一个交易输出的资金作为新交易的输入。换句话说，它涉及解锁与特定交易输出关联的锁定脚本（按惯例称为 `scriptPubKey`），然后允许这些资金作为新交易的输入。解锁脚本按惯例称为 `scriptSig`。
 
 ![mc-9-1](./img/mc-9-1.png)
 
-This lesson primarily focuses on how the Bitcoin protocol utilizes its own scripting language to facilitate transaction spending. However, the concept is fundamental to the functioning of transactions in blockchain technology as a whole. It enables the transfer of ownership of digital assets from one party to another.
+本课程主要关注比特币协议如何利用自己的脚本语言来促进交易花费。然而，这个概念对于整个区块链技术中交易的功能是基本的。它使数字资产的所有权能够从一方转移到另一方。
 
 ---
 
-## 2. Script - Bitcoin Programming Language
+## 2. 脚本 - 比特币编程语言
 
-The scripting language used by MultiChain is a simple stack-based language.
+MultiChain 使用的脚本语言是一种简单的基于堆栈的语言。
 
-### Infix Notation
+### 中缀表示法
 
-In conventional arithmetic notations, the operator sits between the 2 operands and we call this the infix notation. For example.
+在常规算术表示法中，运算符位于两个操作数之间，我们称之为中缀表示法。例如。
 
 <center>11 - 2 x 3 = 11 - 6 = 5 </center>  
 <br />
 
-The expression `11 - 2 x 3` is evaluated by first calculating `3 x 2` which resolves to `6` and then `11 – 6` to get `5`, according to the rules of arithmetics.
+表达式 `11 - 2 x 3` 首先计算 `3 x 2` 得到 `6`，然后 `11 – 6` 得到 `5`，根据算术规则进行求值。
 
-### Postfix Notation (Reverse Polish Notation)
+### 后缀表示法（逆波兰表示法）
 
-However, Infix Notation, cannot be efficiently processed by a computer because the computer needs to read the entire expression before it can
-know the order of the operations.
+然而，中缀表示法无法被计算机有效处理，因为计算机需要读取整个表达式才能知道操作的顺序。
 
-A stack-based language, uses a different notation called reverse polish notation or postfix notation, which means that the operators come before the operand.
+基于堆栈的语言使用一种称为逆波兰表示法或后缀表示法的不同表示法，这意味着运算符位于操作数之前。
 
-Therefore, the expression `11 - 2 x 3` is written in postfix notation as `11 2 3 x -`.
+因此，表达式 `11 - 2 x 3` 在后缀表示法中写成 `11 2 3 x -`。
 
-To evaluate the postfix expression, we can follow these steps:
+要计算后缀表达式，我们可以按照以下步骤：
 
-1. Create an empty stack to store intermediate results.
-2. Read the expression from left to right.
-3. For each token in the postfix expression:
-    - If it is an operand (number), push it onto the stack.
-    - If it is an operator:
-        - Pop the top two operands from the stack.
-        - Apply the operation to the operands in the order they were popped (e.g., perform subtraction: second_operand - first_operand).
-        - Push the result back onto the stack.
-4. After processing all tokens, the final result will be the only value remaining on the stack.
+1. 创建一个空堆栈来存储中间结果。
+2. 从左到右读取表达式。
+3. 对于后缀表达式中的每个标记：
+    - 如果是操作数（数字），将其推入堆栈。
+    - 如果是运算符：
+        - 从堆栈中弹出前两个操作数。
+        - 按弹出顺序对操作数执行操作（例如，执行减法：second_operand - first_operand）。
+        - 将结果推回堆栈。
+4. 处理所有标记后，最终结果将是堆栈上剩余的唯一值。
 
-By going through this steps, we get the results:
+通过这些步骤，我们得到结果：
 
 <center>11 2 3 x - = 11 6 - = 5</center>
 <br />
 
 ---
 
-## 3. Pay-to-PubkeyHash (P2PKH)
+## 3.  Pay-to-PubkeyHash (P2PKH)
 
-To spend a transaction output, we start with the unlocking script (scriptSig) and append the locking script (scriptPubKey) to it.
+要花费交易输出，我们从解锁脚本（scriptSig）开始，然后将锁定脚本（scriptPubKey）附加到它。
 
 ![mc-9-2](./img/mc-9-2.png)
 
-The completed script looks like this
+完整的脚本如下所示：
 
-|  P2PKH Script  |
+|  P2PKH 脚本  |
 | :------------: |
-|   Signature    |
-|   PublicKey    |
+|   签名    |
+|   公钥    |
 |     OP_DUP     |
 |   OP_HASH160   |
-|   PubkeyHash   |
+|   公钥哈希   |
 | OP_EQUALVERIFY |
 |  OP_CHECKSIG   |
 
-We will use the algorithm for evaluating postfix notations to evaluate the script. If the final result is true, then the transaction is valid.
+我们将使用计算后缀表示法的算法来计算脚本。如果最终结果为 true，则交易有效。
 
 ![mc-9-3](./img/mc-9-3.png)
 
@@ -77,10 +76,10 @@ We will use the algorithm for evaluating postfix notations to evaluate the scrip
 
 ---
 
-## 4. Standard Scripts
+## 4. 标准脚本
 
-The script that we have just seen is an example of a standard script known as the Pay-to-PubkeyHash (P2PKH) script. Standard scripts are scripts that are commonly used in the Bitcoin protocol and are supported by most Bitcoin clients.
+我们刚刚看到的脚本是称为 Pay-to-PubkeyHash (P2PKH) 脚本的标准脚本的示例。标准脚本是比特币协议中常用的脚本，并被大多数比特币客户端支持。
 
-You can refer to this [https://en.bitcoin.it/wiki/Script](https://en.bitcoin.it/wiki/Script) for further details on the different operations that can be performed in the Bitcoin scripting language and the kind of standard scripts that can be used.
+您可以参考 [https://en.bitcoin.it/wiki/Script](https://en.bitcoin.it/wiki/Script) 了解更多关于比特币脚本语言可以执行的不同操作以及可以使用的标准脚本类型的详细信息。
 
 ![mc-9-5](./img/mc-9-5.png)

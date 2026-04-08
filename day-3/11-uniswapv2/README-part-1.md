@@ -1,48 +1,48 @@
-# DEFI(Uniswap V2) - Part 1
+# DEFI（Uniswap V2）- 第一部分
 
-Decentralized Exchange (DEX) refers to token exchanges that are fully decentralized and on-chain as opposed to centralized exchanges like Binance.
+去中心化交易所（DEX）是指与币安等中心化交易所完全去中心化和链上的代币交易所。
 
-In this session, you will learn about creating and funding liquidity pools, how a constant function is used to price trades, and executing trades using Uniswap contracts using your Development Network. The version of Uniswap contract used for this lab is based on version 2 (current version is 3).
+在本节课中，您将学习如何创建和为流动性池提供资金、常数函数如何用于定价交易，以及如何使用您的开发网络执行使用 Uniswap 合约的交易。本实验使用的 Uniswap 合约版本基于版本 2（当前版本是 3）。
 
-**Why Uniswap V2 and not V3?** The concept of liquidity pools and constant function market makers are best illustrated using Uniswap V2. Uniswap V3 introduces more advanced concepts like concentrated liquidity and multiple fee tiers, which can complicate the understanding of basic AMM principles.
-
----
-
-## 1. What is Uniswap?
-
-(https://docs.uniswap.org/whitepaper.pdf)
-
-### Automated Market Maker (AMM)
-
-On order-book exchanges, your trade needs a matching order at your price. In thin markets, that means waiting, partial fills, or big price jumps when your order finally executes. To solve this in crypto trading, a type of contract called an **Automated Market Maker (AMM)** is used. AMMs let you trade against a **pool of liquidity** instead of an order book. The price is set by a mathematical formula based on the pool’s token balances. This means you can always trade immediately at the current price, with no waiting or partial fills. (Caveat: Your final execution still depends on trade size and slippage settings.)
-
-Uniswap popularized AMMs in 2018, and it has since become the dominant way to swap tokens on Ethereum and other blockchains. Uniswap is a **Constant-Function Market Maker**: instead of matching you with a counterparty, your trade is priced by a fixed rule applied to the pool’s balances.
+**为什么选择 Uniswap V2 而不是 V3？** 流动性池和常数函数做市商的概念在 Uniswap V2 中得到了最好的说明。Uniswap V3 引入了更高级的概念，如集中流动性和多层级费用，这可能会使理解基本 AMM 原则变得复杂。
 
 ---
 
-### Constant-Product Function
+## 1. 什么是 Uniswap？
 
-(https://docs.uniswap.org/contracts/V2/concepts/protocol-overview/how-uniswap-works)
+（https://docs.uniswap.org/whitepaper.pdf）
 
-In Uniswap v2 that rule is the **constant-product function**:
+### 自动化做市商（AMM）
+
+在订单簿交易所，您的交易需要以您的价格匹配订单。在流动性不足的市场中，这意味着等待、部分成交或当您的订单最终执行时价格大幅波动。为了在加密交易中解决这个问题，使用了一种称为**自动化做市商（AMM）**的合约类型。AMM 允许您与**流动性池**而不是订单簿进行交易。价格根据池的代币余额通过数学公式设定。这意味着您始终可以立即以当前价格进行交易，无需等待或部分成交。（注意：您的最终执行仍取决于交易规模和滑点设置。）
+
+Uniswap 在 2018 年推广了 AMM，此后已成为在以太坊和其他区块链上交换代币的主导方式。Uniswap 是一个**常数函数做市商**：不是将您与交易对手匹配，您的交易通过应用于池余额的固定规则定价。
+
+---
+
+### 常数乘积函数
+
+（https://docs.uniswap.org/contracts/V2/concepts/protocol-overview/how-uniswap-works）
+
+在 Uniswap v2 中，该规则是**常数乘积函数**：
 
 <center>
 𝑥 ⋅ 𝑦 = 𝑘
 </center>
 
-where 𝑥 and 𝑦 are the reserves of the two tokens, and 𝑘 is a constant (also known as constant product invariant). Since 𝑥 ⋅ 𝑦 never changes, pushing price one way automatically pushes back the other.
+其中 𝑥 和 𝑦 是两种代币的储备，𝑘 是一个常数（也称为常数乘积不变量）。由于 𝑥 ⋅ 𝑦 永远不会改变，向一个方向推动价格会自动向另一个方向推动。
 
-For illustration, if you **buy token** 𝑥 from the pool, you take 𝑥 out(its reserve falls) and add 𝑦(its reserve rises). With fewer 𝑥 left per 𝑦, the price of 𝑥 goes up. If you keep buying, each next unit costs a bit more - small trades move price a little; big trades move it a lot. This progressive shift is what users experience as **slippage**.
+为了说明，如果您从池中**购买**代币 𝑥，您取出 𝑥（其储备减少）并添加 𝑦（其储备增加）。由于每单位 𝑦 剩下的 𝑥 减少，𝑥 的价格上涨。如果您继续购买，每个下一个单位的价格会更高——小额交易使价格变动一点；大额交易使价格变动很大。这种渐进式转变就是用户经历的**滑点**。
 
 ---
 
-### Liquidity Pool
+### 流动性池
 
-A liquidity pool is a smart contract that holds reserves of two tokens (𝑥,𝑦). Users (also known as **Liquidity Providers**) can add liquidity by depositing equal values of both tokens into the pool, receiving liquidity tokens (**LP tokens**) in return. These tokens represent their share of the pool and can be redeemed later for the underlying assets plus a portion of the trading fees.
+流动性池是持有两种代币（𝑥,𝑦）储备的智能合约。用户（也称为**流动性提供者**）可以通过向池中存入等值的两种代币来添加流动性，从而获得流动性代币（**LP 代币**）作为回报。这些代币代表他们在池中的份额，可以在以后赎回底层资产以及交易费用的一部分。
 
-### Calculating LP Tokens
+### 计算 LP 代币
 
-In Uniswap v2, the balance of LP tokens represents shares of liquidity in the pool. The amount of shares initially minted is equal to the geometric mean of the amounts deposited:
+在 Uniswap v2 中，LP 代币的余额代表池中的流动性份额。最初铸造的份额数量等于存入金额的几何平均值：
 
 <center>
 
@@ -50,9 +50,9 @@ $S_{minted} = \sqrt{x_{deposited} \cdot y_{deposited}}$
 
 </center>
 
-where $x_{deposited}$ and $y_{deposited}$ are the amounts of $token_0$ and $token_1$ deposited, respectively.
+其中 $x_{deposited}$ 和 $y_{deposited}$ 分别是存入的 $token_0$ 和 $token_1$ 的数量。
 
-Since Uniswap v2 burns the initial 1000 units of shares, the effective balance becomes
+由于 Uniswap v2 燃烧了最初的 1000 单位份额，有效余额变为：
 
 <center>
 
@@ -60,54 +60,54 @@ Since Uniswap v2 burns the initial 1000 units of shares, the effective balance b
 
 </center>
 
-**Example:**
+**示例：**
 
-LP creates a pool (assuming token amounts are denominated in ether, 1 \* $10^{18}$):
+LP 创建一个池（假设代币金额以以太坊计价，1 * $10^{18}$）：
 
--   Initial reserve of token0 = 1000
--   Initial reserve of token1 = 5000
+-   token0 的初始储备 = 1000
+-   token1 的初始储备 = 5000
 
-Therefore, the LP gets $\sqrt{(1000 \cdot 5000)}$ ∗ $10^{18} −1000$ ≈ 2236.068 ∗ $10^{18}$ LP Tokens
-
----
-
-## 2. Uniswap V2 Contracts
-
-There are 3 Uniswap V2 Contracts that you should be familiar with:
-
--   **UniswapV2Pair** — A contract deployed for each liquidity pool (e.g., ETH/DAI, USDC/USDT) by the **UniswapV2Factory**.
-
-    -   Stores the two token reserves.
-    -   Acts as an **ERC-20 token**: the **LP token** that represents ownership shares in the pool.
-    -   Mints **LP tokens** when liquidity is added and burns them when liquidity is removed.
-    -   Executes swaps between the two tokens using the constant-product formula (x \* y = k).
-
--   **UniswapV2Factory** — The contract that manages and creates pools from **UniswapV2Pair**.
-
-    -   Ensures there’s only one pool for each token pair.
-    -   Pool addresses are predictable (using CREATE2).
-    -   Can turn protocol fees on or off.
-    -   Important functions:
-        -   createPair(): Creates a new pool for a token pair.
-        -   getPair(): Returns the address of an existing pool.
-
--   **UniswapV2Router02** — The main entry point for trades and liquidity management.
-    -   Makes it easy and safe to interact with pools.
-    -   Handles token transfers, checks for slippage, enforces deadlines, and supports multi-hop swaps.
-    -   Important functions:
-        -   **addLiquidity()**: Add liquidity and receive LP tokens.
-        -   **removeLiquidity()**: Remove liquidity and get tokens back.
-        -   **swapExactTokensForTokens()**: Swap a fixed amount of input tokens for as many output tokens as possible.
+因此，LP 获得 $\sqrt{(1000 \cdot 5000)}$ ∗ $10^{18} −1000$ ≈ 2236.068 ∗ $10^{18}$ LP 代币
 
 ---
 
-## 🛠️ Lab Practise: Create Liquidity Pool
+## 2. Uniswap V2 合约
 
-In this lab, we will demonstrate how to create a Uniswap V2 liquidity pool and add liquidity to it using Hardhat.
+您应该熟悉 3 个 Uniswap V2 合约：
 
-### Create test/testCreatePool.js
+-   **UniswapV2Pair** — 为每个流动性池（例如 ETH/DAI、USDC/USDT）由 **UniswapV2Factory** 部署的合约。
 
-Create the file `testCreatePool.js` in the `test` directory with an empty test suite:
+    -   存储两种代币的储备。
+    -   作为 **ERC-20 代币**：代表池中所有权份额的 **LP 代币**。
+    -   添加流动性时铸造 LP 代币，移除流动性时燃烧它们。
+    -   使用常数乘积公式（x * y = k）在两种代币之间执行交换。
+
+-   **UniswapV2Factory** — 管理并从 **UniswapV2Pair** 创建池的合约。
+
+    -   确保每个对只有一个池。
+    -   池地址是可预测的（使用 CREATE2）。
+    -   可以开启或关闭协议费用。
+    -   重要函数：
+        -   createPair()：为代币对创建新池。
+        -   getPair()：返回现有池的地址。
+
+-   **UniswapV2Router02** — 交易和流动性管理的主要入口点。
+    -   使与池的交互变得简单和安全。
+    -   处理代币转移、检查滑点、执行截止日期，并支持多跳交换。
+    -   重要函数：
+        -   **addLiquidity()**：添加流动性并接收 LP 代币。
+        -   **removeLiquidity()**：移除流动性并取回代币。
+        -   **swapExactTokensForTokens()**：将固定数量的输入代币交换为尽可能多的输出代币。
+
+---
+
+## 🛠️ 实验实践：创建流动性池
+
+在本实验中，我们将演示如何使用 Hardhat 创建 Uniswap V2 流动性池并向其添加流动性。
+
+### 创建 test/testCreatePool.js
+
+在 `test` 目录中创建包含空测试套件的文件 `testCreatePool.js`：
 
 ```js
 const { expect } = require("chai");
@@ -119,46 +119,46 @@ describe("Test Create Pool", function () {
 });
 ```
 
-For the subsequent stages involving the beforeEach setup and test cases, ensure to place the code inside the describe block.
+对于涉及 beforeEach 设置和测试用例的后续阶段，确保将代码放在 describe 块内。
 
-### Insert the beforeEach setup into the describe block
+### 在 describe 块中插入 beforeEach 设置
 
-The beforeEach function will setup up the testing environment before each test:
+beforeEach 函数将在每个测试之前设置测试环境：
 
--   Deploy UniswapV2Factory
--   Deploy UniswapV2Router02
--   Deploy two demo ERC-20 tokens (DemoTokenA and DemoTokenB)
+-   部署 UniswapV2Factory
+-   部署 UniswapV2Router02
+-   部署两个演示 ERC-20 代币（DemoTokenA 和 DemoTokenB）
 
 <!-- prettier-ignore -->
 ```js
     beforeEach(async function () {
         [signer] = await ethers.getSigners();
 
-        // Deploy UniswapV2Factory
+        // 部署 UniswapV2Factory
         const Factory = await ethers.getContractFactory("UniswapV2Factory");
         factory = await Factory.deploy(signer.address);
 
-        // Deploy UniswapV2Router02
+        // 部署 UniswapV2Router02
         const Router = await ethers.getContractFactory("UniswapV2Router02");
         router = await Router.deploy(
             factory.target,
-            "0x0000000000000000000000000000000000000000" // WETH address (not used in this test)
+            "0x0000000000000000000000000000000000000000" // WETH 地址（本测试中未使用）
         );
 
-        // Deploy Token0
+        // 部署 Token0
         const TokenA = await ethers.getContractFactory("DemoTokenA");
         token0 = await TokenA.deploy();
 
-        // Deploy Token1
+        // 部署 Token1
         const TokenB = await ethers.getContractFactory("DemoTokenB");
         token1 = await TokenB.deploy();
     });
 
 ```
 
-### Create Test Case - Create and fund a liquidity pool
+### 创建测试用例 - 创建并为流动性池提供资金
 
-Add the following test case inside the describe block.
+在 describe 块中添加以下测试用例。
 
 <!-- prettier-ignore -->
 ```js
@@ -167,15 +167,15 @@ Add the following test case inside the describe block.
     });
 ```
 
-In the subsequent steps below, make sure to place the code inside this test case.
+在下面的后续步骤中，确保将代码放在此测试用例内。
 
--   **Step 1: Create a Pool**
+-   **步骤 1：创建池**
 
-    Use the factory contract to create a new liquidity pool with the addresses of token0 and token1.
+    使用工厂合约创建具有 token0 和 token1 地址的新流动性池。
 
     <!-- prettier-ignore -->
     ```js
-        // Step 1: Create a Pool
+        // 步骤 1：创建池
         // -----------------------------------------------------------------
 
         tx = await factory.createPair(
@@ -185,21 +185,21 @@ In the subsequent steps below, make sure to place the code inside this test case
         receipt = await tx.wait();
     ```
 
--   **Step 2: Get the Pool Address**
+-   **步骤 2：获取池地址**
 
-    There are 3 ways to get the pool address.
+    有 3 种方式获取池地址。
 
-    -   **method 1:** From the transaction receipt event logs.
+    -   **方法 1：** 从交易收据事件日志中获取。
 
-        Use this method when you want to get the pair address immediately after creating it
+        在创建配对后立即获取配对地址时使用此方法
 
         <!-- prettier-ignore -->
         ```js
-            // Step 2: Get Pool Address
+            // 步骤 2：获取池地址
             // ---------------------------------------------------------
 
 
-            // Method 1 - Events: Get the pair address from PairCreated event after creating the pair.
+            // 方法 1 - 事件：创建配对后从 PairCreated 事件获取配对地址。
             
             const logs = await factory.queryFilter(
                 factory.filters.PairCreated(null)
@@ -208,27 +208,27 @@ In the subsequent steps below, make sure to place the code inside this test case
             console.log("Pair address:", pairAddress);
         ```
 
-        Check that the pool address is not the zero address.
+        检查池地址不是零地址。
 
         <!-- prettier-ignore -->
         ```js
             expect(pairAddress).to.not.equal(ethers.ZeroAddress);
         ```
 
-        And is a valid address.
+        并且是有效地址。
 
         <!-- prettier-ignore -->
         ```js
             expect(pairAddress).to.be.properAddress;
         ```
 
-    -   **method 2:** Using the `getPair()` function from the factory contract. Use this method when you want to find an existing pair from the reserve token addresses.
+    -   **方法 2：** 使用工厂合约的 `getPair()` 函数。当您想从储备代币地址查找现有配对时使用此方法。
 
-        This method requires an on-chain call to the factory contract which is less efficient than method 3 below.
+        此方法需要调用链上工厂合约，效率低于下面的方法 3。
 
         <!-- prettier-ignore -->
         ```js
-            // Method 2 - On-Chain: Get the pair address by calling the Factory contract on-chain
+            // 方法 2 - 链上：通过调用链上工厂合约获取配对地址
 
             let pairAddress1 = await factory.getPair(
                 await token0.getAddress(),
@@ -238,13 +238,13 @@ In the subsequent steps below, make sure to place the code inside this test case
 
         ```
 
-    -   **method 3:** Using an off-chain deterministic calculation with the CREATE2 opcode. Use this method when you want to find an existing pair from the reserve token addresses.
+    -   **方法 3：** 使用 CREATE2 操作码进行链下确定性计算。当您想从储备代币地址查找现有配对时使用此方法。
 
-        This is the preferred method as it does not require an on-chain call. However, this method requires knowing the init code hash of the UniswapV2Pair contract in your deployment environment. The init code hash may vary between different environments (e.g., local, testnet, mainnet).
+        这是首选方法，因为它不需要链上调用。但是，此方法需要知道您部署环境中 UniswapV2Pair 合约的初始化代码哈希。初始化代码哈希可能在不同环境之间有所不同（例如本地、测试网、主网）。
 
         <!-- prettier-ignore -->
         ```js
-            // Method 3 - Off-Chain: Get the pair address using CREATE2 calculation (preferred)
+            // 方法 3 - 链下：使用 CREATE2 计算获取配对地址（首选）
             address0 = (await token0.getAddress()).toLowerCase();
             address1 = (await token1.getAddress()).toLowerCase();
             if (address0 > address1) {
@@ -258,20 +258,20 @@ In the subsequent steps below, make sure to place the code inside this test case
                         [address0, address1]
                     )
                 ),
-                "0x215a032792ab9f4a5eb14f1f4c1daed5017b1eee4de72ddb42e06c967b16c5d4" // init code hash
+                "0x215a032792ab9f4a5eb14f1f4c1daed5017b1eee4de72ddb42e06c967b16c5d4" // 初始化代码哈希
             );
             expect(pairAddress2).to.equal(pairAddress);
         ```
 
--   **Step 3: Approve Token Transfers**
+-   **步骤 3：批准代币转移**
 
-    Before adding liquidity, approve the router contract to spend token0 and token1 on behalf of the signer.
+    在添加流动性之前，批准路由器合约代表签名者花费 token0 和 token1。
 
-    In this case, we will approve 2 ethers of token0 and 3 ethers of token1.
+    在这种情况下，我们将批准 2 个以太坊的 token0 和 3 个以太坊的 token1。
 
     <!-- prettier-ignore -->
     ```js
-        // Step 3: Approve Token Transfers
+        // 步骤 3：批准代币转移
         // -----------------------------------------------------------------
 
         const amount0 = ethers.parseEther("1000");
@@ -280,9 +280,9 @@ In the subsequent steps below, make sure to place the code inside this test case
         await token1.approve(await router.getAddress(), amount1);
     ```
 
--   **Step 4: Add Liquidity**
+-   **步骤 4：添加流动性**
 
-    Now we are ready to add liquidity to the pool using the router contract's `addLiquidity()` (see **contracts/v2-periphery/UniswapV2Router02.sol**).
+    现在我们可以使用路由器合约的 `addLiquidity()` 向池中添加流动性（参见 **contracts/v2-periphery/UniswapV2Router02.sol**）。
 
     **contracts/v2-periphery/UniswapV2Router02.sol**
 
@@ -299,81 +299,81 @@ In the subsequent steps below, make sure to place the code inside this test case
     )
     ```
 
-    The `addLiquidity()` function requires 8 parameters:
+    `addLiquidity()` 函数需要 8 个参数：
 
-    -   tokenA: Address of token0
-    -   tokenB: Address of token1
-    -   amountADesired: Amount of token0 to add
-    -   amountBDesired: Amount of token1 to add
-    -   amountAMin: Minimum amount of token0 to add (slippage protection)
-    -   amountBMin: Minimum amount of token1 to add (slippage protection)
-    -   to: Recipient of the liquidity tokens (LP tokens)
-    -   deadline: Unix timestamp after which the transaction will revert
+    -   tokenA: token0 的地址
+    -   tokenB: token1 的地址
+    -   amountADesired: 要添加的 token0 数量
+    -   amountBDesired: 要添加的 token1 数量
+    -   amountAMin: 要添加的 token0 最小数量（滑点保护）
+    -   amountBMin: 要添加的 token1 最小数量（滑点保护）
+    -   to: 流动性代币（LP 代币）的接收者
+    -   deadline: 交易将回滚的 Unix 时间戳
 
-    The reason why we need to specify a range (min and desired) only matters when we are adding liquidity to an existing pool. In this case, since we are creating a new pool, the min and desired amounts will be the same. We will explain the concept of **slippage** in the next lab in further details.
+    我们需要指定范围（最小值和期望值）的原因仅在我们向现有池添加流动性时才重要。在这种情况下，由于我们正在创建新池，最小值和期望值将是相同的。我们将在下一个实验中更详细地解释**滑点**的概念。
 
-    The other parameter to observe is the `deadline`. This is to specify when the transaction should expire. In a real-world scenario, you would want to set this to a reasonable value (e.g., 10 minutes from the current time).
+    要观察的另一个参数是 `deadline`。这是指定交易何时过期。在现实世界中，您会将其设置为合理的值（例如，从当前时间起 10 分钟）。
 
     <!-- prettier-ignore -->
     ```js
-        // Step 4: Add Liquidity
+        // 步骤 4：添加流动性
         // -----------------------------------------------------------------
 
         const block = await ethers.provider.getBlock("latest");
-        const deadline = block.timestamp + 600; // 10 minutes from the current block
+        const deadline = block.timestamp + 600; // 从当前区块起 10 分钟
     ```
 
-    Now we can call the `addLiquidity()` function to add liquidity to the pool.
+    现在我们可以调用 `addLiquidity()` 函数向池中添加流动性。
 
     <!-- prettier-ignore -->
     ```js
         tx = await router.addLiquidity(
             await token0.getAddress(),  
             await token1.getAddress(),
-            amount0, // amount of token0 to add
-            amount1, // amount of token1 to add
-            amount0, // min amount of token0 to add (slippage protection)
-            amount1, // min amount of token1 to add (slippage protection)
-            await signer.getAddress(), // recipient of the liquidity tokens
-            deadline // 10 minutes from current block
+            amount0, // 要添加的 token0 数量
+            amount1, // 要添加的 token1 数量
+            amount0, // 要添加的 token0 最小数量（滑点保护）
+            amount1, // 要添加的 token1 最小数量（滑点保护）
+            await signer.getAddress(), // 流动性代币的接收者
+            deadline // 从当前区块起 10 分钟
         );
     ```
 
--   **Step 5: Check Pool Reserves**
+-   **步骤 5：检查池储备**
 
-    After adding liquidity, we can check the pool's reserves to ensure that the tokens have been added correctly.
+    添加流动性后，我们可以检查池的储备以确保代币已正确添加。
 
-    First, we need to get the pair contract instance using the pool address.
+    首先，我们需要使用池地址获取配对合约实例。
 
     <!-- prettier-ignore -->
     ```js
-        // Step 5: Check Pool Reserves
+        // 步骤 5：检查池储备
         // -----------------------------------------------------------------
 
-        // Get the pair contract instance
+        // 获取配对合约实例
         const pair = await ethers.getContractAt("UniswapV2Pair", pairAddress);
     ```
 
-    From the pair contract, you can now fetch the current reserves of both tokens in the pool using the `getReserves()` function. This will return the reserves in the order of token0 and token1 based on their addresses.
+    从配对合约，您现在可以使用 `getReserves()` 函数获取池中两种代币的当前储备。这将根据它们的地址按 token0 和 token1 的顺序返回储备。
 
     <!-- prettier-ignore -->
     ```javascript
-        // Get current reserves
+        // 获取当前储备
         const reserves = await pair.getReserves(); 
     ```
 
-    **Important**: The order of reserves returned by `getReserves()` corresponds to the order of token addresses. That is why we need to map them correctly by comparing the address values.
+    **重要**：`getReserves()` 返回的储备顺序对应于代币地址的顺序。这就是为什么我们需要通过比较地址值来正确映射它们。
 
     <!-- prettier-ignore -->
     ```javascript
-        // IMPORTANT: Make sure to map reserves correctly based on token addresses
+        // 重要：确保根据代币地址正确映射储备
         const [reserve0, reserve1] =
             (await token0.getAddress()) < (await token1.getAddress())
                 ? [reserves[0], reserves[1]]
                 : [reserves[1], reserves[0]];
     ```
 
-    Display the reserves.
+    显示储备。
 
     <!-- prettier-ignore -->
     ```js
@@ -381,7 +381,7 @@ In the subsequent steps below, make sure to place the code inside this test case
         console.log("Reserve1:", ethers.formatEther(reserve1));
     ```
 
-    Finally, verify that the reserves match the amounts we added.
+    最后，验证储备与我们添加的金额匹配。
 
     <!-- prettier-ignore -->
     ```js
@@ -389,20 +389,20 @@ In the subsequent steps below, make sure to place the code inside this test case
         expect(reserve1).to.equal(amount1);
     ```
 
--   **Step 6: Check Liquidity Token Balance**
+-   **步骤 6：检查流动性代币余额**
 
-    Remember that when you add liquidity to the pool, you receive liquidity tokens (LP tokens) in return. These tokens represent your share of the pool and can be redeemed later for the underlying assets plus a portion of the trading fees.
+    请记住，当您向池中添加流动性时，您会收到代表您在池中份额的流动性代币（LP 代币）。这些代币可以在以后赎回底层资产以及交易费用的一部分。
 
-    To get the liquidity token balance, you can use the `balanceOf()` function from the pair contract, passing in the signer's address.
+    要获取流动性代币余额，您可以使用配对合约的 `balanceOf()` 函数，传入签名者的地址。
 
     <!-- prettier-ignore -->
     ```js
-        // Check liquidity token balance of the signer
+        // 检查签名的流动性代币余额
         const lpBalance = await pair.balanceOf(await signer.getAddress());
         console.log("LP Token Balance:", ethers.formatEther(lpBalance));
     ```
 
-    The amount of LP tokens minted is based on the geometric mean of the token amounts added. Refer to [Calculating LP Tokens](#calculating-lp-tokens).
+    铸造的 LP 代币数量基于添加的代币数量的几何平均值。参见 [计算 LP 代币](#calculating-lp-tokens)。
 
     <center>
 
@@ -410,17 +410,17 @@ In the subsequent steps below, make sure to place the code inside this test case
 
     </center>
 
-    where 𝑥 and 𝑦 are the amounts of token0 and token1 added to the pool, respectively, and MINIMUM_LIQUIDITY is a small constant (1000) that is permanently locked in the pool to prevent division-by-zero errors.
+    其中 𝑥 和 𝑦 分别是添加到池中的 token0 和 token1 的数量，MINIMUM_LIQUIDITY 是一个小的常数（1000），永久锁定在池中以防止除以零错误。
 
-    You can verify that the LP token balance matches the expected amount using the formula above.
+    您可以使用上面的公式验证 LP 代币余额是否与预期金额匹配。
 
-    NOTE: There is no built-in square root function for BigInt in JavaScript, so we need to implement our own.
+    注意：JavaScript 的 BigInt 没有内置的平方根函数，所以我们需要自己实现。
 
     <!-- prettier-ignore -->
     ```js
-        // Check LP Balance against formula: sqrt(amount0 * amount1) - MINIMUM_LIQUIDITY (1000)
+        // 根据公式检查 LP 余额：sqrt(amount0 * amount1) - MINIMUM_LIQUIDITY (1000)
 
-        // We need to implement sqrt for BigInt since JS Math.sqrt only works with Number type
+        // 我们需要为 BigInt 实现 sqrt，因为 JS Math.sqrt 只适用于 Number 类型
         function sqrtBigInt(value) {
             if (value < 0n) {
                 throw new Error(
@@ -432,7 +432,7 @@ In the subsequent steps below, make sure to place the code inside this test case
                 return value;
             }
 
-            // Newton's method for integer square root
+            // 牛顿法求整数平方根
             let x = value;
             let y = (x + 1n) / 2n;
 
@@ -444,7 +444,7 @@ In the subsequent steps below, make sure to place the code inside this test case
             return x;
         }
 
-        const computedLpBalance = sqrtBigInt(amount0 * amount1) - 1000n; // minus MINIMUM_LIQUIDITY (1000)
+        const computedLpBalance = sqrtBigInt(amount0 * amount1) - 1000n; // 减去 MINIMUM_LIQUIDITY (1000)
 
         console.log(
             "Computed LP Token Balance:",
@@ -453,14 +453,14 @@ In the subsequent steps below, make sure to place the code inside this test case
         expect(lpBalance).to.equal(computedLpBalance);
     ```
 
-### Run the test
+### 运行测试
 
-Run the test using Hardhat.
+使用 Hardhat 运行测试。
 
 ```bash
 hh test test/testCreatePool.js
 
-    # Sample Output:
+    # 示例输出：
     # Test Create Pool
     # Token0 address: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
     # Token1 address: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
@@ -473,8 +473,8 @@ hh test test/testCreatePool.js
 
 ```
 
-The resulting LP token balance should match the computed value from [LP Token Example](#calculating-lp-tokens) above.
+产生的 LP 代币余额应与上面 [LP 代币示例](#calculating-lp-tokens) 中的计算值匹配。
 
-### Task completed ✅
+### 任务完成 ✅
 
-In this lab, you have learned how to create and fund a Uniswap V2 liquidity pool using Hardhat. You have also learned how to check the amount of liquidity token (LP token) minted to your address after adding liquidity.
+在本实验中，您学习了如何使用 Hardhat 创建和为 Uniswap V2 流动性池提供资金。您还学习了如何在添加流动性后检查铸造到您地址的流动性代币（LP 代币）数量。

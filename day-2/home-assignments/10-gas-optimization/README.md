@@ -1,119 +1,119 @@
-# Gas Optimization
+# Gas 优化
 
-## 1. Core Principles of Gas Optimization
+## 1. Gas 优化的核心原则
 
-Gas optimization is really about **paying less for data**.  
-You pay gas mainly for two things:
+Gas 优化实际上是**为数据支付更少**。  
+您主要为此支付 Gas：
 
-1. **State (storage) writes and reads**
+1. **状态（存储）写入和读取**
 
-    - Writing to storage (`SSTORE`) is the most expensive thing you can do.
-    - Reading from storage (`SLOAD`) also costs, but less.
+    -   写入存储（`SSTORE`）是您能做的最昂贵的事情。
+    -   从存储读取（`SLOAD`）也花费，但更少。
 
-2. **Copies of data**
-    - Moving data between `calldata → memory → storage` or across contracts costs gas.
+2. **数据副本**
+    -   在 `calldata → memory → storage` 之间或跨合约移动数据需要花费 Gas。
 
-👉 In short: **write less, move less, touch fewer slots.**
+👉 简而言之：**写得更少，移动更少，接触更少的槽位**。
 
-### How to Apply This
+### 如何应用这一点
 
--   Use **calldata** for function inputs you don’t need to modify.
--   Cache values from storage in **local variables** instead of re-reading in a loop.
--   Minimize **storage writes** (batch updates, avoid overwrite patterns).
--   **Pack variables** into the same storage slot when possible.
--   Use **constant** or **immutable** instead of storage when values never change.
--   Keep loops small; avoid unnecessary memory expansion and external calls.
+-   对于您不需要修改的函数输入使用 **calldata**。
+-   在循环中将存储中的值缓存在**局部变量**中，而不是重新读取。
+-   最小化**存储写入**（批量更新，避免覆盖模式）。
+-   尽可能将**变量打包**到同一个存储槽中。
+-   当值永不改变时，使用 **constant** 或 **immutable** 而不是存储。
+-   保持循环小；避免不必要的内存扩展和外部调用。
 
-> Everything—SSTORE/SLOAD costs, slot packing, calldata vs memory, loop design—comes back to one thing: **optimize where data lives and how far it travels.**
+> 一切——SSTORE/SLOAD 成本、槽位打包、calldata 与 memory、循环设计——都归结为一件事：**优化数据所在位置及其传输距离**。
 
-### Example: Data Locations in Practice
+### 示例：实践中的数据位置
 
 ```solidity
 contract DataLocationExample {
-    string private storedName;  // STORAGE by default (SSTORE/SLOAD)
+    string private storedName;  // 默认 STORAGE（需要 SSTORE/SLOAD）
 
     function processName(string calldata name) external {
-        // Use CALldata for read-only parameters - cheapest
-        bytes32 hash = keccak256(bytes(name));  // ~cheap, no storage touched
+        // 对只读参数使用 CALldata - 最便宜
+        bytes32 hash = keccak256(bytes(name));  // ~便宜，不接触存储
 
-        // Copy to MEMORY only when needed for manipulation
-        string memory tempName = name;  // calldata → memory copy (costly if big)
-        // ... manipulate tempName
+        // 仅在需要操作时复制到 MEMORY
+        string memory tempName = name;  // calldata → memory 复制（如果大则昂贵）
+        // ... 操作 tempName
     }
 
     function setName(string memory name) public {
-        // MEMORY → STORAGE copy
-        // Expensive: ~20,000 gas if writing zero → non-zero
-        //            ~5,000 gas if updating an already used slot
+        // MEMORY → STORAGE 复制
+        // 昂贵：如果从零写入非零约 20,000 gas
+        //        如果更新已使用的槽约 5,000 gas
         storedName = name;
     }
 }
 ```
 
-### Gas Costs (Ballpark, Post-London)
+### Gas 成本（以太坊伦敦硬分叉）
 
--   **SSTORE (write to storage slot):**
+-   **SSTORE（写入存储槽）：**
 
-    -   zero → non-zero: ~20,000 gas
-    -   non-zero → non-zero (same tx, “dirty” slot): ~5,000 gas
-    -   write same value (no change): ~100 gas
+    -   零 → 非零：约 20,000 gas
+    -   非零 → 非零（同一交易，"脏"槽）：约 5,000 gas
+    -   写入相同值（无变化）：约 100 gas
 
--   **SLOAD (read storage):**
+-   **SLOAD（读取存储）：**
 
-    -   first read of a slot = **cold** ≈ 2,100 + 100 gas
-    -   subsequent reads = **warm** ≈ 100 gas
+    -   首次读取槽位 = **冷** ≈ 2,100 + 100 gas
+    -   后续读取 = **热** ≈ 100 gas
 
--   **Memory:** cheaper than storage, but not free.
+-   **Memory：** 比存储便宜，但不是免费的。
 
-    -   ~3 gas/word plus an expansion cost as memory grows.
-    -   Big arrays/copies can get expensive.
+    -   约 3 gas/字 + 随着内存增长而扩展的成本。
+    -   大数组/副本可能很昂贵。
 
--   **Constants/Immutables:** stored in bytecode/code storage → **no SLOAD cost** at runtime.
-
----
-
-### Quick Rules of Thumb
-
--   Reads cost far less than writes.
--   Storage charges **per slot** (32 bytes), not per field.
--   Use **calldata directly** when possible—don’t copy to memory if you don’t need to.
-
-## 2. Gas Costs by Function Type (pure, view, state-changing)
-
-Different function types and patterns can have dramatically different gas costs particularly when it comes interacting with state variables(storage).
-
-**Gas cost hierarchy (on-chain calls):**
-
-1. **Pure functions** - cheapest (no storage access, no state reads)
-
-    - Example: Mathematical calculations, string manipulations
-    - Gas cost: ~200-500 gas
-
-2. **View functions** - low cost (reads storage but doesn't modify)
-
-    - Example: `balanceOf()`, `count()`, getter functions
-    - Gas cost: ~200-2,000 gas (depends on storage complexity)
-
-3. **State-changing functions** - highest cost (modifies storage)
-    - Example: `transfer()`, `increment()`, setter functions
-    - Gas cost: 20,000-50,000+ gas (depends on operations)
-
-**Key insight**: External calls to view/pure functions are **free**, but contract-to-contract calls consume gas.
+-   **常量/不可变量：** 存储在字节码/代码存储中 → 运行时无 SLOAD 成本。
 
 ---
 
-## 🛠️ Lab: Gas Costs by Function Type (pure, view, state-changing)
+### 快速经验法则
 
-**Understanding Contract Interaction Costs**: External calls to view/pure functions are free, but contract-to-contract calls cost gas. The Counter contract includes all function types: pure, view, and state-changing.
+-   读取比写入便宜得多。
+-   存储按**槽**（32 字节）收费，而非按字段。
+-   尽可能直接使用 **calldata**——如果您不需要复制到 memory，就不要复制。
 
-### Install project dependencies
+## 2. 按函数类型的 Gas 成本（pure、view、状态修改）
+
+不同的函数类型和模式可能有显著不同的 Gas 成本，特别是在与状态变量（存储）交互时。
+
+**Gas 成本层级（链上调用）：**
+
+1. **Pure 函数** - 最便宜（无存储访问，无状态读取）
+
+    -   示例：数学计算、字符串操作
+    -   Gas 成本：约 200-500 gas
+
+2. **View 函数** - 低成本（读取存储但不修改）
+
+    -   示例：`balanceOf()`、`count()`、getter 函数
+    -   Gas 成本：约 200-2,000 gas（取决于存储复杂性）
+
+3. **状态修改函数** - 最高成本（修改存储）
+    -   示例：`transfer()`、`increment()`、setter 函数
+    -   Gas 成本：20,000-50,000+ gas（取决于操作）
+
+**关键洞察**：对 view/pure 函数的外部调用是**免费的**，但合约到合约的调用消耗 Gas。
+
+---
+
+## 🛠️ 实验：按函数类型的 Gas 成本（pure、view、状态修改）
+
+**理解合约交互成本**：对 view/pure 函数的外部调用是免费的，但对 view/pure 函数的合约到合约调用需要花费 Gas。Counter 合约包含所有函数类型：pure、view 和状态修改。
+
+### 安装项目依赖
 
     ```bash
     cd /workspace/day-2/home-assignments/10-gas-optimization
     npm i
     ```
 
-### Create `test/functionCallTest.js`
+### 创建 `test/functionCallTest.js`
 
 ```js
 describe("Contract Function Call Costs", () => {
@@ -121,7 +121,7 @@ describe("Contract Function Call Costs", () => {
         const factory = await ethers.getContractFactory("Counter");
         const counter = await factory.deploy(10);
 
-        // External calls are free
+        // 外部调用是免费的
         const addResult = await counter.addNumbers(5, 3);
         const squareResult = await counter.calculateSquare(7);
         console.log(
@@ -133,7 +133,7 @@ describe("Contract Function Call Costs", () => {
         const factory = await ethers.getContractFactory("Counter");
         const counter = await factory.deploy(10);
 
-        // External view calls are free
+        // 外部 view 调用是免费的
         const count1 = await counter.getCount();
         const count2 = await counter.count();
         console.log(
@@ -145,7 +145,7 @@ describe("Contract Function Call Costs", () => {
         const factory = await ethers.getContractFactory("Counter");
         const counter = await factory.deploy(10);
 
-        // State changes always cost gas
+        // 状态修改总是花费 Gas
         const tx = await counter.increment();
         const receipt = await tx.wait();
         console.log(`State change gas used: ${receipt.gasUsed}`);
@@ -156,88 +156,88 @@ describe("Contract Function Call Costs", () => {
 });
 ```
 
-### Run the tests:
+### 运行测试：
 
 ```bash
 hh test test/functionCallTest.js
 ```
 
-**Expected results:**
+**预期结果：**
 
--   **Pure functions**: Free externally, ~200-500 gas on-chain
--   **View functions**: Free externally, ~200-2,000 gas on-chain
--   **State-changing functions**: ~26,000-30,000 gas for simple storage updates
+-   **Pure 函数**：外部免费，链上约 200-500 gas
+-   **View 函数**：外部免费，链上约 200-2,000 gas
+-   **状态修改函数**：简单存储更新约 26,000-30,000 gas
 
-**Key takeaway**: The theoretical gas cost hierarchy from Section 8 is validated through practical testing.
+**关键要点**：第 8 节中的理论 Gas 成本层级通过实践测试得到验证。
 
 ---
 
-## 3. Storage Slot Packing and State Variable Ordering
+## 3. 存储槽打包和状态变量排序
 
-Storage operations are the most expensive part of smart contract execution. Reordering variables and using smaller types can significantly reduce gas costs.
+存储操作是智能合约执行中最昂贵的部分。重新排序变量和使用更小的类型可以显著降低 Gas 成本。
 
 ```solidity
-// ❌ Expensive: Large types prevent packing
+// ❌ 昂贵：大类型阻止打包
 contract Inefficient {
-    uint8 a;    // Slot 0
-    uint256 b;  // Slot 1 (can't pack with uint8)
-    uint8 c;    // Slot 2 (can't pack with uint256)
-    // Total: 3 storage slots = ~60,000 gas for writes
+    uint8 a;    // 槽 0
+    uint256 b;  // 槽 1（不能与 uint8 打包）
+    uint8 c;    // 槽 2（不能与 uint256 打包）
+    // 总计：3 个存储槽 ≈ 60,000 gas 写入
 }
 
-// ✅ Efficient: Group small types together
+// ✅ 高效：将小类型分组在一起
 contract Efficient {
     uint8 a;   // }
-    uint8 c;   // } Slot 0: All pack together
-    uint256 b; // Slot 1: Large type separate
-    // Total: 2 storage slots = ~40,000 gas for writes
+    uint8 c;   // } 槽 0：全部打包在一起
+    uint256 b; // 槽 1：大类型单独
+    // 总计：2 个存储槽 ≈ 40,000 gas 写入
 }
 ```
 
 ---
 
-## 🛠️ Lab: Storage Slot Packing and State Variable Ordering
+## 🛠️ 实验：存储槽打包和状态变量排序
 
-**Understanding Storage Slot Packing**: Solidity packs variables into 32-byte storage slots. Multiple small variables can share a slot, dramatically reducing gas costs.
+**理解存储槽打包**：Solidity 将变量打包到 32 字节的存储槽中。多个小变量可以共享一个槽，显著降低 Gas 成本。
 
--   **Create storage efficiency contracts**
+-   **创建存储效率合约**
 
-    Create `contracts/StorageTest.sol`:
+    创建 `contracts/StorageTest.sol`：
 
     ```solidity
     // SPDX-License-Identifier: MIT
     pragma solidity ^0.8.8;
 
-    // ❌ Inefficient: Large types prevent packing
+    // ❌ 低效：大类型阻止打包
     contract Inefficient {
-        uint8 a;    // Slot 0
-        uint256 b;  // Slot 1 (can't pack with uint8)
-        uint8 c;    // Slot 2 (can't pack with uint256)
+        uint8 a;    // 槽 0
+        uint256 b;  // 槽 1（不能与 uint8 打包）
+        uint8 c;    // 槽 2（不能与 uint256 打包）
 
         function setValues(uint8 _a, uint256 _b, uint8 _c) public {
-            a = _a;  // 20,000 gas (new storage slot)
-            b = _b;  // 20,000 gas (new storage slot)
-            c = _c;  // 20,000 gas (new storage slot)
+            a = _a;  // 20,000 gas（新存储槽）
+            b = _b;  // 20,000 gas（新存储槽）
+            c = _c;  // 20,000 gas（新存储槽）
         }
     }
 
-    // ✅ Efficient: Group small types together
+    // ✅ 高效：将小类型分组在一起
     contract Efficient {
-        uint8 a;    // Slot 0: byte 0
-        uint8 c;    // Slot 0: byte 1 (packed together)
-        uint256 b;  // Slot 1: separate slot for large type
+        uint8 a;    // 槽 0: 字节 0
+        uint8 c;    // 槽 0: 字节 1（打包在一起）
+        uint256 b;  // 槽 1: 大类型单独槽
 
         function setValues(uint8 _a, uint256 _b, uint8 _c) public {
-            a = _a;  // 20,000 gas (new storage slot)
-            c = _c;  // 5,000 gas (update existing slot)
-            b = _b;  // 20,000 gas (new storage slot)
+            a = _a;  // 20,000 gas（新存储槽）
+            c = _c;  // 5,000 gas（更新现有槽）
+            b = _b;  // 20,000 gas（新存储槽）
         }
     }
     ```
 
--   **Create storage efficiency test**
+-   **创建存储效率测试**
 
-    Create `test/storageEfficiencyTest.js`
+    创建 `test/storageEfficiencyTest.js`
 
     ```js
     describe("Storage Efficiency Comparison", () => {
@@ -261,69 +261,69 @@ contract Efficient {
     });
     ```
 
--   **Run the test**
+-   **运行测试**
 
     ```bash
     hh test test/storageEfficiencyTest.js
     ```
 
--   **Expected results:**
+-   **预期结果：**
 
-    -   **Inefficient**: ~60,000 gas (3 storage slots × 20,000 gas each)
-    -   **Efficient**: ~45,000 gas (2 storage slots: 1 packed + 1 separate)
-    -   **Savings**: ~25% gas reduction through variable reordering
+    -   **低效**：约 60,000 gas（3 个存储槽 × 20,000 gas）
+    -   **高效**：约 45,000 gas（2 个存储槽：1 个打包 + 1 个单独）
+    -   **节省**：通过变量重新排序减少约 25% Gas
 
-**Key takeaway**: Proper variable ordering and type selection can cut storage costs in half.
+**关键要点**：正确的变量排序和类型选择可以将存储成本削减一半。
 
 ---
 
-## 4. Gas Costs of Function Visibility (public vs external)
+## 4. 函数可见性的 Gas 成本（public vs external）
 
-Function visibility affects both deployment costs and execution gas. Choosing the right visibility can reduce contract size and gas consumption.
+函数可见性影响部署成本和执行 Gas。选择正确的可见性可以减少合约大小和 Gas 消耗。
 
-**Visibility types and gas impact:**
+**可见性类型和 Gas 影响：**
 
-1. **External vs Public** - External functions are cheaper for external calls
+1. **External vs Public** - External 函数对外部调用更便宜
 
-    - `external`: Parameters stored in calldata (cheaper)
-    - `public`: Parameters copied to memory (more expensive)
+    -   `external`：参数存储在 calldata 中（更便宜）
+    -   `public`：参数复制到 memory 中（更昂贵）
 
-2. **Private/Internal** - Reduce deployment gas
-    - No external interface generation
-    - Smaller contract bytecode
-    - (Not demonstrated in this lab - focuses on external vs public)
+2. **Private/Internal** - 减少部署 Gas
+    -   无外部接口生成
+    -   更小的合约字节码
+    -   （本实验未演示 - 专注于 external vs public）
 
 ```solidity
-// ❌ Expensive: Public function copies calldata to memory
+// ❌ 昂贵：Public 函数将 calldata 复制到 memory
 contract Inefficient {
     function processData(bytes memory data) public pure returns (uint256) {
-        return data.length; // Memory copy costs gas
+        return data.length; // Memory 复制花费 Gas
     }
 }
 
-// ✅ Efficient: External function uses calldata directly
+// ✅ 高效：External 函数直接使用 calldata
 contract Efficient {
     function processData(bytes calldata data) external pure returns (uint256) {
-        return data.length; // Direct calldata access
+        return data.length; // 直接 calldata 访问
     }
 }
 ```
 
 ---
 
-## 🛠️ Lab: Gas Costs of Function Visibility (public vs external)
+## 🛠️ 实验：函数可见性的 Gas 成本（public vs external）
 
-**Understanding Visibility Impact**: External functions are more gas-efficient than public functions for external calls, and private/internal functions reduce deployment costs.
+**理解可见性影响**：External 函数比 public 函数对外部调用更 Gas 高效，而 private/internal 函数减少部署成本。
 
-### Create storage visibility contracts
+### 创建可见性合约
 
-Create `contracts/VisibilityTest.sol`:
+创建 `contracts/VisibilityTest.sol`：
 
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.8;
 
-// ❌ Less efficient: Public functions copy to memory
+// ❌ 较低效：Public 函数复制到 memory
 contract PublicContract {
     function processArray(uint256[] memory arr) public pure returns (uint256) {
         uint256 sum = 0;
@@ -334,7 +334,7 @@ contract PublicContract {
     }
 }
 
-// ✅ More efficient: External functions use calldata
+// ✅ 较高效：External 函数使用 calldata
 contract ExternalContract {
     function processArray(uint256[] calldata arr) external pure returns (uint256) {
         uint256 sum = 0;
@@ -346,7 +346,7 @@ contract ExternalContract {
 }
 ```
 
-### Create `test/visibilityTest.js`
+### 创建 `test/visibilityTest.js`
 
 ```js
 describe("Function Visibility Gas Costs", () => {
@@ -372,16 +372,16 @@ describe("Function Visibility Gas Costs", () => {
 });
 ```
 
-### Run the test:
+### 运行测试：
 
 ```bash
 hh test test/visibilityTest.js
 ```
 
-**Expected results:**
+**预期结果：**
 
--   **Public function**: Higher gas due to memory copying
--   **External function**: Lower gas due to calldata usage
--   **Savings**: 10-20% gas reduction for array processing
+-   **Public 函数**：由于 memory 复制，Gas 更高
+-   **External 函数**：由于使用 calldata，Gas 更低
+-   **节省**：数组处理减少 10-20% Gas
 
-**Key takeaway**: Use `external` with `calldata` for functions only called externally to reduce execution gas costs.
+**关键要点**：对于仅从外部调用的函数，使用 `external` 和 `calldata` 来降低执行 Gas 成本。

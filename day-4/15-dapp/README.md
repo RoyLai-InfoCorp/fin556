@@ -1,177 +1,170 @@
-# Building DApps
+# 构建 DApp
 
-This lesson introduces two important concepts:
+本课程介绍两个重要概念：
 
--   **Decentralized Applications (DApps) Development** involves building applications that interact with blockchain networks.
+-   **去中心化应用（DApps）开发**涉及构建与区块链网络交互的应用程序。
 
--   **Design Thinking** is a human-centered approach to problem solving. It focuses on understanding the people you’re designing for, generating creative ideas, and iteratively testing and refining solutions.
+-   **设计思维**是一种以人为中心的解决问题的方法。它专注于理解您正在为其设计的人，产生创意想法，并迭代测试和改进解决方案。
 
-We will explore how to apply Design Thinking principles to create user-friendly DApps that solve real-world problems.
+我们将探索如何应用设计思维原则来创建解决实际问题的用户友好的 DApp。
 
-## DApp and Web3
+## DApp 和 Web3
 
--   A **Decentralized Application (DApp)** is a web application that connects to a blockchain network. The front-end typically runs entirely in the browser and integrates with a client-side wallet such as MetaMask.
+-   **去中心化应用（DApp）**是连接到区块链网络的 Web 应用程序。前端通常完全在浏览器中运行，并与客户端钱包（如 MetaMask）集成。
 
--   In theory, you could eliminate the web server altogether, hosting only a static web page that interacts with the blockchain — this is the foundation of the **Web3** movement to decentralize the web.
+-   从理论上讲，您可以完全消除 Web 服务器，只托管一个与区块链交互的静态网页——这是**Web3** 运动去中心化网络的基础。
 
--   In practice, most DApps use frameworks like **React** or **Vue.js**, written in **JavaScript** or **TypeScript**, and rely on libraries such as **ethers.js** or **web3.js** for blockchain interaction.
-
----
-
-## Applying Design Thinking to DApp Development
-
-Design Thinking is a **human-centered approach** to creating effective solutions. It prioritizes user needs and iterative improvement over technical features.
-
-**The 5 Core Phases**
-
-1. **Empathize** – Understand the user’s needs.
-2. **Define** – Clearly state the problem you want to solve.
-3. **Ideate** – Generate a wide range of possible solutions.
-4. **Prototype** – Build a simple version of your idea to test it.
-5. **Test** – Gather feedback and improve the design.
+-   实际上，大多数 DApp 使用 **React** 或 **Vue.js** 框架，用 **JavaScript** 或 **TypeScript** 编写，并依赖 **ethers.js** 或 **web3.js** 等库进行区块链交互。
 
 ---
 
-### Applying Design Thinking to Blockchain and DApps
+## 将设计思维应用于 DApp 开发
 
-When developing a DApp, Design Thinking ensures you’re solving the right problem, not just writing smart contracts.
+设计思维是一种**以人为中心**的创建有效解决方案的方法。它优先考虑用户需求和迭代改进，而不是技术功能。
 
-Ask yourself:
+**5 个核心阶段**
 
--   Who are my users?
--   What pain points do they have in existing systems?
--   Why does decentralization matter here?
--   What experience will make blockchain invisible yet beneficial to them?
-
-The goal is to design DApps that are **useful**, **usable**, and **meaningful** — not just technically **“on-chain.”**
-
-To illustrate, we’ll apply these steps to building a token swap DApp similar to a decentralized exchange (DEX).
+1. **同理心** – 了解用户的需求
+2. **定义** – 明确陈述您想要解决的问题
+3. **构思** – 生成广泛的可能解决方案
+4. **原型** – 构建您的想法的简单版本来测试它
+5. **测试** – 收集反馈并改进设计
 
 ---
 
-### Step 1 — Empathize
+### 将设计思维应用于区块链和 DApp
 
-Here, your users are DeFi participants who:
+在开发 DApp 时，设计思维确保您解决正确的问题，而不仅仅是编写智能合约。
 
--   Provide liquidity to TokenA–TokenB pools.
+问问自己：
 
--   Want to view balances and pool reserves.
+-   我的用户是谁？
+-   他们现有系统中的痛点是什么？
+-   为什么去中心化在这里很重要？
+-   什么样的体验会让区块链对他们来说无形但有益？
 
--   Need a simple interface to swap tokens.
+目标是设计有用的、可用且有意义的 DApp——而不仅仅是技术上"在链上"。
 
-Their frustrations:
-
--   Complex DEX interfaces.
-
--   Poor visibility of pool data.
-
--   Transactions failing without explanation.
-
-Your mission: **make token interactions simple, transparent, and intuitive**.
-
-### Step 2 — Define the Problem
-
-Formulate a **clear problem statement**.
-
-> “Users need an easy way to view token balances, check pool reserves, and swap tokens without dealing with blockchain complexity”
-
-This statement defines both **what** the DApp must do and **how** it should feel to use — simple, clear, and trustworthy.
-
-### Step 3 — Ideate
-
-Now brainstorm possible solutions.
-
--   Should balances and reserves appear in separate tabs or panels?
--   How can we make swap inputs and actions self-explanatory?
--   What visual layout communicates token flow best?
-
-Sketch your layout before coding.
-The goal is to **translate the user’s workflow into an intuitive UI**.
-
-### Step 4 — Prototype
-
-In this phase, we create a **mock-up** of our DApp — a visual and structural representation of the final product.
-
-At this stage, **no blockchain logic** is included. The purpose is purely to design the interface and define how users will interact with the application.
-
-**What to Expect at This Step**
-
--   You will create the **layout and structure** of the DApp using React and Material UI.
--   The DApp will include **two main sections**:
-
-    **Liquidity Pool Section**
-
-    -   Displays token addresses, user balances, and pool reserves.
-    -   Includes a "Check" button that will later refresh these values from the blockchain.
-
-    **Token Swap Section**
-
-    -   Allows users to enter amounts for TokenA or TokenB.
-    -   Includes “Buy” and “Sell” buttons that will later trigger swap transactions.
-
--   All data at this point will be **hardcoded** — this is intentional.  
-    It allows us to focus on **user experience and flow** before integrating live data.
-
-**Purpose of This Step**
-
--   To visualize the DApp layout before coding the blockchain interactions.
--   To confirm that the user interface matches what users expect.
--   To identify any usability issues early, before smart contract integration.
-
-This **mock-up** serves as the foundation for the lab exercise, where you will implement the actual functionality to connect to MetaMask, query token balances, and execute swaps.
-
-### Step 5 — Test (with Users)
-
-Once your mock-up runs in the browser, gather **user feedback** before coding blockchain logic.
-
-Ask:
-
--   Is the layout clear?
--   Do labels and sections make sense?
--   Would users know what to click to swap?
-
-Iterate on the UI based on feedback before integrating contracts.  
-Design Thinking treats testing as continuous — not a one-time phase.
+为了说明这一点，我们将应用这些步骤来构建一个类似于去中心化交易所（DEX）的代币交换 DApp。
 
 ---
 
-### Integrating Blockchain Logic (Post-Mock-up Phase)
+### 步骤 1 — 同理心
 
-After validating your UI, you’ll incrementally add blockchain functionality:
+在这里，您的用户是 DeFi 参与者，他们：
 
-1. **Connect wallet (MetaMask)**  
-   Use `window.ethereum` and `ethers.js` to connect and get the user’s address.
+-   为 TokenA-TokenB 池提供流动性
+-   想要查看余额和池储备
+-   需要一个简单的界面来交换代币
 
-2. **Read token balances and reserves**
+他们的挫折：
 
-    - Load ERC-20 balances with `contract.balanceOf(userAddress)`.
-    - Query Uniswap-like pool contracts for reserves.
+-   复杂的 DEX 界面
+-   池数据可见性差
+-   交易失败且没有解释
 
-3. **Update the “Check” button**  
-   Replace mock data with live blockchain values.
+您的任务：**让代币交互变得简单、透明和直观**。
 
-4. **Implement Buy/Sell (Swap)**
-    - Call the `swap()` function of your DEX contract.
-    - Handle transaction states and show feedback using `CircularProgress` or alerts.
+### 步骤 2 — 定义问题
+
+制定一个**清晰的问题陈述**。
+
+> "用户需要一个简单的方式来查看代币余额、检查池储备和交换代币，而无需处理区块链复杂性"
+
+这个陈述定义了 DApp 必须做什么以及使用它的感觉如何——简单、清晰和值得信赖。
+
+### 步骤 3 — 构思
+
+现在集思广益可能的解决方案。
+
+-   余额和储备应该出现在单独的标签页或面板中吗？
+-   我们如何使交换输入和操作不言自明？
+-   什么视觉布局最能传达代币流动？
+
+在编码之前绘制您的布局。目标是**将用户的工作流程转化为直观的 UI**。
+
+### 步骤 4 — 原型
+
+在这个阶段，我们创建 DApp 的**模型**——最终产品的视觉和结构表示。
+
+在这个阶段，**不包含区块链逻辑**。纯粹是为了设计界面并定义用户将如何与应用交互。
+
+**这一步骤的预期**
+
+-   您将使用 React 和 Material UI 创建 DApp 的**布局和结构**。
+-   DApp 将包括**两个主要部分**：
+
+    **流动性池部分**
+
+    -   显示代币地址、用户余额和池储备。
+    -   包含一个"检查"按钮，以后将从区块链刷新这些值。
+
+    **代币交换部分**
+
+    -   允许用户输入 TokenA 或 TokenB 的金额。
+    -   包含"买入"和"卖出"按钮，以后将触发交换交易。
+
+-   此时所有数据都将被**硬编码**——这是故意的。它允许我们在集成实时数据之前专注于**用户体验和流程**。
+
+**这一步骤的目的**
+
+-   在编码区块链交互之前可视化 DApp 布局。
+-   确认用户界面符合用户的期望。
+-   在智能合约集成之前及早识别任何可用性问题。
+
+这个**模型**作为实验的基础，您将在其中实现连接到 MetaMask、查询代币余额和执行交换的实际功能。
+
+### 步骤 5 — 测试（与用户一起）
+
+一旦您的模型在浏览器中运行，在编码区块链逻辑之前收集**用户反馈**。
+
+问问：
+
+-   布局清楚吗？
+-   标签和部分有意义吗？
+-   用户知道点击什么来交换吗？
+
+在集成合约之前根据反馈迭代 UI。设计思维将测试视为持续的——而不是一次性阶段。
 
 ---
 
-## Implementing the DApp
+### 集成区块链逻辑（模型后阶段）
 
-The lab for this lesson are organized into multiple parts to help you build the DApp step-by-step.
+验证您的 UI 后，您将逐步添加区块链功能：
 
-The DApp we are going to build will have the following features:
+1. **连接钱包（MetaMask）**  
+   使用 `window.ethereum` 和 `ethers.js` 连接并获取用户的地址。
 
--   Connects to Metamask wallet.
--   Interacts with contracts deployed on local Hardhat node.
--   Shows the current token balances of the user.
--   Show the current pool reserves.
--   Allow the user to swap tokens.
+2. **读取代币余额和储备**
 
-The lab will be divided into the following parts:
+   -   使用 `contract.balanceOf(userAddress)` 加载 ERC-20 余额。
+   -   查询类似 Uniswap 的池合约以获取储备。
 
-a) Setting up the web framework (React)
-b) Create a mock-up of the DApp with hardcoded data
-c) Extend the DApp to integrate with Metamask
-d) Deploy Uniswap contracts to local Hardhat node
-e) Complete the DApp to allow token swaps
+3. **更新"检查"按钮**  
+   用实时区块链值替换模拟数据。
+
+4. **实现买入/卖出（交换）**
+   -   调用您的 DEX 合约的 `swap()` 函数。
+   -   使用 `CircularProgress` 或警报处理交易状态并显示反馈。
+
+---
+
+## 实现 DApp
+
+本课程的实验分为多个部分，帮助您逐步构建 DApp。
+
+我们要构建的 DApp 将具有以下功能：
+
+-   连接到 Metamask 钱包。
+-   与部署在本地 Hardhat 节点上的合约交互。
+-   显示用户当前的代币余额。
+-   显示当前池储备。
+-   允许用户交换代币。
+
+实验将分为以下部分：
+
+a) 设置 Web 框架（React）
+b) 使用硬编码数据创建 DApp 模型
+c) 扩展 DApp 以集成 Metamask
+d) 将 Uniswap 合约部署到本地 Hardhat 节点
+e) 完成 DApp 以允许代币交换
