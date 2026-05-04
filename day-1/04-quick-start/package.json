@@ -11,6 +11,7 @@
     "description": "",
     "devDependencies": {
         "@nomicfoundation/hardhat-ethers": "3.0.8",
+        "chai": "^6.2.2",
         "ethers": "6.13.2",
         "hardhat": "2.22.15"
     }

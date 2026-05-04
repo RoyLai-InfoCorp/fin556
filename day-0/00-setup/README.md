@@ -9,7 +9,7 @@
 -   [ ] 步骤 3. 克隆 FIN556 仓库。
 -   [ ] 步骤 4. 安装 Docker Desktop。
 -   [ ] 步骤 5. 安装 Visual Studio Code。
--   [ ] 步骤 6. 验证 DevContainer 配置。
+-   [ ] 步骤 6. 验证 DevContainer 配置。 
 
 ---
 

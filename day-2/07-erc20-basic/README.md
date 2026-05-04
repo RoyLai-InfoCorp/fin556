@@ -659,7 +659,7 @@ event Approval(address indexed _owner, address indexed _spender, uint256 _value)
             (x) => x.fragment.name === "Approval"
         );
         const args = approvalLog.args.toObject();
-        expect(args.owner).to.equal(accounts0].address);
+        expect(args.owner).to.equal(accounts[0].address);
         expect(args.spender).to.equal(accounts[1].address);
         expect(args.value).to.equal(1n);
     });
