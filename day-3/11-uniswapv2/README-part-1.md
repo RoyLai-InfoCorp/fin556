@@ -64,8 +64,8 @@ Since Uniswap v2 burns the initial 1000 units of shares, the effective balance b
 
 LP creates a pool (assuming token amounts are denominated in ether, 1 \* $10^{18}$):
 
--   Initial reserve of token0 = 1000
--   Initial reserve of token1 = 5000
+- Initial reserve of token0 = 1000
+- Initial reserve of token1 = 5000
 
 Therefore, the LP gets $\sqrt{(1000 \cdot 5000)}$ ∗ $10^{18} −1000$ ≈ 2236.068 ∗ $10^{18}$ LP Tokens
 
@@ -75,29 +75,40 @@ Therefore, the LP gets $\sqrt{(1000 \cdot 5000)}$ ∗ $10^{18} −1000$ ≈ 2236
 
 There are 3 Uniswap V2 Contracts that you should be familiar with:
 
--   **UniswapV2Pair** — A contract deployed for each liquidity pool (e.g., ETH/DAI, USDC/USDT) by the **UniswapV2Factory**.
+- **UniswapV2Pair** — A contract deployed for each liquidity pool (e.g., ETH/DAI, USDC/USDT) by the **UniswapV2Factory**.
+    - Stores the two token reserves.
+    - Acts as an **ERC-20 token**: the **LP token** that represents ownership shares in the pool.
+    - Mints **LP tokens** when liquidity is added and burns them when liquidity is removed.
+    - Executes swaps between the two tokens using the constant-product formula (x \* y = k).
 
-    -   Stores the two token reserves.
-    -   Acts as an **ERC-20 token**: the **LP token** that represents ownership shares in the pool.
-    -   Mints **LP tokens** when liquidity is added and burns them when liquidity is removed.
-    -   Executes swaps between the two tokens using the constant-product formula (x \* y = k).
+- **UniswapV2Factory** — The contract that manages and creates pools from **UniswapV2Pair**.
+    - Ensures there’s only one pool for each token pair.
+    - Pool addresses are predictable (using CREATE2).
+    - Can turn protocol fees on or off.
+    - Important functions:
+        - createPair(): Creates a new pool for a token pair.
+        - getPair(): Returns the address of an existing pool.
 
--   **UniswapV2Factory** — The contract that manages and creates pools from **UniswapV2Pair**.
+- **UniswapV2Router02** — The main entry point for trades and liquidity management.
+    - Makes it easy and safe to interact with pools.
+    - Handles token transfers, checks for slippage, enforces deadlines, and supports multi-hop swaps.
+    - Important functions:
+        - **addLiquidity()**: Add liquidity and receive LP tokens.
+        - **removeLiquidity()**: Remove liquidity and get tokens back.
+        - **swapExactTokensForTokens()**: Swap a fixed amount of input tokens for as many output tokens as possible.
 
-    -   Ensures there’s only one pool for each token pair.
-    -   Pool addresses are predictable (using CREATE2).
-    -   Can turn protocol fees on or off.
-    -   Important functions:
-        -   createPair(): Creates a new pool for a token pair.
-        -   getPair(): Returns the address of an existing pool.
+---
 
--   **UniswapV2Router02** — The main entry point for trades and liquidity management.
-    -   Makes it easy and safe to interact with pools.
-    -   Handles token transfers, checks for slippage, enforces deadlines, and supports multi-hop swaps.
-    -   Important functions:
-        -   **addLiquidity()**: Add liquidity and receive LP tokens.
-        -   **removeLiquidity()**: Remove liquidity and get tokens back.
-        -   **swapExactTokensForTokens()**: Swap a fixed amount of input tokens for as many output tokens as possible.
+## 🛠️ IMPORTANT: About Init Code Hash
+
+Due to a trick that Uniswap used to compute pair address, we need to calculate the init code hash of the UniswapV2Pair contract in our local environment and update the test code in the next section accordingly. This has already been done for you in the devcontainer, but if running without devcontainer, you will need to open hh console and execute the following code to get the init code hash:
+
+```js
+> const bytecode = require("./artifacts/contracts/v2-core/UniswapV2Pair.sol/UniswapV2Pair.json").bytecode;
+> ethers.keccak256(bytecode);
+```
+
+Then update line 36 in **contracts/v2-periphery/libraries/UniswapV2Library.sol** and line 80 in **test/testCreatePool.js** with the init code hash you obtained.
 
 ---
 
@@ -125,9 +136,9 @@ For the subsequent stages involving the beforeEach setup and test cases, ensure 
 
 The beforeEach function will setup up the testing environment before each test:
 
--   Deploy UniswapV2Factory
--   Deploy UniswapV2Router02
--   Deploy two demo ERC-20 tokens (DemoTokenA and DemoTokenB)
+- Deploy UniswapV2Factory
+- Deploy UniswapV2Router02
+- Deploy two demo ERC-20 tokens (DemoTokenA and DemoTokenB)
 
 <!-- prettier-ignore -->
 ```js
@@ -169,118 +180,122 @@ Add the following test case inside the describe block.
 
 In the subsequent steps below, make sure to place the code inside this test case.
 
--   **Step 1: Create a Pool**
+- **Step 1: Create a Pool**
 
     Use the factory contract to create a new liquidity pool with the addresses of token0 and token1.
 
-    <!-- prettier-ignore -->
-    ```js
-        // Step 1: Create a Pool
-        // -----------------------------------------------------------------
+              <!-- prettier-ignore -->
 
-        tx = await factory.createPair(
-            await token0.getAddress(),
-            await token1.getAddress()
-        );
-        receipt = await tx.wait();
+    ```js
+    // Step 1: Create a Pool
+    // -----------------------------------------------------------------
+
+    tx = await factory.createPair(
+        await token0.getAddress(),
+        await token1.getAddress(),
+    );
+    receipt = await tx.wait();
     ```
 
--   **Step 2: Get the Pool Address**
+- **Step 2: Get the Pool Address**
 
     There are 3 ways to get the pool address.
-
-    -   **method 1:** From the transaction receipt event logs.
+    - **method 1:** From the transaction receipt event logs.
 
         Use this method when you want to get the pair address immediately after creating it
 
-        <!-- prettier-ignore -->
+                  <!-- prettier-ignore -->
+
         ```js
-            // Step 2: Get Pool Address
-            // ---------------------------------------------------------
+        // Step 2: Get Pool Address
+        // ---------------------------------------------------------
 
+        // Method 1 - Events: Get the pair address from PairCreated event after creating the pair.
 
-            // Method 1 - Events: Get the pair address from PairCreated event after creating the pair.
-            
-            const logs = await factory.queryFilter(
-                factory.filters.PairCreated(null)
-            );
-            pairAddress = logs[0].args.pair;
-            console.log("Pair address:", pairAddress);
+        const logs = await factory.queryFilter(
+            factory.filters.PairCreated(null),
+        );
+        pairAddress = logs[0].args.pair;
+        console.log("Pair address:", pairAddress);
         ```
 
         Check that the pool address is not the zero address.
 
-        <!-- prettier-ignore -->
+                  <!-- prettier-ignore -->
+
         ```js
-            expect(pairAddress).to.not.equal(ethers.ZeroAddress);
+        expect(pairAddress).to.not.equal(ethers.ZeroAddress);
         ```
 
         And is a valid address.
 
-        <!-- prettier-ignore -->
+                  <!-- prettier-ignore -->
+
         ```js
-            expect(pairAddress).to.be.properAddress;
+        expect(pairAddress).to.be.properAddress;
         ```
 
-    -   **method 2:** Using the `getPair()` function from the factory contract. Use this method when you want to find an existing pair from the reserve token addresses.
+    - **method 2:** Using the `getPair()` function from the factory contract. Use this method when you want to find an existing pair from the reserve token addresses.
 
         This method requires an on-chain call to the factory contract which is less efficient than method 3 below.
 
-        <!-- prettier-ignore -->
+                  <!-- prettier-ignore -->
+
         ```js
-            // Method 2 - On-Chain: Get the pair address by calling the Factory contract on-chain
+        // Method 2 - On-Chain: Get the pair address by calling the Factory contract on-chain
 
-            let pairAddress1 = await factory.getPair(
-                await token0.getAddress(),
-                await token1.getAddress()
-            );
-            expect(pairAddress1).to.equal(pairAddress);
-
+        let pairAddress1 = await factory.getPair(
+            await token0.getAddress(),
+            await token1.getAddress(),
+        );
+        expect(pairAddress1).to.equal(pairAddress);
         ```
 
-    -   **method 3:** Using an off-chain deterministic calculation with the CREATE2 opcode. Use this method when you want to find an existing pair from the reserve token addresses.
+    - **method 3:** Using an off-chain deterministic calculation with the CREATE2 opcode. Use this method when you want to find an existing pair from the reserve token addresses.
 
         This is the preferred method as it does not require an on-chain call. However, this method requires knowing the init code hash of the UniswapV2Pair contract in your deployment environment. The init code hash may vary between different environments (e.g., local, testnet, mainnet).
 
-        <!-- prettier-ignore -->
+                  <!-- prettier-ignore -->
+
         ```js
-            // Method 3 - Off-Chain: Get the pair address using CREATE2 calculation (preferred)
-            address0 = (await token0.getAddress()).toLowerCase();
-            address1 = (await token1.getAddress()).toLowerCase();
-            if (address0 > address1) {
-                [address0, address1] = [address1, address0];
-            }
-            const pairAddress2 = ethers.getCreate2Address(
-                factory.target,
-                ethers.keccak256(
-                    ethers.solidityPacked(
-                        ["address", "address"],
-                        [address0, address1]
-                    )
+        // Method 3 - Off-Chain: Get the pair address using CREATE2 calculation (preferred)
+        address0 = (await token0.getAddress()).toLowerCase();
+        address1 = (await token1.getAddress()).toLowerCase();
+        if (address0 > address1) {
+            [address0, address1] = [address1, address0];
+        }
+        const pairAddress2 = ethers.getCreate2Address(
+            factory.target,
+            ethers.keccak256(
+                ethers.solidityPacked(
+                    ["address", "address"],
+                    [address0, address1],
                 ),
-                "0x215a032792ab9f4a5eb14f1f4c1daed5017b1eee4de72ddb42e06c967b16c5d4" // init code hash
-            );
-            expect(pairAddress2).to.equal(pairAddress);
+            ),
+            "0x215a032792ab9f4a5eb14f1f4c1daed5017b1eee4de72ddb42e06c967b16c5d4", // init code hash
+        );
+        expect(pairAddress2).to.equal(pairAddress);
         ```
 
--   **Step 3: Approve Token Transfers**
+- **Step 3: Approve Token Transfers**
 
     Before adding liquidity, approve the router contract to spend token0 and token1 on behalf of the signer.
 
     In this case, we will approve 2 ethers of token0 and 3 ethers of token1.
 
-    <!-- prettier-ignore -->
-    ```js
-        // Step 3: Approve Token Transfers
-        // -----------------------------------------------------------------
+              <!-- prettier-ignore -->
 
-        const amount0 = ethers.parseEther("1000");
-        const amount1 = ethers.parseEther("5000");
-        await token0.approve(await router.getAddress(), amount0);
-        await token1.approve(await router.getAddress(), amount1);
+    ```js
+    // Step 3: Approve Token Transfers
+    // -----------------------------------------------------------------
+
+    const amount0 = ethers.parseEther("1000");
+    const amount1 = ethers.parseEther("5000");
+    await token0.approve(await router.getAddress(), amount0);
+    await token1.approve(await router.getAddress(), amount1);
     ```
 
--   **Step 4: Add Liquidity**
+- **Step 4: Add Liquidity**
 
     Now we are ready to add liquidity to the pool using the router contract's `addLiquidity()` (see **contracts/v2-periphery/UniswapV2Router02.sol**).
 
@@ -300,115 +315,122 @@ In the subsequent steps below, make sure to place the code inside this test case
     ```
 
     The `addLiquidity()` function requires 8 parameters:
-
-    -   tokenA: Address of token0
-    -   tokenB: Address of token1
-    -   amountADesired: Amount of token0 to add
-    -   amountBDesired: Amount of token1 to add
-    -   amountAMin: Minimum amount of token0 to add (slippage protection)
-    -   amountBMin: Minimum amount of token1 to add (slippage protection)
-    -   to: Recipient of the liquidity tokens (LP tokens)
-    -   deadline: Unix timestamp after which the transaction will revert
+    - tokenA: Address of token0
+    - tokenB: Address of token1
+    - amountADesired: Amount of token0 to add
+    - amountBDesired: Amount of token1 to add
+    - amountAMin: Minimum amount of token0 to add (slippage protection)
+    - amountBMin: Minimum amount of token1 to add (slippage protection)
+    - to: Recipient of the liquidity tokens (LP tokens)
+    - deadline: Unix timestamp after which the transaction will revert
 
     The reason why we need to specify a range (min and desired) only matters when we are adding liquidity to an existing pool. In this case, since we are creating a new pool, the min and desired amounts will be the same. We will explain the concept of **slippage** in the next lab in further details.
 
     The other parameter to observe is the `deadline`. This is to specify when the transaction should expire. In a real-world scenario, you would want to set this to a reasonable value (e.g., 10 minutes from the current time).
 
-    <!-- prettier-ignore -->
-    ```js
-        // Step 4: Add Liquidity
-        // -----------------------------------------------------------------
+              <!-- prettier-ignore -->
 
-        const block = await ethers.provider.getBlock("latest");
-        const deadline = block.timestamp + 600; // 10 minutes from the current block
+    ```js
+    // Step 4: Add Liquidity
+    // -----------------------------------------------------------------
+
+    const block = await ethers.provider.getBlock("latest");
+    const deadline = block.timestamp + 600; // 10 minutes from the current block
     ```
 
     Now we can call the `addLiquidity()` function to add liquidity to the pool.
 
-    <!-- prettier-ignore -->
+              <!-- prettier-ignore -->
+
     ```js
-        tx = await router.addLiquidity(
-            await token0.getAddress(),  
-            await token1.getAddress(),
-            amount0, // amount of token0 to add
-            amount1, // amount of token1 to add
-            amount0, // min amount of token0 to add (slippage protection)
-            amount1, // min amount of token1 to add (slippage protection)
-            await signer.getAddress(), // recipient of the liquidity tokens
-            deadline // 10 minutes from current block
-        );
+    tx = await router.addLiquidity(
+        await token0.getAddress(),
+        await token1.getAddress(),
+        amount0, // amount of token0 to add
+        amount1, // amount of token1 to add
+        amount0, // min amount of token0 to add (slippage protection)
+        amount1, // min amount of token1 to add (slippage protection)
+        await signer.getAddress(), // recipient of the liquidity tokens
+        deadline, // 10 minutes from current block
+    );
     ```
 
--   **Step 5: Check Pool Reserves**
+- **Step 5: Check Pool Reserves**
 
     After adding liquidity, we can check the pool's reserves to ensure that the tokens have been added correctly.
 
     First, we need to get the pair contract instance using the pool address.
 
-    <!-- prettier-ignore -->
-    ```js
-        // Step 5: Check Pool Reserves
-        // -----------------------------------------------------------------
+              <!-- prettier-ignore -->
 
-        // Get the pair contract instance
-        const pair = await ethers.getContractAt("UniswapV2Pair", pairAddress);
+    ```js
+    // Step 5: Check Pool Reserves
+    // -----------------------------------------------------------------
+
+    // Get the pair contract instance
+    const pair = await ethers.getContractAt("UniswapV2Pair", pairAddress);
     ```
 
     From the pair contract, you can now fetch the current reserves of both tokens in the pool using the `getReserves()` function. This will return the reserves in the order of token0 and token1 based on their addresses.
 
-    <!-- prettier-ignore -->
+              <!-- prettier-ignore -->
+
     ```javascript
-        // Get current reserves
-        const reserves = await pair.getReserves(); 
+    // Get current reserves
+    const reserves = await pair.getReserves();
     ```
 
     **Important**: The order of reserves returned by `getReserves()` corresponds to the order of token addresses. That is why we need to map them correctly by comparing the address values.
 
-    <!-- prettier-ignore -->
+              <!-- prettier-ignore -->
+
     ```javascript
-        // IMPORTANT: Make sure to map reserves correctly based on token addresses
-        const [reserve0, reserve1] =
-            (await token0.getAddress()) < (await token1.getAddress())
-                ? [reserves[0], reserves[1]]
-                : [reserves[1], reserves[0]];
+    // IMPORTANT: Make sure to map reserves correctly based on token addresses
+    const [reserve0, reserve1] =
+        (await token0.getAddress()) < (await token1.getAddress())
+            ? [reserves[0], reserves[1]]
+            : [reserves[1], reserves[0]];
     ```
 
     Display the reserves.
 
-    <!-- prettier-ignore -->
+              <!-- prettier-ignore -->
+
     ```js
-        console.log("Reserve0:", ethers.formatEther(reserve0));
-        console.log("Reserve1:", ethers.formatEther(reserve1));
+    console.log("Reserve0:", ethers.formatEther(reserve0));
+    console.log("Reserve1:", ethers.formatEther(reserve1));
     ```
 
     Finally, verify that the reserves match the amounts we added.
 
-    <!-- prettier-ignore -->
+              <!-- prettier-ignore -->
+
     ```js
-        expect(reserve0).to.equal(amount0);
-        expect(reserve1).to.equal(amount1);
+    expect(reserve0).to.equal(amount0);
+    expect(reserve1).to.equal(amount1);
     ```
 
--   **Step 6: Check Liquidity Token Balance**
+- **Step 6: Check Liquidity Token Balance**
 
     Remember that when you add liquidity to the pool, you receive liquidity tokens (LP tokens) in return. These tokens represent your share of the pool and can be redeemed later for the underlying assets plus a portion of the trading fees.
 
     To get the liquidity token balance, you can use the `balanceOf()` function from the pair contract, passing in the signer's address.
 
-    <!-- prettier-ignore -->
+              <!-- prettier-ignore -->
+
     ```js
-        // Check liquidity token balance of the signer
-        const lpBalance = await pair.balanceOf(await signer.getAddress());
-        console.log("LP Token Balance:", ethers.formatEther(lpBalance));
+    // Check liquidity token balance of the signer
+    const lpBalance = await pair.balanceOf(await signer.getAddress());
+    console.log("LP Token Balance:", ethers.formatEther(lpBalance));
     ```
 
     The amount of LP tokens minted is based on the geometric mean of the token amounts added. Refer to [Calculating LP Tokens](#calculating-lp-tokens).
 
-    <center>
+              <center>
 
     $L=\sqrt{x\cdot y}-\text{MINIMUM\_LIQUIDITY}$
 
-    </center>
+              </center>
 
     where 𝑥 and 𝑦 are the amounts of token0 and token1 added to the pool, respectively, and MINIMUM_LIQUIDITY is a small constant (1000) that is permanently locked in the pool to prevent division-by-zero errors.
 
@@ -416,41 +438,40 @@ In the subsequent steps below, make sure to place the code inside this test case
 
     NOTE: There is no built-in square root function for BigInt in JavaScript, so we need to implement our own.
 
-    <!-- prettier-ignore -->
+              <!-- prettier-ignore -->
+
     ```js
-        // Check LP Balance against formula: sqrt(amount0 * amount1) - MINIMUM_LIQUIDITY (1000)
+    // Check LP Balance against formula: sqrt(amount0 * amount1) - MINIMUM_LIQUIDITY (1000)
 
-        // We need to implement sqrt for BigInt since JS Math.sqrt only works with Number type
-        function sqrtBigInt(value) {
-            if (value < 0n) {
-                throw new Error(
-                    "Square root of negative numbers is not supported"
-                );
-            }
-
-            if (value < 2n) {
-                return value;
-            }
-
-            // Newton's method for integer square root
-            let x = value;
-            let y = (x + 1n) / 2n;
-
-            while (y < x) {
-                x = y;
-                y = (x + value / x) / 2n;
-            }
-
-            return x;
+    // We need to implement sqrt for BigInt since JS Math.sqrt only works with Number type
+    function sqrtBigInt(value) {
+        if (value < 0n) {
+            throw new Error("Square root of negative numbers is not supported");
         }
 
-        const computedLpBalance = sqrtBigInt(amount0 * amount1) - 1000n; // minus MINIMUM_LIQUIDITY (1000)
+        if (value < 2n) {
+            return value;
+        }
 
-        console.log(
-            "Computed LP Token Balance:",
-            ethers.formatEther(computedLpBalance)
-        );        
-        expect(lpBalance).to.equal(computedLpBalance);
+        // Newton's method for integer square root
+        let x = value;
+        let y = (x + 1n) / 2n;
+
+        while (y < x) {
+            x = y;
+            y = (x + value / x) / 2n;
+        }
+
+        return x;
+    }
+
+    const computedLpBalance = sqrtBigInt(amount0 * amount1) - 1000n; // minus MINIMUM_LIQUIDITY (1000)
+
+    console.log(
+        "Computed LP Token Balance:",
+        ethers.formatEther(computedLpBalance),
+    );
+    expect(lpBalance).to.equal(computedLpBalance);
     ```
 
 ### Run the test
