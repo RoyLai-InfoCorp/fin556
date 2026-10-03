@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FIN556 — Weekly Setup</title>
+<!-- Typography comes from Google Fonts; the deck needs no JavaScript libraries. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   Include this ENTIRE file in every presentation.
+   Slides are authored at 1920×1080 and scaled as a whole.
+   =========================================== */
+
+/* 1. Lock the browser viewport */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 2. Full-window deck viewport */
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 3. Fixed 16:9 design canvas.
+   JavaScript sets transform: translate(...) scale(...). */
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+/* 4. Slides stack inside the fixed stage.
+   Content must be laid out at 1920×1080, not reflowed per device. */
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+/* 5. Keep media inside authored slide bounds */
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* 6. Presentation chrome stays outside the slide design system */
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+/* 7. Print one fixed-size slide per page */
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+/* 8. Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* === SWISS MODERN THEME === */
+:root{--stage-bg:#151515;--slide-bg:#fafafa;--ink:#111;--accent:#ff3300;--muted:#515151}
+*{box-sizing:border-box}body{font-family:Nunito,sans-serif;color:var(--ink)}
+.slide{padding:82px 110px;background-image:linear-gradient(90deg,transparent 109px,#11108 110px,transparent 111px)}
+.label,.kicker{font:600 25px Archivo,sans-serif;letter-spacing:3px;text-transform:uppercase}
+.kicker{display:flex;justify-content:space-between;border-top:8px solid var(--accent);padding-top:24px}
+h1,h2,h3{font-family:Archivo,sans-serif;letter-spacing:-3px}
+h1{font-size:142px;line-height:1.12;margin:70px 0 40px;font-weight:900}
+h2{font-size:88px;line-height:1.08;margin:54px 0 44px;font-weight:800}
+h3{font-size:46px;letter-spacing:-1.5px;line-height:1.2;margin:22px 0}
+em{font-style:normal;color:var(--accent)}p,li{font-size:34px;line-height:1.45}
+.lead{font-size:40px;line-height:1.4;margin:0 0 36px}.note{font-size:28px;color:var(--muted);line-height:1.45;margin-top:30px}
+footer{position:absolute;left:110px;right:110px;bottom:62px;border-top:1px solid #bbb;padding-top:20px;display:flex;justify-content:space-between;font:500 22px Archivo,sans-serif;letter-spacing:2px}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start}.columns>*,.steps>*{min-width:0}
+aside{background:#eee;padding:42px;border-left:8px solid var(--accent)}aside p{font-size:32px}aside .label{font-size:23px;color:var(--accent)}
+pre{background:#151515;color:#f7f7f7;font:400 34px/1.6 'IBM Plex Mono',monospace;padding:40px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.prompt{color:#ff7757}.result{color:#b4d8b1}
+ul{padding-left:32px;margin:20px 0}li{padding-left:8px;margin:18px 0}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:60px}.steps.three{grid-template-columns:repeat(3,1fr)}
+.steps article{border-top:4px solid #111;padding-top:30px}.steps b{font:800 100px Archivo,sans-serif;color:var(--accent)}.steps p{font-size:31px}
+.route{display:flex;justify-content:space-between;border-top:7px solid var(--accent);padding-top:30px;margin-top:70px;font:600 26px Archivo,sans-serif}
+.image-layout{grid-template-columns:650px 1fr;gap:55px}.image-layout li{font-size:30px;margin:12px 0}.image-layout p{font-size:30px}.image-layout .note{font-size:27px;margin-top:25px}
+figure{margin:0}figure img{width:970px;height:550px;object-fit:contain;object-position:top;border:1px solid #aaa;background:#1f1f1f}figcaption{font-size:24px;color:var(--muted);margin-top:16px}
+.command-name{font-family:Archivo,sans-serif;font-weight:800;color:var(--accent)}.checklist{border-left:10px solid var(--accent);padding-left:48px;margin-top:50px}.checklist p{font-size:48px;margin:22px 0}
+/* === REVEAL MOTION === */
+.slide .content{opacity:0;transform:translateY(20px);transition:opacity .35s ease,transform .35s ease}.slide.visible .content{opacity:1;transform:none}
+/* === PRESENTATION CONTROLS === */
+.deck-controls{display:flex;align-items:center;gap:14px;background:#151515;color:white;padding:8px 14px;border-radius:5px;font:15px Archivo,sans-serif}
+button{font:inherit;cursor:pointer;border:1px solid #777;background:#222;color:white;padding:8px 12px}button:focus-visible{outline:3px solid var(--accent)}button:disabled{opacity:.4;cursor:default}
+.edit-hotzone{position:fixed;top:0;left:0;width:90px;height:80px;z-index:10000}.edit-toggle{position:fixed;top:18px;left:18px;z-index:10001;opacity:0;pointer-events:none}
+.edit-toggle.show,.edit-toggle.active{opacity:1;pointer-events:auto}.editing [data-edit]{outline:2px dashed #ff330077;cursor:text}
+@media print{.edit-hotzone,.edit-toggle{display:none!important}.slide .content{opacity:1;transform:none}@page{size:1920px 1080px;margin:0}}
+</style></head><body>
+<!-- Slides are authored at 1920×1080 and scaled uniformly on every screen. -->
+<div class="deck-viewport"><main class="deck-stage" id="deckStage">
+<section class="slide active visible hero" aria-label="Slide 1: Weekly setup.  Ready for class. "><header class="kicker"><span data-edit>START OF CLASS</span><span>FIN556 / DAY 0</span></header><div class="content"><h1 data-edit>Weekly setup.<br><em>Ready for class.</em></h1><p class="lead" data-edit>Update your materials. Open your workspace.<br>Check your tools before the lesson begins.</p><div class="route"><span>01 / UPDATE</span><span>02 / OPEN</span><span>03 / CONNECT</span><span>04 / VERIFY</span></div></div><footer><span>WEEKLY SETUP</span><span>01 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 2: Four steps. Every week."><header class="kicker"><span data-edit>THE ROUTINE</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Four steps. Every week.</h2><div class="steps"><article><b>01</b><h3 data-edit>Get materials</h3><p data-edit>Pull the latest course repository.</p></article><article><b>02</b><h3 data-edit>Open VS Code</h3><p data-edit>Start in the FIN556 directory.</p></article><article><b>03</b><h3 data-edit>Enter the container</h3><p data-edit>Use the shared course environment.</p></article><article><b>04</b><h3 data-edit>Verify tools</h3><p data-edit>Confirm that your terminal is ready.</p></article></div></div><footer><span>WEEKLY SETUP</span><span>02 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 3: Get the latest materials."><header class="kicker"><span data-edit>01 / UPDATE</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Get the latest materials.</h2><p class="lead" data-edit>In your host terminal: Ubuntu on Windows/WSL, or Terminal on macOS.</p><pre data-edit><span class="prompt">$</span> cd ~/courses/FIN556
+<span class="prompt">$</span> git pull</pre><p class="note" data-edit>Run these commands at the start of each class.</p></div><footer><span>WEEKLY SETUP</span><span>03 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 4: Open your workspace."><header class="kicker"><span data-edit>02 / OPEN</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Open your workspace.</h2><div class="columns"><div><p class="lead" data-edit>Stay in the course directory.</p><pre data-edit><span class="prompt">$</span> code .</pre><p class="note" data-edit>The dot means “open the current folder.”</p></div><aside><span class="label">WORKING DIRECTORY</span><h3 data-edit>~/courses/<br>FIN556</h3><p data-edit>Your course files should appear in the VS Code Explorer.</p></aside></div></div><footer><span>WEEKLY SETUP</span><span>04 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 5: Install Dev Containers."><header class="kicker"><span data-edit>03 / CONNECT · FIRST TIME</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Install Dev Containers.</h2><p class="lead" data-edit>Already installed? Skip this step.</p><div class="columns"><div><h3 data-edit>Open Extensions</h3><p data-edit>Windows: Ctrl + Shift + X<br>macOS: Cmd + Shift + X</p></div><aside><span class="label">SEARCH → INSTALL</span><h3 data-edit>Dev Containers</h3><p data-edit>Install the extension in VS Code.</p></aside></div></div><footer><span>WEEKLY SETUP</span><span>05 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 6: Reopen in Container."><header class="kicker"><span data-edit>03 / CONNECT</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Reopen in Container.</h2><div class="columns image-layout"><div><p data-edit>Before you connect:</p><ul><li data-edit>Docker Desktop is running.</li><li data-edit>Dev Containers is installed.</li><li data-edit>The course folder is open.</li></ul><p class="note" data-edit>Command Palette:<br>Windows: Ctrl + Shift + P<br>macOS: Cmd + Shift + P</p><p class="command-name" data-edit>Dev Containers:<br>Reopen in Container</p></div><figure><img src="../img/dev-container.png" alt="VS Code menu showing Reopen in Container"><figcaption data-edit>Select Reopen in Container in VS Code.</figcaption></figure></div></div><footer><span>WEEKLY SETUP</span><span>06 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 7: Let VS Code get ready."><header class="kicker"><span data-edit>03 / CONNECT · WAIT</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Let VS Code get ready.</h2><div class="steps three"><article><b>1</b><h3 data-edit>Download</h3><p data-edit>The configured image is downloaded if it is not available locally.</p></article><article><b>2</b><h3 data-edit>Start</h3><p data-edit>The container starts with its pre-installed development tools.</p></article><article><b>3</b><h3 data-edit>Configure</h3><p data-edit>VS Code installs the configured extensions.</p></article></div><p class="note" data-edit>The first run may take a few minutes. Look for your project files and an active container terminal.</p></div><footer><span>WEEKLY SETUP</span><span>07 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 8: Check the tools inside."><header class="kicker"><span data-edit>04 / VERIFY</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Check the tools inside.</h2><p class="lead" data-edit>In VS Code, choose Terminal → New Terminal.</p><div class="columns"><pre data-edit><span class="prompt">$</span> node --version
+<span class="result">v22.15.0</span>
+<span class="prompt">$</span> npm --version
+<span class="result">10.9.2</span>
+<span class="prompt">$</span> git --version
+<span class="result">git version 2.34.1</span></pre><aside><span class="label">EXAMPLE OUTPUT</span><h3 data-edit>Commands should<br>return versions.</h3><p data-edit>These are examples from the course image. Output can vary when the environment changes.</p></aside></div></div><footer><span>WEEKLY SETUP</span><span>08 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 9: Find hardhat-shorthand."><header class="kicker"><span data-edit>04 / VERIFY</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Find hardhat-shorthand.</h2><pre data-edit><span class="prompt">$</span> npm ls -g
+<span class="result">/usr/local/share/nvm/versions/node/v22.15.0/lib
+├── corepack@0.32.0
+├── hardhat-shorthand@1.1.0
+└── npm@10.9.2</span></pre><p class="lead" data-edit>Look for hardhat-shorthand in the list.</p><p class="note" data-edit>It provides the hh shortcut for npx hardhat, used in day-1 lessons. Output shown is an example.</p></div><footer><span>WEEKLY SETUP</span><span>09 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 10: Container won’t start?"><header class="kicker"><span data-edit>TROUBLESHOOTING</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Container won’t start?</h2><div class="columns"><div><h3 data-edit>Check the basics</h3><ul><li data-edit>Docker Desktop is running.</li><li data-edit>Your internet connection is stable.</li><li data-edit>On Windows, WSL2 is installed and virtualization is enabled.</li></ul></div><aside><span class="label">TRY AGAIN</span><h3 data-edit>Rebuild Container</h3><p data-edit>Open the Command Palette and select Dev Containers: Rebuild Container.</p><p class="note" data-edit>If Docker will not start after installation, restart your computer.</p></aside></div></div><footer><span>WEEKLY SETUP</span><span>10 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 11: Editor or Mac issues?"><header class="kicker"><span data-edit>TROUBLESHOOTING</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Editor or Mac issues?</h2><div class="columns"><div><h3 data-edit>VS Code extensions</h3><ul><li data-edit>Select Developer: Reload Window.</li><li data-edit>Check that extensions are enabled.</li><li data-edit>Update VS Code if needed.</li></ul></div><div><h3 data-edit>On macOS</h3><ul><li data-edit>Follow permission prompts in Privacy & Security.</li><li data-edit>For missing commands, check installation and PATH.</li><li data-edit>Use ARM64 apps on Apple Silicon.</li></ul></div></div><p class="note" data-edit>For container file-permission issues, try rebuilding. If problems persist, search using the exact error message.</p></div><footer><span>WEEKLY SETUP</span><span>11 / 13</span></footer></section>
+<section class="slide  " aria-label="Slide 12: Tools + editor extensions."><header class="kicker"><span data-edit>YOUR ENVIRONMENT</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Tools + editor extensions.</h2><div class="columns"><div><h3 data-edit>Pre-installed tools</h3><ul><li data-edit>Node.js — JavaScript runtime</li><li data-edit>npm — package manager</li><li data-edit>Git — version control</li><li data-edit>hardhat-shorthand — hh shortcut</li></ul></div><div><h3 data-edit>Configured extensions</h3><ul><li data-edit>Solidity (Juan Blanco)</li><li data-edit>Prettier</li><li data-edit>ESLint</li><li data-edit>JavaScript (ES6) code snippets</li></ul></div></div></div><footer><span>WEEKLY SETUP</span><span>12 / 13</span></footer></section>
+<section class="slide  hero" aria-label="Slide 13: Your final check."><header class="kicker"><span data-edit>READY FOR THE LESSON</span><span>FIN556 / DAY 0</span></header><div class="content"><h1 data-edit>Your final check.</h1><div class="checklist"><p data-edit>✓ Course materials updated</p><p data-edit>✓ FIN556 open in the dev container</p><p data-edit>✓ Tool versions checked</p><p data-edit>✓ hardhat-shorthand found</p></div><p class="note" data-edit>You’re ready to begin the lab.</p></div><footer><span>WEEKLY SETUP</span><span>13 / 13</span></footer></section>
+</main></div>
+<nav class="deck-controls" aria-label="Presentation controls"><button id="previous" aria-label="Previous slide">←</button><span id="counter" aria-live="polite"></span><button id="next" aria-label="Next slide">→</button><button id="fullscreen">Fullscreen</button><button id="save">Save HTML</button></nav>
+<div class="edit-hotzone" title="Click to edit text"></div><button class="edit-toggle" id="editToggle" aria-pressed="false">Edit text (E)</button>
+<script>
+/* === NAVIGATION AND FIXED STAGE SCALING === */
+class SlidePresentation {
+ constructor(){
+  this.slides=[...document.querySelectorAll('.slide')];this.current=0;this.editing=false;this.stage=document.getElementById('deckStage');this.lastWheel=0;
+  this.editables=[...document.querySelectorAll('[data-edit]')];this.storageKey='fin556-weekly-setup-swiss-v1';
+  try{const stored=JSON.parse(localStorage.getItem(this.storageKey)||'[]');stored.forEach((value,index)=>{if(this.editables[index]&&typeof value==='string')this.editables[index].textContent=value})}catch{}
+  this.fit();addEventListener('resize',()=>this.fit());
+  document.getElementById('previous').onclick=()=>this.show(this.current-1);document.getElementById('next').onclick=()=>this.show(this.current+1);
+  document.getElementById('fullscreen').onclick=()=>{const action=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();action.catch(()=>{})};
+  document.getElementById('save').onclick=()=>this.save();
+  document.getElementById('editToggle').onclick=()=>this.toggleEdit();
+  document.addEventListener('keydown',event=>{
+   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='s'){event.preventDefault();this.save();return}
+   if(event.target.isContentEditable||/INPUT|TEXTAREA/.test(event.target.tagName))return;
+   if(event.key.toLowerCase()==='e'){this.toggleEdit();return}
+   if(this.editing)return;
+   if(['ArrowRight','ArrowDown',' ','PageDown'].includes(event.key)){event.preventDefault();this.show(this.current+1)}
+   if(['ArrowLeft','ArrowUp','PageUp'].includes(event.key)){event.preventDefault();this.show(this.current-1)}
+   if(event.key==='Home')this.show(0);if(event.key==='End')this.show(this.slides.length-1);
+  });
+  document.addEventListener('wheel',event=>{if(this.editing||Math.abs(event.deltaY)<15)return;if(Date.now()-this.lastWheel>600){this.show(this.current+Math.sign(event.deltaY));this.lastWheel=Date.now()}},{passive:true});
+  let touchStart=0;document.addEventListener('touchstart',event=>{touchStart=event.changedTouches[0].clientX},{passive:true});
+  document.addEventListener('touchend',event=>{const distance=event.changedTouches[0].clientX-touchStart;if(!this.editing&&Math.abs(distance)>45)this.show(this.current+(distance<0?1:-1))},{passive:true});
+  this.editables.forEach(element=>element.addEventListener('input',()=>{try{localStorage.setItem(this.storageKey,JSON.stringify(this.editables.map(item=>item.textContent)))}catch{}}));
+  const hotzone=document.querySelector('.edit-hotzone');const toggle=document.getElementById('editToggle');let hideTimer;
+  for(const element of [hotzone,toggle]){element.addEventListener('mouseenter',()=>{clearTimeout(hideTimer);toggle.classList.add('show')});element.addEventListener('mouseleave',()=>{hideTimer=setTimeout(()=>{if(!this.editing)toggle.classList.remove('show')},400)})}
+  hotzone.onclick=()=>this.toggleEdit();this.show(0);
+ }
+ fit(){const factor=Math.min(innerWidth/1920,innerHeight/1080);this.stage.style.transform='translate('+((innerWidth-1920*factor)/2)+'px,'+((innerHeight-1080*factor)/2)+'px) scale('+factor+')'}
+ show(index){this.current=Math.max(0,Math.min(index,this.slides.length-1));this.slides.forEach((slide,position)=>{const active=position===this.current;slide.classList.toggle('active',active);slide.classList.toggle('visible',active);slide.setAttribute('aria-hidden',String(!active));slide.inert=!active});document.getElementById('counter').textContent=(this.current+1)+' / '+this.slides.length;document.getElementById('previous').disabled=this.current===0;document.getElementById('next').disabled=this.current===this.slides.length-1}
+ /* === INLINE TEXT EDITING === */
+ toggleEdit(){this.editing=!this.editing;document.body.classList.toggle('editing',this.editing);this.editables.forEach(element=>element.contentEditable=String(this.editing));const toggle=document.getElementById('editToggle');toggle.classList.toggle('active',this.editing);toggle.setAttribute('aria-pressed',String(this.editing));toggle.textContent=this.editing?'Finish editing (E)':'Edit text (E)'}
+ /* === EXPORT CURRENT TEXT AS A STANDALONE HTML FILE === */
+ save(){const clone=document.documentElement.cloneNode(true);clone.querySelector('body').classList.remove('editing');clone.querySelectorAll('[contenteditable]').forEach(element=>element.removeAttribute('contenteditable'));clone.querySelectorAll('.slide').forEach((slide,index)=>{slide.classList.toggle('active',index===0);slide.classList.toggle('visible',index===0);slide.removeAttribute('inert');slide.removeAttribute('aria-hidden')});clone.querySelector('#editToggle').className='edit-toggle';clone.querySelector('#editToggle').textContent='Edit text (E)';clone.querySelector('#editToggle').setAttribute('aria-pressed','false');const blob=new Blob(['<!DOCTYPE html>\n'+clone.outerHTML],{type:'text/html'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download='weekly-setup.html';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+}
+window.presentation=new SlidePresentation();
+</script></body></html>
