@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FIN556 — One-Time Setup</title>
+<!-- Typography comes from Google Fonts; the deck needs no JavaScript libraries. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   Include this ENTIRE file in every presentation.
+   Slides are authored at 1920×1080 and scaled as a whole.
+   =========================================== */
+
+/* 1. Lock the browser viewport */
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 2. Full-window deck viewport */
+.deck-viewport {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+
+/* 3. Fixed 16:9 design canvas.
+   JavaScript sets transform: translate(...) scale(...). */
+.deck-stage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+
+/* 4. Slides stack inside the fixed stage.
+   Content must be laid out at 1920×1080, not reflowed per device. */
+.slide {
+    position: absolute;
+    inset: 0;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    display: block;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+
+.slide.active,
+.slide.visible {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+/* 5. Keep media inside authored slide bounds */
+img,
+video,
+canvas,
+svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* 6. Presentation chrome stays outside the slide design system */
+.deck-controls {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+/* 7. Print one fixed-size slide per page */
+@media print {
+    html,
+    body {
+        width: 1920px;
+        height: auto;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-viewport {
+        position: static;
+        overflow: visible;
+        background: #fff;
+    }
+
+    .deck-stage {
+        position: static;
+        width: auto;
+        height: auto;
+        transform: none !important;
+        background: none;
+    }
+
+    .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+    }
+
+    .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+    }
+
+    .deck-controls {
+        display: none !important;
+    }
+}
+
+/* 8. Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* === SWISS MODERN THEME === */
+:root{--stage-bg:#151515;--slide-bg:#fafafa;--ink:#111;--accent:#ff3300;--muted:#515151}
+*{box-sizing:border-box}body{font-family:Nunito,sans-serif;color:var(--ink)}
+.slide{padding:82px 110px;background-image:linear-gradient(90deg,transparent 109px,#11108 110px,transparent 111px)}
+.label,.kicker{font:600 25px Archivo,sans-serif;letter-spacing:3px;text-transform:uppercase}
+.kicker{display:flex;justify-content:space-between;border-top:8px solid var(--accent);padding-top:24px}
+h1,h2,h3{font-family:Archivo,sans-serif;letter-spacing:-3px}
+h1{font-size:142px;line-height:1.12;margin:70px 0 40px;font-weight:900}
+h2{font-size:88px;line-height:1.08;margin:54px 0 44px;font-weight:800}
+h3{font-size:46px;letter-spacing:-1.5px;line-height:1.2;margin:22px 0}
+em{font-style:normal;color:var(--accent)}p,li{font-size:34px;line-height:1.45}
+.lead{font-size:40px;line-height:1.4;margin:0 0 36px}.note{font-size:28px;color:var(--muted);line-height:1.45;margin-top:30px}
+footer{position:absolute;left:110px;right:110px;bottom:62px;border-top:1px solid #bbb;padding-top:20px;display:flex;justify-content:space-between;font:500 22px Archivo,sans-serif;letter-spacing:2px}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start}.columns>*,.steps>*{min-width:0}
+aside{background:#eee;padding:42px;border-left:8px solid var(--accent)}aside p{font-size:32px}aside .label{font-size:23px;color:var(--accent)}
+pre{background:#151515;color:#f7f7f7;font:400 34px/1.6 'IBM Plex Mono',monospace;padding:40px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.prompt{color:#ff7757}.result{color:#b4d8b1}
+ul{padding-left:32px;margin:20px 0}li{padding-left:8px;margin:18px 0}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:60px}.steps.three{grid-template-columns:repeat(3,1fr)}
+.steps article{border-top:4px solid #111;padding-top:30px}.steps b{font:800 100px Archivo,sans-serif;color:var(--accent)}.steps p{font-size:31px}
+.route{display:flex;justify-content:space-between;border-top:7px solid var(--accent);padding-top:30px;margin-top:70px;font:600 26px Archivo,sans-serif}
+.image-layout{grid-template-columns:650px 1fr;gap:55px}.image-layout li{font-size:30px;margin:12px 0}.image-layout p{font-size:30px}.image-layout .note{font-size:27px;margin-top:25px}
+figure{margin:0}figure img{width:970px;height:550px;object-fit:contain;object-position:top;border:1px solid #aaa;background:#1f1f1f}figcaption{font-size:24px;color:var(--muted);margin-top:16px}
+.command-name{font-family:Archivo,sans-serif;font-weight:800;color:var(--accent)}.checklist{border-left:10px solid var(--accent);padding-left:48px;margin-top:50px}.checklist p{font-size:48px;margin:22px 0}
+/* === SETUP TABLES, LINKS AND SCREENSHOT === */
+a{color:#b92300;text-decoration-thickness:2px;text-underline-offset:5px}a:focus-visible{outline:3px solid var(--accent)}
+.compact-code{font-size:30px;line-height:1.55}
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:28px;text-align:left}
+th,td{padding:9px 24px;border-bottom:1px solid #bbb}th{font-family:Archivo,sans-serif;background:#eee}
+.source{font-size:25px;margin-top:26px}
+table + .note{margin-top:14px}table + .note + .source{margin-top:12px}
+.wide-image img{width:1700px;height:520px;object-fit:contain;background:white;border:1px solid #aaa}
+.wide-image figcaption{margin-top:22px}
+/* === REVEAL MOTION === */
+.slide .content{opacity:0;transform:translateY(20px);transition:opacity .35s ease,transform .35s ease}.slide.visible .content{opacity:1;transform:none}
+/* === PRESENTATION CONTROLS === */
+.deck-controls{display:flex;align-items:center;gap:14px;background:#151515;color:white;padding:8px 14px;border-radius:5px;font:15px Archivo,sans-serif}
+button{font:inherit;cursor:pointer;border:1px solid #777;background:#222;color:white;padding:8px 12px}button:focus-visible{outline:3px solid var(--accent)}button:disabled{opacity:.4;cursor:default}
+.edit-hotzone{position:fixed;top:0;left:0;width:90px;height:80px;z-index:10000}.edit-toggle{position:fixed;top:18px;left:18px;z-index:10001;opacity:0;pointer-events:none}
+.edit-toggle.show,.edit-toggle.active{opacity:1;pointer-events:auto}.editing [data-edit]{outline:2px dashed #ff330077;cursor:text}
+@media print{.edit-hotzone,.edit-toggle{display:none!important}.slide .content{opacity:1;transform:none}@page{size:1920px 1080px;margin:0}}
+</style></head><body>
+<!-- Slides are authored at 1920×1080 and scaled uniformly on every screen. -->
+<div class="deck-viewport"><main class="deck-stage" id="deckStage">
+<section class="slide active visible hero" aria-label="Slide 1: One-time setup.  Start here. "><header class="kicker"><span data-edit>BEFORE YOUR FIRST CLASS</span><span>FIN556 / DAY 0</span></header><div class="content"><h1 data-edit>One-time setup.<br><em>Start here.</em></h1><p class="lead" data-edit>Prepare your terminal, tools, and course materials.<br>Then find your group and confirm you’re ready.</p><div class="route"><span>TERMINAL + GIT</span><span>DOCKER + EDITOR</span><span>COURSE + GROUP</span></div></div><footer><span>ONE-TIME SETUP</span><span>01 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 2: Eight steps to get ready."><header class="kicker"><span data-edit>YOUR CHECKLIST</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Eight steps to get ready.</h2><div class="columns"><div><h3 data-edit>Prepare the computer</h3><ul><li data-edit>1. Set up your terminal</li><li data-edit>2. Check your architecture</li><li data-edit>3. Install Git</li><li data-edit>4. Install Docker Desktop</li></ul></div><div><h3 data-edit>Prepare for the course</h3><ul><li data-edit>5. Install Visual Studio Code</li><li data-edit>6. Clone FIN556</li><li data-edit>7. Find your Canvas group</li><li data-edit>8. Send your confirmation email</li></ul></div></div><p class="note" data-edit>Allow time for downloads and any required restarts.</p></div><footer><span>ONE-TIME SETUP</span><span>02 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 3: Start with WSL2."><header class="kicker"><span data-edit>01 / TERMINAL · WINDOWS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Start with WSL2.</h2><div class="columns"><div><h3 data-edit>Install Ubuntu 24.04 LTS</h3><ul><li data-edit>Follow Microsoft’s WSL installation guide.</li><li data-edit>Create a Linux username and password.</li><li data-edit>Keep those credentials for later.</li></ul><p><a href="https://learn.microsoft.com/en-us/windows/wsl/install" target="_blank" rel="noopener">Microsoft WSL installation guide ↗</a></p></div><aside><span class="label">OPEN THE LINUX SHELL</span><h3 data-edit>Windows Terminal<br>→ Ubuntu</h3><p data-edit>Install Windows Terminal from the Microsoft Store, then select Ubuntu from its dropdown.</p><p><a href="https://aka.ms/terminal" target="_blank" rel="noopener">Get Windows Terminal ↗</a></p></aside></div></div><footer><span>ONE-TIME SETUP</span><span>03 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 4: Your terminal is built in."><header class="kicker"><span data-edit>01 / TERMINAL · MACOS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Your terminal is built in.</h2><div class="columns"><div><h3 data-edit>Find Terminal</h3><ul><li data-edit>Press Cmd + Space and search for Terminal.</li><li data-edit>Or open Applications → Utilities → Terminal.</li></ul></div><aside><span class="label">READY TO CONTINUE</span><h3 data-edit>A command prompt</h3><p data-edit>Open Terminal and confirm that you can type commands.</p></aside></div><p class="note" data-edit>For the remaining steps, “terminal” means Ubuntu on Windows/WSL2 or Terminal on macOS.</p></div><footer><span>ONE-TIME SETUP</span><span>04 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 5: Choose the right downloads."><header class="kicker"><span data-edit>02 / ARCHITECTURE</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Choose the right downloads.</h2><pre data-edit><span class="prompt">$</span> uname -m</pre><div class="columns"><div><h3 data-edit>x86_64</h3><p data-edit>Intel or AMD computer.<br>Choose x64 software, or the Intel build on macOS.</p></div><div><h3 data-edit>aarch64 / arm64</h3><p data-edit>ARM64 computer.<br>Choose ARM64 software; Apple Silicon on macOS.</p></div></div><p class="note" data-edit>Run this in Ubuntu on Windows, or a native Terminal session on macOS.</p></div><footer><span>ONE-TIME SETUP</span><span>05 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 6: Install Git in Ubuntu."><header class="kicker"><span data-edit>03 / GIT · WINDOWS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Install Git in Ubuntu.</h2><p class="lead" data-edit>Git is required to download and update the course repository.</p><pre data-edit><span class="prompt">$</span> sudo apt update
+<span class="prompt">$</span> sudo apt install -y git
+<span class="prompt">$</span> git --version</pre><p class="note" data-edit>Git for Windows and Git inside WSL are separate installations.</p></div><footer><span>ONE-TIME SETUP</span><span>06 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 7: Use browser sign-in."><header class="kicker"><span data-edit>03 / GIT · WINDOWS SIGN-IN</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Use browser sign-in.</h2><div class="columns"><div><h3 data-edit>Install Git for Windows</h3><ul><li data-edit>Download the Windows installer.</li><li data-edit>Ensure Git Credential Manager is selected.</li><li data-edit>Use Windows GCM from your Ubuntu Git configuration.</li></ul><p><a href="https://git-scm.com/download/win" target="_blank" rel="noopener">Download Git for Windows ↗</a></p></div><aside><span class="label">HTTPS AUTHENTICATION</span><h3 data-edit>Git Credential Manager</h3><p data-edit>GCM can open browser sign-in when authentication is needed. Existing credentials may skip the prompt.</p><p class="note" data-edit>A public clone may not request sign-in. SSH remotes do not use GCM.</p></aside></div></div><footer><span>ONE-TIME SETUP</span><span>07 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 8: Find the actual executable."><header class="kicker"><span data-edit>03 / GIT · CONFIGURE GCM</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Find the actual executable.</h2><p class="lead" data-edit>In Ubuntu, locate GCM before setting the helper.</p><pre class="compact-code" data-edit><span class="prompt">$</span> find "/mnt/c/Program Files/Git" \
+    -name 'git-credential-manager.exe' 2>/dev/null</pre><table><thead><tr><th>Git for Windows</th><th>Folder inside C:\Program Files\Git</th></tr></thead><tbody><tr><td>x64, v2.56.0 or later</td><td>ucrt64\bin</td></tr><tr><td>x64, v2.55.x or earlier</td><td>mingw64\bin</td></tr><tr><td>ARM64</td><td>clangarm64\bin</td></tr></tbody></table><p class="note" data-edit>If no executable is found, rerun the installer with GCM enabled.</p><p class="source"><a href="https://github.com/git-ecosystem/git-credential-manager/blob/main/docs/wsl.md" target="_blank" rel="noopener">Official GCM setup and alternate installation paths ↗</a></p></div><footer><span>ONE-TIME SETUP</span><span>08 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 9: Connect WSL Git to GCM."><header class="kicker"><span data-edit>03 / GIT · CONFIGURE GCM</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Connect WSL Git to GCM.</h2><p class="lead" data-edit>Example for a newer x64 installation:</p><pre class="compact-code" data-edit><span class="prompt">$</span> git config --global credential.helper \
+    "/mnt/c/Program\ Files/Git/ucrt64/bin/git-credential-manager.exe"
+
+<span class="prompt">$</span> "/mnt/c/Program Files/Git/ucrt64/bin/git-credential-manager.exe" --version</pre><p class="note" data-edit>Replace ucrt64 with the folder you found. Keep the escaping shown in the helper command.</p><p class="source"><a href="https://github.com/git-ecosystem/git-credential-manager/blob/main/docs/wsl.md" target="_blank" rel="noopener">GCM’s official WSL instructions ↗</a></p></div><footer><span>ONE-TIME SETUP</span><span>09 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 10: Check Git first."><header class="kicker"><span data-edit>03 / GIT · MACOS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Check Git first.</h2><pre data-edit><span class="prompt">$</span> git --version</pre><div class="columns"><div><h3 data-edit>A version appears?</h3><p data-edit>You can continue to Docker Desktop.</p></div><aside><span class="label">IF GIT IS MISSING</span><h3 data-edit>Install Git</h3><p data-edit>Follow the macOS installation options on the official Git site.</p><p><a href="https://git-scm.com/download/mac" target="_blank" rel="noopener">Git for macOS ↗</a></p></aside></div></div><footer><span>ONE-TIME SETUP</span><span>10 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 11: Install Docker Desktop."><header class="kicker"><span data-edit>04 / DOCKER</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Install Docker Desktop.</h2><div class="columns"><div><h3 data-edit>Windows</h3><ul><li data-edit>Choose the x64 or ARM64 installer.</li><li data-edit>Start Docker Desktop.</li><li data-edit>Enable your Ubuntu distribution under Settings → Resources → WSL Integration.</li></ul></div><div><h3 data-edit>macOS</h3><ul><li data-edit>Choose Intel or Apple Silicon.</li><li data-edit>Install and start Docker Desktop.</li><li data-edit>Follow any macOS permission prompts.</li></ul></div></div><p class="source"><a href="https://www.docker.com/products/docker-desktop/" target="_blank" rel="noopener">Download Docker Desktop ↗</a></p></div><footer><span>ONE-TIME SETUP</span><span>11 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 12: Check Docker is running."><header class="kicker"><span data-edit>04 / DOCKER · VERIFY</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Check Docker is running.</h2><p class="lead" data-edit>Start Docker Desktop, then run these commands in your terminal.</p><pre data-edit><span class="prompt">$</span> docker --version
+<span class="prompt">$</span> docker run --rm hello-world</pre><div class="columns"><div><h3 data-edit>CLI check</h3><p data-edit>The first command prints the Docker CLI version.</p></div><div><h3 data-edit>Runtime check</h3><p data-edit>The second confirms that Docker can download and run a container.</p></div></div></div><footer><span>ONE-TIME SETUP</span><span>12 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 13: Install VS Code on Windows."><header class="kicker"><span data-edit>05 / EDITOR · WINDOWS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Install VS Code on Windows.</h2><div class="columns"><div><h3 data-edit>Install the editor</h3><ul><li data-edit>Download the Windows version.</li><li data-edit>Enable Add to PATH during installation.</li><li data-edit>Install Microsoft’s WSL extension.</li></ul></div><aside><span class="label">WINDOWS UI + LINUX WORKSPACE</span><h3 data-edit>Open from Ubuntu</h3><p data-edit>You will use code . from your Ubuntu terminal after cloning the course repository.</p></aside></div><p class="source"><a href="https://code.visualstudio.com/" target="_blank" rel="noopener">Download VS Code ↗</a> · <a href="https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode" target="_blank" rel="noopener">Official WSL setup ↗</a></p></div><footer><span>ONE-TIME SETUP</span><span>13 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 14: Enable the code command."><header class="kicker"><span data-edit>05 / EDITOR · MACOS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Enable the code command.</h2><div class="columns"><div><h3 data-edit>Install VS Code</h3><ul><li data-edit>Move Visual Studio Code.app to Applications.</li><li data-edit>Open VS Code.</li><li data-edit>Press Cmd + Shift + P.</li></ul></div><aside><span class="label">COMMAND PALETTE</span><h3 data-edit>Shell Command:</h3><p class="command-name" data-edit>Install 'code' command in PATH</p><p data-edit>Run this command, then reopen Terminal.</p></aside></div><p class="source"><a href="https://code.visualstudio.com/docs/setup/mac" target="_blank" rel="noopener">Official macOS installation instructions ↗</a></p></div><footer><span>ONE-TIME SETUP</span><span>14 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 15: Clone FIN556."><header class="kicker"><span data-edit>06 / COURSE MATERIALS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Clone FIN556.</h2><pre class="compact-code" data-edit><span class="prompt">$</span> cd ~
+<span class="prompt">$</span> mkdir -p courses
+<span class="prompt">$</span> cd courses
+<span class="prompt">$</span> git clone https://github.com/RoyLai-InfoCorp/FIN556.git
+<span class="prompt">$</span> cd FIN556
+<span class="prompt">$</span> ls</pre><p class="note" data-edit>Confirm that day-0 appears in the output. Use FIN556 consistently for the local directory name.</p></div><footer><span>ONE-TIME SETUP</span><span>15 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 16: Find your student group."><header class="kicker"><span data-edit>07 / CANVAS</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Find your student group.</h2><p class="lead" data-edit>Sign in to Canvas and open your course site.</p><div class="columns"><div><h3 data-edit>People → Groups</h3><p data-edit>Identify your assigned group.</p><p class="note" data-edit>The course guide specifies a maximum of five members per group.</p></div><aside><span class="label">KEEP THE GROUP NAME</span><h3 data-edit>You’ll need it<br>for confirmation.</h3><p data-edit>If you are not assigned to a group, check with the instructor.</p></aside></div></div><footer><span>ONE-TIME SETUP</span><span>16 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 17: Look under Groups."><header class="kicker"><span data-edit>07 / CANVAS · SCREEN REFERENCE</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Look under Groups.</h2><figure class="wide-image"><img src="../img/canvas_groups.png" alt="Canvas course People page with Groups tab and example groups"><figcaption data-edit>Example Canvas screen. Your course site and group names may differ.</figcaption></figure></div><footer><span>ONE-TIME SETUP</span><span>17 / 19</span></footer></section>
+<section class="slide  " aria-label="Slide 18: Email the instructor."><header class="kicker"><span data-edit>08 / CONFIRMATION</span><span>FIN556 / DAY 0</span></header><div class="content"><h2 data-edit>Email the instructor.</h2><p class="lead" data-edit>Confirm that your environment is ready for class.</p><div class="checklist"><p data-edit>Full name</p><p data-edit>Student identification number</p><p data-edit>Operating system: Windows, macOS, or other</p><p data-edit>Assigned Canvas group</p></div></div><footer><span>ONE-TIME SETUP</span><span>18 / 19</span></footer></section>
+<section class="slide  hero" aria-label="Slide 19: Set up once.  Check every week. "><header class="kicker"><span data-edit>NEXT / WEEKLY ROUTINE</span><span>FIN556 / DAY 0</span></header><div class="content"><h1 data-edit>Set up once.<br><em>Check every week.</em></h1><p class="lead" data-edit>Next, follow the weekly setup guide to open the dev container<br>and verify the course tools.</p><p><a href="weekly-setup.html">Open the weekly setup presentation →</a></p><p class="note" data-edit>Update materials → Open VS Code → Reopen in Container → Verify tools.</p></div><footer><span>ONE-TIME SETUP</span><span>19 / 19</span></footer></section>
+</main></div>
+<nav class="deck-controls" aria-label="Presentation controls"><button id="previous" aria-label="Previous slide">←</button><span id="counter" aria-live="polite"></span><button id="next" aria-label="Next slide">→</button><button id="fullscreen">Fullscreen</button><button id="save">Save HTML</button></nav>
+<div class="edit-hotzone" title="Click to edit text"></div><button class="edit-toggle" id="editToggle" aria-pressed="false">Edit text (E)</button>
+<script>
+/* === NAVIGATION AND FIXED STAGE SCALING === */
+class SlidePresentation {
+ constructor(){
+  this.slides=[...document.querySelectorAll('.slide')];this.current=0;this.editing=false;this.stage=document.getElementById('deckStage');this.lastWheel=0;
+  this.editables=[...document.querySelectorAll('[data-edit]')];this.storageKey='fin556-onetime-setup-swiss-v1';
+  try{const stored=JSON.parse(localStorage.getItem(this.storageKey)||'[]');stored.forEach((value,index)=>{if(this.editables[index]&&typeof value==='string')this.editables[index].textContent=value})}catch{}
+  this.fit();addEventListener('resize',()=>this.fit());
+  document.getElementById('previous').onclick=()=>this.show(this.current-1);document.getElementById('next').onclick=()=>this.show(this.current+1);
+  document.getElementById('fullscreen').onclick=()=>{const action=document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();action.catch(()=>{})};
+  document.getElementById('save').onclick=()=>this.save();
+  document.getElementById('editToggle').onclick=()=>this.toggleEdit();
+  document.addEventListener('keydown',event=>{
+   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='s'){event.preventDefault();this.save();return}
+   if(event.target.isContentEditable||/INPUT|TEXTAREA/.test(event.target.tagName))return;
+   if(event.key.toLowerCase()==='e'){this.toggleEdit();return}
+   if(this.editing)return;
+   if(['ArrowRight','ArrowDown',' ','PageDown'].includes(event.key)){event.preventDefault();this.show(this.current+1)}
+   if(['ArrowLeft','ArrowUp','PageUp'].includes(event.key)){event.preventDefault();this.show(this.current-1)}
+   if(event.key==='Home')this.show(0);if(event.key==='End')this.show(this.slides.length-1);
+  });
+  document.addEventListener('wheel',event=>{if(this.editing||Math.abs(event.deltaY)<15)return;if(Date.now()-this.lastWheel>600){this.show(this.current+Math.sign(event.deltaY));this.lastWheel=Date.now()}},{passive:true});
+  let touchStart=0;document.addEventListener('touchstart',event=>{touchStart=event.changedTouches[0].clientX},{passive:true});
+  document.addEventListener('touchend',event=>{const distance=event.changedTouches[0].clientX-touchStart;if(!this.editing&&Math.abs(distance)>45)this.show(this.current+(distance<0?1:-1))},{passive:true});
+  this.editables.forEach(element=>element.addEventListener('input',()=>{try{localStorage.setItem(this.storageKey,JSON.stringify(this.editables.map(item=>item.textContent)))}catch{}}));
+  const hotzone=document.querySelector('.edit-hotzone');const toggle=document.getElementById('editToggle');let hideTimer;
+  for(const element of [hotzone,toggle]){element.addEventListener('mouseenter',()=>{clearTimeout(hideTimer);toggle.classList.add('show')});element.addEventListener('mouseleave',()=>{hideTimer=setTimeout(()=>{if(!this.editing)toggle.classList.remove('show')},400)})}
+  hotzone.onclick=()=>this.toggleEdit();this.show(0);
+ }
+ fit(){const factor=Math.min(innerWidth/1920,innerHeight/1080);this.stage.style.transform='translate('+((innerWidth-1920*factor)/2)+'px,'+((innerHeight-1080*factor)/2)+'px) scale('+factor+')'}
+ show(index){this.current=Math.max(0,Math.min(index,this.slides.length-1));this.slides.forEach((slide,position)=>{const active=position===this.current;slide.classList.toggle('active',active);slide.classList.toggle('visible',active);slide.setAttribute('aria-hidden',String(!active));slide.inert=!active});document.getElementById('counter').textContent=(this.current+1)+' / '+this.slides.length;document.getElementById('previous').disabled=this.current===0;document.getElementById('next').disabled=this.current===this.slides.length-1}
+ /* === INLINE TEXT EDITING === */
+ toggleEdit(){this.editing=!this.editing;document.body.classList.toggle('editing',this.editing);this.editables.forEach(element=>element.contentEditable=String(this.editing));const toggle=document.getElementById('editToggle');toggle.classList.toggle('active',this.editing);toggle.setAttribute('aria-pressed',String(this.editing));toggle.textContent=this.editing?'Finish editing (E)':'Edit text (E)'}
+ /* === EXPORT CURRENT TEXT AS A STANDALONE HTML FILE === */
+ save(){const clone=document.documentElement.cloneNode(true);clone.querySelector('body').classList.remove('editing');clone.querySelectorAll('[contenteditable]').forEach(element=>element.removeAttribute('contenteditable'));clone.querySelectorAll('.slide').forEach((slide,index)=>{slide.classList.toggle('active',index===0);slide.classList.toggle('visible',index===0);slide.removeAttribute('inert');slide.removeAttribute('aria-hidden')});clone.querySelector('#editToggle').className='edit-toggle';clone.querySelector('#editToggle').textContent='Edit text (E)';clone.querySelector('#editToggle').setAttribute('aria-pressed','false');const blob=new Blob(['<!DOCTYPE html>\n'+clone.outerHTML],{type:'text/html'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download='onetime-setup.html';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+}
+window.presentation=new SlidePresentation();
+</script></body></html>
