@@ -62,7 +62,6 @@ async function getPairAddress(token0, token1, initCodeHash) {
     );
     await router.waitForDeployment();
     routerAddress = await router.getAddress();
-    console.log(`UniswapV2Router02 deployed to: ${routerAddress}`);
 
     // Create Pair
     token0 = await ethers.getContractAt("DemoTokenA", token0Address);

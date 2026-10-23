@@ -101,14 +101,30 @@ There are 3 Uniswap V2 Contracts that you should be familiar with:
 
 ## 🛠️ IMPORTANT: About Init Code Hash
 
-Due to a trick that Uniswap used to compute pair address, we need to calculate the init code hash of the UniswapV2Pair contract in our local environment and update the test code in the next section accordingly. This has already been done for you in the devcontainer, but if running without devcontainer, you will need to open hh console and execute the following code to get the init code hash:
+Due to a trick that Uniswap used to compute pair address, we need to calculate the init code hash of the UniswapV2Pair contract in our local environment and update the test code in the next section accordingly. 
 
-```js
-> const bytecode = require("./artifacts/contracts/v2-core/UniswapV2Pair.sol/UniswapV2Pair.json").bytecode;
-> ethers.keccak256(bytecode);
+**Step 1:** Generate the Init Code Hash
+
+Enter this command in the project directory:
+
+```bash
+hh run scripts/getInitCodeHash.js
+# 0x1445d203f13f60adfabc2036dbb0cd186371cf7ec9e16d576718b94109ab1991
 ```
 
-Then update line 36 in **contracts/v2-periphery/libraries/UniswapV2Library.sol** and line 80 in **test/testCreatePool.js** with the init code hash you obtained.
+**Step 2:** Update the Uniswap Library `pairFor` function
+
+Update line 36 in **contracts/v2-periphery/libraries/UniswapV2Library.sol** with the init code hash you obtained.
+
+**Step 3:** Verify your changes
+
+Run the following commands:
+
+```sh
+INIT_CODE_HASH="replace-this-with-output-from-getInitCodeHash" hh run ./scripts/testInitCodeHash.js
+# init code verified success! ✅
+```
+
 
 ---
 
